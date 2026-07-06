@@ -1,21 +1,21 @@
-# WHATSAPP AGENT PLAN - Architecture et Implémentation
+# RENCANA WHATSAPP AGENT - Arsitektur dan Implementasi
 
 ---
 
-## 🎯 VUE D'ENSEMBLE
+## GAMBARAN UMUM
 
-Architecture décentralisée avec **deux agents LangChain distincts** :
+Arsitektur terdesentralisasi dengan **dua agent LangChain berbeda**:
 
-1. **Backend Agent** : Conversation avec le **patron** (onboarding, configuration)
-2. **WhatsApp Agent** : Conversation avec les **clients WhatsApp** du patron
+1. **Backend Agent**: Percakapan dengan **pemilik bisnis** (onboarding, konfigurasi)
+2. **WhatsApp Agent**: Percakapan dengan **klien WhatsApp** pemilik bisnis
 
 ---
 
-## 🏗️ ARCHITECTURE GLOBALE
+## ARSITEKTUR GLOBAL
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  VPS BACKEND (1 pour tous les clients)                          │
+│  VPS BACKEND (1 untuk semua klien)                              │
 │                                                                    │
 │  ┌─────────────────────┐         ┌──────────────────────┐       │
 │  │  Backend (NestJS)   │────────▶│  PostgreSQL          │       │
@@ -32,7 +32,7 @@ Architecture décentralisée avec **deux agents LangChain distincts** :
 │            │                     └──────────────────────┘       │
 │  ┌─────────▼───────────┐                                        │
 │  │  Frontend (React)   │                                        │
-│  │  - Dashboard patron │                                        │
+│  │  - Dashboard pemilik│                                        │
 │  │  - Chat onboarding  │                                        │
 │  └─────────────────────┘                                        │
 └──────────────────────────────────────┬───────────────────────────┘
@@ -40,17 +40,17 @@ Architecture décentralisée avec **deux agents LangChain distincts** :
                                        │ HTTPS/REST API
                                        │
 ┌──────────────────────────────────────▼───────────────────────────┐
-│  VPS CLIENT (plusieurs clients possible)                         │
+│  VPS KLIEN (beberapa klien dimungkinkan)                        │
 │                                                                    │
-│  ┌─────────────── CLIENT 1 ───────────────────────────┐          │
+│  ┌─────────────── KLIEN 1 ───────────────────────────┐          │
 │  │                                                      │          │
 │  │  ┌──────────────────┐         ┌──────────────────┐ │          │
 │  │  │  Connector       │────────▶│  Agent           │ │          │
 │  │  │  - wwebjs        │ webhook │  - LangChain     │ │          │
-│  │  │  - Events        │  local  │  - Tools         │ │          │
+│  │  │  - Events        │  lokal  │  - Tools         │ │          │
 │  │  │  - Execute code  │         │  - Prisma        │ │          │
-│  │  │  PAS de BD       │         └────────┬─────────┘ │          │
-│  │  │  PAS de Prisma   │                  │           │          │
+│  │  │  TANPA DB        │         └────────┬─────────┘ │          │
+│  │  │  TANPA Prisma    │                  │           │          │
 │  │  └──────────────────┘                  │           │          │
 │  │                              ┌──────────▼─────────┐ │          │
 │  │                              │  PostgreSQL        │ │          │
@@ -63,47 +63,47 @@ Architecture décentralisée avec **deux agents LangChain distincts** :
 │  │                              └────────────────────┘ │          │
 │  └──────────────────────────────────────────────────────┘          │
 │                                                                    │
-│  ┌─────────────── CLIENT 2 ───────────────────────────┐          │
-│  │  (même structure)                                   │          │
+│  ┌─────────────── KLIEN 2 ───────────────────────────┐          │
+│  │  (struktur sama)                                   │          │
 │  └──────────────────────────────────────────────────────┘          │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🧠 DEUX AGENTS LANGCHAIN DISTINCTS
+## DUA AGENT LANGCHAIN BERBEDA
 
 ### 1. Backend Agent (Onboarding)
 
-**Rôle** : Configurer l'agent du patron via chat conversationnel
+**Peran**: Mengonfigurasi agent pemilik bisnis melalui chat percakapan
 
-**Utilisateur** : Le patron (via dashboard web)
+**Pengguna**: Pemilik bisnis (via dashboard web)
 
-**Tools Backend** :
-- `readUserInfo` - Lire infos utilisateur
-- `readBusinessProfile` - Lire profil business
-- `readProducts` - Lire produits
-- `updateAgentContext` - Modifier le contexte de l'agent
-- `executeScriptViaConnector` - Exécuter script WPP via connector
-- `getAllLabels` - Récupérer labels WhatsApp
-- `addNewLabel` - Créer un label
-- `editLabel` - Modifier un label
-- `createGroup` - Créer groupe WhatsApp
-- `analyzeProductImages` - Analyser images avec IA
-- `updateStrategy` - Changer stratégie de vente
+**Tools Backend**:
+- `readUserInfo` - Baca info pengguna
+- `readBusinessProfile` - Baca profil bisnis
+- `readProducts` - Baca produk
+- `updateAgentContext` - Ubah konteks agent
+- `executeScriptViaConnector` - Jalankan skrip WPP via connector
+- `getAllLabels` - Ambil label WhatsApp
+- `addNewLabel` - Buat label baru
+- `editLabel` - Ubah label
+- `createGroup` - Buat grup WhatsApp
+- `analyzeProductImages` - Analisis gambar dengan AI
+- `updateStrategy` - Ubah strategi penjualan
 
-**Exemple de conversation** :
+**Contoh percakapan**:
 ```
-Patron: "Je veux que mon agent soit plus amical"
+Pemilik: "Saya ingin agent saya lebih ramah"
 Backend Agent:
-  1. Lit le contexte actuel (readAgentContext)
-  2. Modifie le ton (updateAgentContext)
-  3. Répond: "✅ Contexte mis à jour ! Ton amical activé."
+  1. Baca konteks saat ini (readAgentContext)
+  2. Ubah nada (updateAgentContext)
+  3. Balas: "✅ Konteks diperbarui! Nada ramah diaktifkan."
 ```
 
-**Base de données** : PostgreSQL backend (centrale)
+**Database**: PostgreSQL backend (terpusat)
 
-**LangGraph State** :
+**LangGraph State**:
 ```typescript
 const BackendAgentState = z.object({
   messages: MessagesZodMeta,
@@ -116,47 +116,47 @@ const BackendAgentState = z.object({
 
 ---
 
-### 2. WhatsApp Agent (Conversations clients)
+### 2. WhatsApp Agent (Percakapan klien)
 
-**Rôle** : Répondre aux clients WhatsApp automatiquement
+**Peran**: Membalas klien WhatsApp secara otomatis
 
-**Utilisateur** : Les clients WhatsApp du patron
+**Pengguna**: Klien WhatsApp pemilik bisnis
 
-**Tools Agent** :
-- `sendMessage` - Envoyer message (max 500 chars)
-- `sendProduct` - Envoyer produit du catalogue
-- `sendCollection` - Envoyer collection
-- `forwardToManagementGroup` - Transférer au groupe de gestion
-- `listProducts` - Lister produits
-- `searchProducts` - Rechercher produits
-- `getProductDetails` - Détails produit
-- `getContactLabels` - Labels du contact
-- `addLabelToContact` - Ajouter label
-- `getOlderMessages` - Récupérer messages anciens
-- `detectIntent` - Détecter intention
-- `scheduleMessage` - Programmer rappel
-- `savePersistentMemory` - Sauvegarder mémoire importante
-- `retrievePersistentMemory` - Récupérer mémoires
+**Tools Agent**:
+- `sendMessage` - Kirim pesan (maks 500 karakter)
+- `sendProduct` - Kirim produk dari katalog
+- `sendCollection` - Kirim koleksi
+- `forwardToManagementGroup` - Teruskan ke grup manajemen
+- `listProducts` - Daftar produk
+- `searchProducts` - Cari produk
+- `getProductDetails` - Detail produk
+- `getContactLabels` - Label kontak
+- `addLabelToContact` - Tambah label
+- `getOlderMessages` - Ambil pesan lama
+- `detectIntent` - Deteksi niat
+- `scheduleMessage` - Jadwalkan pengingat
+- `savePersistentMemory` - Simpan memori penting
+- `retrievePersistentMemory` - Ambil memori
 
-**Exemple de conversation** :
+**Contoh percakapan**:
 ```
-Client: "C'est combien la robe bleue ?"
+Klien: "Berapa harga gaun biru?"
 WhatsApp Agent:
-  1. Recherche produit (searchProducts)
-  2. Obtient détails (getProductDetails)
-  3. Envoie produit (sendProduct)
-  4. Répond: "Voici notre robe bleue élégante! 👗 Prix: 25000 FCFA"
+  1. Cari produk (searchProducts)
+  2. Dapatkan detail (getProductDetails)
+  3. Kirim produk (sendProduct)
+  4. Balas: "Ini gaun biru elegan kami! 👗 Harga: 25000 FCFA"
 ```
 
-**Base de données** : PostgreSQL agent (locale sur VPS client)
+**Database**: PostgreSQL agent (lokal di VPS klien)
 
-**LangGraph State** :
+**LangGraph State**:
 ```typescript
 const WhatsAppAgentState = z.object({
   messages: MessagesZodMeta,
   chatId: z.string(),
   contactLabels: z.array(z.string()),
-  agentContext: z.string(),  // Récupéré depuis backend
+  agentContext: z.string(),  // Diambil dari backend
   userPreferences: z.record(z.string(), z.any()).optional(),
   pendingOrder: z.any().optional(),
 });
@@ -164,49 +164,49 @@ const WhatsAppAgentState = z.object({
 
 ---
 
-## 🔄 CONNECTOR (CLIENT PUR)
+## CONNECTOR (KLIEN MURNI)
 
-**Responsabilités UNIQUEMENT** :
-1. Se connecter à WhatsApp Web
-2. Envoyer events → Agent (webhook local)
-3. Recevoir scripts → Exécuter dans la page
-4. **C'EST TOUT**
+**Tanggung Jawab HANYA**:
+1. Terhubung ke WhatsApp Web
+2. Kirim event → Agent (webhook lokal)
+3. Menerima skrip → Jalankan di halaman
+4. **ITU SAJA**
 
-**PAS de** :
-- ❌ Base de données
-- ❌ Prisma
-- ❌ Logique métier
-- ❌ LangChain
-- ❌ Tools
+**TIDAK ADA**:
+- Database
+- Prisma
+- Logika bisnis
+- LangChain
+- Tools
 
-**Configuration** :
+**Konfigurasi**:
 ```env
 CONNECTOR_IP=connector-client-001
-AGENT_WEBHOOK_URL=http://localhost:3002/webhook  # Local au VPS
+AGENT_WEBHOOK_URL=http://localhost:3002/webhook  # Lokal ke VPS
 ```
 
-**Code minimal** :
+**Kode minimal**:
 ```typescript
 // whatsapp-client.service.ts
 this.client.on('ready', (...args) => {
-  // Envoyer event au agent (local)
+  // Kirim event ke agent (lokal)
   await this.webhookService.sendEvent('ready', args);
 });
 
 this.client.on('message', (...args) => {
-  // Envoyer event au agent (local)
+  // Kirim event ke agent (lokal)
   await this.webhookService.sendEvent('message', args);
 });
 
 this.client.on('disconnected', (...args) => {
-  // Envoyer event au agent (local)
+  // Kirim event ke agent (lokal)
   await this.webhookService.sendEvent('disconnected', {
     connectorIp: this.connectorIp,
     reason: args[0]
   });
 });
 
-// Endpoint pour exécuter scripts
+// Endpoint untuk menjalankan skrip
 @Post('execute-script')
 async executeScript(@Body() { script }) {
   const result = await this.pupPage.evaluate(script);
@@ -216,24 +216,24 @@ async executeScript(@Body() { script }) {
 
 ---
 
-## 📡 FLOW COMPLET D'UN MESSAGE
+## FLOW LENGKAP SEBUAH PESAN
 
-### 1. Message reçu sur WhatsApp
+### 1. Pesan diterima di WhatsApp
 
 ```
 1. WhatsApp → Connector (wwebjs event 'message')
    ↓
-2. Connector → Agent (webhook local POST /webhook/message)
+2. Connector → Agent (webhook lokal POST /webhook/message)
    {
      event: 'message',
-     data: [message]
+     data: [...args]
    }
    ↓
-3. Agent récupère labels via Connector
+3. Agent mengambil label via Connector
    POST http://localhost:3001/execute-script
    { script: "WPP.labels.getChatLabels('237xxx@c.us')" }
    ↓
-4. Agent récupère historique via Connector
+4. Agent mengambil riwayat via Connector
    POST http://localhost:3001/execute-script
    { script: "WPP.chat.getMessages('237xxx@c.us', 10)" }
    ↓
@@ -242,16 +242,16 @@ async executeScript(@Body() { script }) {
    {
      connectorIp: "connector-001",
      from: "237xxx@c.us",
-     message: "C'est combien ?",
+     message: "Berapa harga?",
      contactLabels: ["client"],
      recentMessages: [...]
    }
    ↓
-6. Backend vérifie :
-   - Score ≥ 80% ?
-   - Crédits restants ?
-   - Mode prod ou labels test ?
-   - Labels exclus ?
+6. Backend memeriksa:
+   - Skor ≥ 80%?
+   - Kredit tersisa?
+   - Mode prod atau label tes?
+   - Label yang dikecualikan?
    ↓
 7. Backend → Agent
    {
@@ -263,18 +263,18 @@ async executeScript(@Body() { script }) {
      }
    }
    ↓
-8. Agent traite avec LangGraph
-   - Charge checkpoints (mémoire conversation)
-   - Exécute agent avec tools
-   - Génère réponse
+8. Agent memproses dengan LangGraph
+   - Muat checkpoint (memori percakapan)
+   - Jalankan agent dengan tools
+   - Buat respons
    ↓
-9. Agent envoie réponse via Connector
+9. Agent mengirim respons via Connector
    POST http://localhost:3001/execute-script
    {
-     script: "WPP.chat.sendTextMessage('237xxx@c.us', 'Bonjour...')"
+     script: "WPP.chat.sendTextMessage('237xxx@c.us', 'Halo...')"
    }
    ↓
-10. Agent log opération au Backend
+10. Agent mencatat operasi ke Backend
     POST https://backend.example.com/agent/log-operation
     {
       from: "237xxx@c.us",
@@ -287,11 +287,11 @@ async executeScript(@Body() { script }) {
 
 ---
 
-## 🛠️ TOOLS PAR AGENT
+## TOOLS PER AGENT
 
-### Backend Agent Tools (Configuration)
+### Tools Backend Agent (Konfigurasi)
 
-#### Lecture de données
+#### Membaca data
 
 ```typescript
 const readAgentContext = tool(
@@ -306,7 +306,7 @@ const readAgentContext = tool(
   },
   {
     name: 'read_agent_context',
-    description: 'Lire le contexte actuel de l\'agent',
+    description: 'Baca konteks agent saat ini',
     schema: z.object({ agentId: z.string() })
   }
 );
@@ -321,13 +321,13 @@ const readProducts = tool(
   },
   {
     name: 'read_products',
-    description: 'Lire tous les produits du catalogue',
+    description: 'Baca semua produk dari katalog',
     schema: z.object({ userId: z.string() })
   }
 );
 ```
 
-#### Modification de configuration
+#### Modifikasi konfigurasi
 
 ```typescript
 const updateAgentContext = tool(
@@ -340,7 +340,7 @@ const updateAgentContext = tool(
   },
   {
     name: 'update_agent_context',
-    description: 'Modifier le contexte de l\'agent (ton, règles, etc.)',
+    description: 'Ubah konteks agent (nada, aturan, dll.)',
     schema: z.object({
       agentId: z.string(),
       newContext: z.string()
@@ -358,7 +358,7 @@ const updateStrategy = tool(
   },
   {
     name: 'update_strategy',
-    description: 'Changer la stratégie d\'activation (test/tags/all)',
+    description: 'Ubah strategi aktivasi (test/tags/all)',
     schema: z.object({
       agentId: z.string(),
       strategy: z.object({
@@ -371,12 +371,12 @@ const updateStrategy = tool(
 );
 ```
 
-#### Interaction avec WhatsApp (via Connector)
+#### Interaksi dengan WhatsApp (via Connector)
 
 ```typescript
 const getAllLabels = tool(
   async ({ connectorIp }) => {
-    // Appel au connector pour exécuter script
+    // Panggil connector untuk menjalankan skrip
     const result = await connectorClient.executeScript(
       connectorIp,
       `(async () => {
@@ -392,7 +392,7 @@ const getAllLabels = tool(
   },
   {
     name: 'get_all_labels',
-    description: 'Récupérer tous les labels WhatsApp',
+    description: 'Ambil semua label WhatsApp',
     schema: z.object({ connectorIp: z.string() })
   }
 );
@@ -407,7 +407,7 @@ const addNewLabel = tool(
   },
   {
     name: 'add_new_label',
-    description: 'Créer un nouveau label WhatsApp',
+    description: 'Buat label WhatsApp baru',
     schema: z.object({
       connectorIp: z.string(),
       name: z.string(),
@@ -426,7 +426,7 @@ const createGroup = tool(
   },
   {
     name: 'create_group',
-    description: 'Créer un groupe WhatsApp',
+    description: 'Buat grup WhatsApp',
     schema: z.object({
       connectorIp: z.string(),
       name: z.string(),
@@ -436,7 +436,7 @@ const createGroup = tool(
 );
 ```
 
-#### Analyse IA
+#### Analisis AI
 
 ```typescript
 const analyzeProductImages = tool(
@@ -446,7 +446,7 @@ const analyzeProductImages = tool(
       include: { images: true }
     });
 
-    // Analyser les 2 premières images avec Grok
+    // Analisis 2 gambar pertama dengan Grok
     const analyses = [];
     for (const image of product.images.slice(0, 2)) {
       const analysis = await grokVision.invoke([
@@ -456,7 +456,7 @@ const analyzeProductImages = tool(
         },
         {
           type: 'text',
-          text: 'Décris ce produit en détail (couleur, matière, style, etc.)'
+          text: 'Jelaskan produk ini secara detail (warna, bahan, gaya, dll.)'
         }
       ]);
       analyses.push(analysis.content);
@@ -466,7 +466,7 @@ const analyzeProductImages = tool(
   },
   {
     name: 'analyze_product_images',
-    description: 'Analyser les images d\'un produit avec l\'IA',
+    description: 'Analisis gambar produk dengan AI',
     schema: z.object({ productId: z.string() })
   }
 );
@@ -474,9 +474,9 @@ const analyzeProductImages = tool(
 
 ---
 
-### WhatsApp Agent Tools (Client)
+### Tools WhatsApp Agent (Klien)
 
-#### Communication
+#### Komunikasi
 
 ```typescript
 const sendMessage = tool(
@@ -484,11 +484,11 @@ const sendMessage = tool(
     if (message.length > 500) {
       return JSON.stringify({
         success: false,
-        error: 'Message trop long (max 500 chars)'
+        error: 'Pesan terlalu panjang (maks 500 karakter)'
       });
     }
 
-    // Appel au connector (local)
+    // Panggil connector (lokal)
     const result = await connectorClient.executeScript(
       `WPP.chat.sendTextMessage("${to}", "${message}")`
     );
@@ -497,7 +497,7 @@ const sendMessage = tool(
   },
   {
     name: 'send_message',
-    description: 'Envoyer un message texte COURT (max 500 caractères)',
+    description: 'Kirim pesan teks PENDEK (maks 500 karakter)',
     schema: z.object({
       to: z.string(),
       message: z.string().max(500)
@@ -514,7 +514,7 @@ const sendProduct = tool(
   },
   {
     name: 'send_product',
-    description: 'Envoyer un produit du catalogue WhatsApp',
+    description: 'Kirim produk dari katalog WhatsApp',
     schema: z.object({
       to: z.string(),
       productId: z.string()
@@ -528,12 +528,12 @@ const forwardToManagementGroup = tool(
     const groupId = state.agentContext.managementGroupId;
 
     const message = `
-🔔 *Transfert de conversation*
+🔔 *Penerusan percakapan*
 
-👤 Contact: ${context.from}
-📝 Raison: ${context.reason}
+👤 Kontak: ${context.from}
+📝 Alasan: ${context.reason}
 
-💬 Résumé:
+💬 Ringkasan:
 ${context.summary}
     `;
 
@@ -545,7 +545,7 @@ ${context.summary}
   },
   {
     name: 'forward_to_management_group',
-    description: 'Transférer au groupe de gestion',
+    description: 'Teruskan ke grup manajemen',
     schema: z.object({
       context: z.object({
         from: z.string(),
@@ -557,12 +557,12 @@ ${context.summary}
 );
 ```
 
-#### Catalogue
+#### Katalog
 
 ```typescript
 const listProducts = tool(
   async ({ includeDescriptions, limit }) => {
-    // Appel au backend
+    // Panggil backend
     const products = await backendClient.get('/catalog/products', {
       params: {
         agentId: getCurrentAgentId(),
@@ -574,7 +574,7 @@ const listProducts = tool(
   },
   {
     name: 'list_products',
-    description: 'Lister les produits du catalogue',
+    description: 'Daftar produk dari katalog',
     schema: z.object({
       includeDescriptions: z.boolean().default(false),
       limit: z.number().default(20)
@@ -595,7 +595,7 @@ const searchProducts = tool(
   },
   {
     name: 'search_products',
-    description: 'Rechercher des produits par mots-clés',
+    description: 'Cari produk berdasarkan kata kunci',
     schema: z.object({
       query: z.string(),
       limit: z.number().default(10)
@@ -604,7 +604,7 @@ const searchProducts = tool(
 );
 ```
 
-#### Labels et Contexte
+#### Label dan Konteks
 
 ```typescript
 const getContactLabels = tool(
@@ -616,7 +616,7 @@ const getContactLabels = tool(
   },
   {
     name: 'get_contact_labels',
-    description: 'Récupérer les labels d\'un contact',
+    description: 'Ambil label kontak',
     schema: z.object({ contactId: z.string() })
   }
 );
@@ -630,7 +630,7 @@ const addLabelToContact = tool(
   },
   {
     name: 'add_label_to_contact',
-    description: 'Ajouter un label à un contact',
+    description: 'Tambah label ke kontak',
     schema: z.object({
       contactId: z.string(),
       labelId: z.string()
@@ -639,7 +639,7 @@ const addLabelToContact = tool(
 );
 ```
 
-#### Mémoire
+#### Memori
 
 ```typescript
 const savePersistentMemory = tool(
@@ -651,7 +651,7 @@ const savePersistentMemory = tool(
   },
   {
     name: 'save_persistent_memory',
-    description: 'Sauvegarder une mémoire critique (préférence VIP, etc.)',
+    description: 'Simpan memori penting (preferensi VIP, dll.)',
     schema: z.object({
       chatId: z.string(),
       type: z.enum(['PREFERENCE', 'VIP_NOTE', 'ORDER']),
@@ -662,7 +662,7 @@ const savePersistentMemory = tool(
 );
 ```
 
-#### Messages programmés
+#### Pesan terjadwal
 
 ```typescript
 const scheduleMessage = tool(
@@ -676,7 +676,7 @@ const scheduleMessage = tool(
   },
   {
     name: 'schedule_message',
-    description: 'Programmer un message futur intelligent',
+    description: 'Jadwalkan pesan cerdas di masa depan',
     schema: z.object({
       chatId: z.string(),
       scheduledFor: z.string(),
@@ -692,17 +692,17 @@ const scheduleMessage = tool(
 
 ---
 
-## 🔒 SÉCURITÉ
+## KEAMANAN
 
 ### Backend Agent (Onboarding)
 
-**Utilisateur authentifié** : Seulement le patron peut modifier son agent
+**Pengguna terautentikasi**: Hanya pemilik bisnis yang dapat mengubah agent-nya
 
 ```typescript
-// Guard sur tous les endpoints
+// Guard di semua endpoint
 @UseGuards(JwtAuthGuard)
 async updateContext(@User() user, @Body() dto) {
-  // Vérifier que l'agent appartient à l'utilisateur
+  // Verifikasi bahwa agent milik pengguna
   const agent = await prisma.whatsAppAgent.findFirst({
     where: {
       id: dto.agentId,
@@ -714,13 +714,13 @@ async updateContext(@User() user, @Body() dto) {
     throw new UnauthorizedException();
   }
 
-  // Continuer...
+  // Lanjutkan...
 }
 ```
 
-### WhatsApp Agent (Client)
+### WhatsApp Agent (Klien)
 
-**Sanitization et validation** :
+**Sanitasi dan validasi**:
 
 ```typescript
 function sanitizeUserInput(input: string): string {
@@ -747,7 +747,7 @@ const securityRules = [
 ];
 ```
 
-**Rate limiting** (Redis local) :
+**Rate limiting** (Redis lokal):
 
 ```typescript
 async function checkRateLimit(chatId: string) {
@@ -759,16 +759,16 @@ async function checkRateLimit(chatId: string) {
   }
 
   if (count > 10) {
-    throw new RateLimitException('Trop de messages');
+    throw new RateLimitException('Terlalu banyak pesan');
   }
 }
 ```
 
 ---
 
-## 🎛️ MODEL SWITCHING DYNAMIQUE
+## PERTUKARAN MODEL DINAMIS
 
-**Les DEUX agents** utilisent le model switching :
+**Kedua agent** menggunakan model switching:
 
 ```typescript
 const geminiFast = new ChatGoogleGenerativeAI({
@@ -805,7 +805,7 @@ const dynamicModelSelection = createMiddleware({
 
 ---
 
-## 📝 BASES DE DONNÉES
+## DATABASE
 
 ### Backend PostgreSQL
 
@@ -895,7 +895,7 @@ model AgentMessageLog {
 }
 ```
 
-### Agent PostgreSQL (local)
+### Agent PostgreSQL (lokal)
 
 ```prisma
 // apps/whatsapp-agent/prisma/schema.prisma
@@ -919,28 +919,28 @@ enum MemoryType {
   ORDER
 }
 
-// Note: Table `checkpoints` créée automatiquement par PostgresSaver
+// Catatan: Tabel `checkpoints` dibuat otomatis oleh PostgresSaver
 ```
 
 ---
 
-## 📋 IMPLÉMENTATION - CHECKLIST
+## IMPLEMENTASI - CHECKLIST
 
-### Phase 1 : Connector (Client pur) ✅
+### Fase 1: Connector (Klien murni)
 
-- [ ] Nettoyer le connector (supprimer toute logique)
-- [ ] Garder uniquement :
-  - [ ] whatsapp-web.js client
-  - [ ] Event listeners → webhook agent
+- [ ] Bersihkan connector (hapus semua logika)
+- [ ] Pertahankan hanya:
+  - [ ] klien whatsapp-web.js
+  - [ ] Event listener → webhook agent
   - [ ] Endpoint /execute-script
-- [ ] Configurer CONNECTOR_IP
-- [ ] Configurer AGENT_WEBHOOK_URL (local)
+- [ ] Konfigurasi CONNECTOR_IP
+- [ ] Konfigurasi AGENT_WEBHOOK_URL (lokal)
 
-### Phase 2 : Backend Agent (Onboarding) ✅
+### Fase 2: Backend Agent (Onboarding)
 
-**Backend** :
-- [ ] Setup LangGraph pour backend agent
-- [ ] Créer tools de configuration :
+**Backend**:
+- [ ] Setup LangGraph untuk backend agent
+- [ ] Buat tools konfigurasi:
   - [ ] read_agent_context
   - [ ] update_agent_context
   - [ ] read_products
@@ -949,23 +949,23 @@ enum MemoryType {
   - [ ] add_new_label
   - [ ] create_group
   - [ ] analyze_product_images
-- [ ] Système de threads (onboarding)
-- [ ] WebSocket pour chat en temps réel
+- [ ] Sistem thread (onboarding)
+- [ ] WebSocket untuk chat real-time
 - [ ] Endpoint /agent/can-process
 
-**Frontend** :
-- [ ] Page chat onboarding
-- [ ] Affichage score contexte
-- [ ] Interface sélection stratégie
+**Frontend**:
+- [ ] Halaman chat onboarding
+- [ ] Tampilan skor konteks
+- [ ] Antarmuka pemilihan strategi
 
-### Phase 3 : WhatsApp Agent (Client) ✅
+### Fase 3: WhatsApp Agent (Klien)
 
-**Agent** :
-- [ ] Setup PostgreSQL local
+**Agent**:
+- [ ] Setup PostgreSQL lokal
 - [ ] Setup Prisma
-- [ ] Setup Redis local (Bull)
-- [ ] Setup LangGraph avec PostgresSaver
-- [ ] Créer tools :
+- [ ] Setup Redis lokal (Bull)
+- [ ] Setup LangGraph dengan PostgresSaver
+- [ ] Buat tools:
   - [ ] send_message
   - [ ] send_product
   - [ ] send_collection
@@ -976,44 +976,44 @@ enum MemoryType {
   - [ ] add_label_to_contact
   - [ ] schedule_message
   - [ ] save_persistent_memory
-- [ ] Worker Bull pour rappels
-- [ ] Sécurité (sanitization, rate limiting)
-- [ ] Cleanup automatique (cron)
+- [ ] Worker Bull untuk pengingat
+- [ ] Keamanan (sanitasi, rate limiting)
+- [ ] Pembersihan otomatis (cron)
 
-### Phase 4 : Communication ✅
+### Fase 4: Komunikasi
 
-- [ ] Connector → Agent (webhook local)
+- [ ] Connector → Agent (webhook lokal)
 - [ ] Agent → Backend (API REST)
 - [ ] Backend → Connector (execute-script via API)
-- [ ] Logging centralisé (agent → backend)
+- [ ] Logging terpusat (agent → backend)
 
-### Phase 5 : Tests ✅
+### Fase 5: Tes
 
-- [ ] Tests E2E flow complet
-- [ ] Tests backend agent (onboarding)
-- [ ] Tests whatsapp agent (client)
-- [ ] Tests sécurité (prompt injection)
+- [ ] Tes E2E flow lengkap
+- [ ] Tes backend agent (onboarding)
+- [ ] Tes whatsapp agent (klien)
+- [ ] Tes keamanan (prompt injection)
 - [ ] Load testing
 
 ---
 
-## 🎯 MÉTRIQUES DE SUCCÈS
+## METRIK KESUKSESAN
 
-**Backend Agent (Onboarding)** :
-- Score contexte ≥ 80% avant activation
-- Temps onboarding < 10 minutes
-- Satisfaction patron ≥ 90%
+**Backend Agent (Onboarding)**:
+- Skor konteks ≥ 80% sebelum aktivasi
+- Waktu onboarding < 10 menit
+- Kepuasan pemilik ≥ 90%
 
-**WhatsApp Agent (Client)** :
-- Taux de résolution auto ≥ 70%
-- Temps de réponse < 3 secondes
-- Messages courts : 95% < 500 chars
-- Coût par conversation < 0.05€
-- Sécurité : 0 incident
+**WhatsApp Agent (Klien)**:
+- Tingkat resolusi otomatis ≥ 70%
+- Waktu respons < 3 detik
+- Pesan pendek: 95% < 500 karakter
+- Biaya per percakapan < 0.05€
+- Keamanan: 0 insiden
 
 ---
 
-## 📚 RESSOURCES
+## SUMBER DAYA
 
 - [LangChain Docs](https://docs.langchain.com/)
 - [LangGraph](https://langchain-ai.github.io/langgraph/)
@@ -1022,93 +1022,93 @@ enum MemoryType {
 
 ---
 
-**Version** : 4.0 (Architecture finale décentralisée)
-**Date** : 2025-11-24
+**Versi**: 4.0 (Arsitektur terdesentralisasi final)
+**Tanggal**: 2025-11-24
 
 ---
 
-## 📝 LOG D'IMPLÉMENTATION
+## LOG IMPLEMENTASI
 
-### 2025-11-25 - Début de l'implémentation WhatsApp Agent
+### 2025-11-25 - Mulai implementasi WhatsApp Agent
 
-#### ✅ Complété:
+#### Selesai:
 
 1. **Setup Prisma** (`apps/whatsapp-agent/prisma/`)
-   - Créé `schema.prisma` avec les modèles:
+   - Buat `schema.prisma` dengan model:
      - `ConversationMemory` (PREFERENCE, VIP_NOTE, ORDER, CONTEXT)
-     - `ScheduledMessage` (pour les reminders Bull Queue)
-   - Créé `PrismaService` et `PrismaModule`
-   - Ajouté scripts Prisma au `package.json`
+     - `ScheduledMessage` (untuk pengingat Bull Queue)
+   - Buat `PrismaService` dan `PrismaModule`
+   - Tambah skrip Prisma ke `package.json`
 
-2. **Installation des dépendances**
-   - ✅ `@prisma/client`, `prisma`
-   - ✅ `@nestjs/bull`, `bull`, `ioredis`
-   - ✅ `@langchain/langgraph`
+2. **Instalasi dependensi**
+   - `@prisma/client`, `prisma`
+   - `@nestjs/bull`, `bull`, `ioredis`
+   - `@langchain/langgraph`
 
-3. **Setup Queue avec Bull** (`apps/whatsapp-agent/src/queue/`)
-   - Créé `QueueModule` avec configuration Redis
-   - Créé `QueueService` pour gérer les messages programmés
-   - Créé `ScheduledMessageProcessor` pour traiter les reminders
+3. **Setup Queue dengan Bull** (`apps/whatsapp-agent/src/queue/`)
+   - Buat `QueueModule` dengan konfigurasi Redis
+   - Buat `QueueService` untuk mengelola pesan terjadwal
+   - Buat `ScheduledMessageProcessor` untuk memproses pengingat
 
-4. **Création des Tools LangChain** (`apps/whatsapp-agent/src/tools/`)
-   - ✅ **CommunicationTools**: sendMessage, sendProduct, sendCollection, forwardToManagementGroup
-   - ✅ **CatalogTools**: listProducts, searchProducts, getProductDetails
-   - ✅ **LabelsTools**: getContactLabels, addLabelToContact
-   - ✅ **MemoryTools**: savePersistentMemory, retrievePersistentMemory
-   - ✅ **MessagesTools**: getOlderMessages, scheduleMessage
-   - ✅ **IntentTools**: detectIntent
-   - ✅ **ToolsModule**: Module regroupant tous les tools
+4. **Pembuatan Tools LangChain** (`apps/whatsapp-agent/src/tools/`)
+   - **CommunicationTools**: sendMessage, sendProduct, sendCollection, forwardToManagementGroup
+   - **CatalogTools**: listProducts, searchProducts, getProductDetails
+   - **LabelsTools**: getContactLabels, addLabelToContact
+   - **MemoryTools**: savePersistentMemory, retrievePersistentMemory
+   - **MessagesTools**: getOlderMessages, scheduleMessage
+   - **IntentTools**: detectIntent
+   - **ToolsModule**: Modul yang mengelompokkan semua tools
 
-5. **Sécurité** (`apps/whatsapp-agent/src/security/`)
-   - ✅ **SanitizationService**: Validation et nettoyage des inputs utilisateur
-   - ✅ **RateLimitService**: Limitation du nombre de messages par chat (Redis)
-   - ✅ **SecurityModule**: Module regroupant les services de sécurité
+5. **Keamanan** (`apps/whatsapp-agent/src/security/`)
+   - **SanitizationService**: Validasi dan pembersihan input pengguna
+   - **RateLimitService**: Batasan jumlah pesan per chat (Redis)
+   - **SecurityModule**: Modul yang mengelompokkan layanan keamanan
 
-6. **Service principal de l'agent** (`apps/whatsapp-agent/src/langchain/`)
-   - ✅ **WhatsAppAgentService**: Service principal avec modèles IA (Grok + Gemini fallback)
-   - ✅ Tous les modules intégrés dans `app.module.ts`
-   - ✅ Webhook controller mis à jour pour utiliser le nouveau service
-   - ✅ Type-check passant sans erreurs
-   - ⚠️ Note: `createAgent` commenté temporairement (en attente de LangChain v1 stable)
+6. **Service utama agent** (`apps/whatsapp-agent/src/langchain/`)
+   - **WhatsAppAgentService**: Service utama dengan model AI (Grok + Gemini fallback)
+   - Semua modul diintegrasikan dalam `app.module.ts`
+   - Webhook controller diperbarui untuk menggunakan service baru
+   - Type-check lolos tanpa error
+   - Catatan: `createAgent` dikomentari sementara (menunggu LangChain v1 stabil)
 
-#### ✅ COMPLETÉ:
-Toute l'infrastructure de base est en place et fonctionnelle !
+#### SELESAI:
+Seluruh infrastruktur dasar sudah berfungsi!
 
-#### 🔮 Fonctionnalités futures à explorer:
+#### Fitur masa depan yang mungkin dieksplorasi:
 
-1. **Embedding multimodal d'images** 🖼️
-   - Gemini supporte les embeddings multimodaux (texte + images)
-   - Permettrait une recherche "montre-moi une robe comme ça" (client envoie photo)
-   - Coût: À évaluer
-   - Complexité: Moyenne (Gemini a déjà l'API)
-   - Use case: Recherche visuelle, recommandations basées sur photos
-   - Doc: https://ai.google.dev/gemini-api/docs/embeddings
+1. **Embedding multimodal gambar**
+   - Gemini mendukung embedding multimodal (teks + gambar)
+   - Memungkinkan pencarian "tunjukkan saya gaun seperti ini" (klien mengirim foto)
+   - Biaya: Perlu dievaluasi
+   - Kompleksitas: Sedang (Gemini sudah punya API)
+   - Kasus: Pencarian visual, rekomendasi berbasis foto
+   - Dokumentasi: https://ai.google.dev/gemini-api/docs/embeddings
 
-2. **Caching des embeddings**
-   - LangChain `CacheBackedEmbeddings` avec Redis
-   - Évite de re-calculer les embeddings existants
-   - Économie de coûts API et temps
+2. **Caching embedding**
+   - LangChain `CacheBackedEmbeddings` dengan Redis
+   - Hindari re-calculate embedding yang sudah ada
+   - Hemat biaya API dan waktu
 
-#### 📋 Prochaines étapes:
-1. **Tests avec une base de données**
-   - Configurer DATABASE_URL dans .env
-   - Exécuter `pnpm prisma migrate dev`
-   - Tester la connexion Prisma
+#### Langkah berikutnya:
+1. **Tes dengan database**
+   - Konfigurasi DATABASE_URL di .env
+   - Jalankan `pnpm prisma migrate dev`
+   - Tes koneksi Prisma
 
-2. **Configuration Redis**
-   - Configurer REDIS_URL dans .env
-   - Tester les connexions Redis (Queue + RateLimit)
+2. **Konfigurasi Redis**
+   - Konfigurasi REDIS_URL di .env
+   - Tes koneksi Redis (Queue + RateLimit)
 
-3. **Intégration avec le backend**
-   - Implémenter les endpoints `/agent/can-process` et `/agent/log-operation` dans le backend
-   - Tester le flow complet de communication
+3. **Integrasi dengan backend**
+   - Implementasi endpoint `/agent/can-process` dan `/agent/log-operation` di backend
+   - Tes flow komunikasi lengkap
 
-4. **Migration vers LangChain v1**
-   - Quand stable, décommenter le code `createAgent` dans WhatsAppAgentService
-   - Implémenter les middleware et outils avec le système d'agent complet
+4. **Migrasi ke LangChain v1**
+   - Saat stabil, uncomment kode `createAgent` di WhatsAppAgentService
+   - Implementasi middleware dan tools dengan sistem agent lengkap
 
-5. **Tests end-to-end**
-   - Tester réception de messages
-   - Tester exécution des tools
-   - Tester rate limiting et sanitization
-   - Tester messages programmés (Bull Queue)
+5. **Tes end-to-end**
+   - Tes penerimaan pesan
+   - Tes eksekusi tools
+   - Tes rate limiting dan sanitasi
+   - Tes pesan terjadwal (Bull Queue)

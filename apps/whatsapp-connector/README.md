@@ -1,67 +1,67 @@
 # WhatsApp Connector
 
-Service de connexion WhatsApp - Wrapper REST pour whatsapp-web.js
+Layanan koneksi WhatsApp - Wrapper REST untuk whatsapp-web.js
 
-## Description
+## Deskripsi
 
-Le WhatsApp Connector est un service NestJS qui expose toutes les fonctionnalités de whatsapp-web.js via une API REST générique. Il permet d'exécuter n'importe quelle méthode du client WhatsApp et diffuse tous les événements WhatsApp vers des webhooks configurables.
+WhatsApp Connector adalah layanan NestJS yang mengekspos semua fungsi whatsapp-web.js melalui API REST generik. Layanan ini memungkinkan eksekusi metode klien WhatsApp apa pun dan menyiarkan semua event WhatsApp ke webhook yang dapat dikonfigurasi.
 
-## Caractéristiques
+## Fitur
 
-- **Endpoint générique `/whatsapp/execute`** : Exécute n'importe quelle méthode du client whatsapp-web.js
-- **Système de webhooks** : Tous les événements WhatsApp sont envoyés aux URLs configurées
-- **Gestion du QR code** : Affichage dans le terminal + endpoint API pour récupération
-- **Session persistante** : Les sessions WhatsApp sont sauvegardées localement
-- **Documentation Swagger** : API complètement documentée
+- **Endpoint generik `/whatsapp/execute`**: Jalankan metode klien whatsapp-web.js apa pun
+- **Sistem webhook**: Semua event WhatsApp dikirim ke URL yang dikonfigurasi
+- **Manajemen QR code**: Tampilan di terminal + endpoint API untuk pengambilan
+- **Sesi persisten**: Sesi WhatsApp disimpan secara lokal
+- **Dokumentasi Swagger**: API terdokumentasi sepenuhnya
 
-## Installation
+## Instalasi
 
 ```bash
-# Depuis la racine du monorepo
+# Dari root monorepo
 pnpm install
 ```
 
-## Configuration
+## Konfigurasi
 
-Créer un fichier `.env` basé sur `.env.example`:
+Buat file `.env` berdasarkan `.env.example`:
 
 ```bash
-# Port du serveur
+# Port server
 PORT=3001
 
-# Chemin de stockage des sessions WhatsApp
+# Path penyimpanan sesi WhatsApp
 WHATSAPP_SESSION_PATH=./data/sessions
 
-# URLs des webhooks (séparées par des virgules)
+# URL webhook (dipisahkan dengan koma)
 WEBHOOK_URLS=http://localhost:3002/webhook/message
 ```
 
-## Démarrage
+## Memulai
 
 ```bash
-# Mode développement
+# Mode pengembangan
 pnpm dev:whatsapp-connector
 
-# Mode production
+# Mode produksi
 pnpm build:whatsapp-connector
 pnpm start:whatsapp-connector
 ```
 
-## Utilisation
+## Penggunaan
 
-### 1. Première connexion
+### 1. Koneksi pertama
 
-Au démarrage, si aucune session n'existe, un QR code sera affiché dans le terminal. Scannez-le avec WhatsApp pour authentifier le client.
+Saat mulai, jika tidak ada sesi, QR code akan ditampilkan di terminal. Pindai dengan WhatsApp untuk autentikasi klien.
 
-Vous pouvez aussi récupérer le QR code via l'API :
+Anda juga bisa mengambil QR code via API:
 
 ```bash
 GET http://localhost:3001/whatsapp/qr
 ```
 
-### 2. Exécuter une méthode WhatsApp
+### 2. Jalankan metode WhatsApp
 
-Utilisez l'endpoint générique pour exécuter n'importe quelle méthode du client :
+Gunakan endpoint generik untuk menjalankan metode klien apa pun:
 
 ```bash
 POST http://localhost:3001/whatsapp/execute
@@ -73,18 +73,18 @@ Content-Type: application/json
 }
 ```
 
-#### Exemples de méthodes disponibles
+#### Contoh metode yang tersedia
 
-**Envoyer un message :**
+**Kirim pesan:**
 
 ```json
 {
   "method": "sendMessage",
-  "parameters": ["123456789@c.us", "Bonjour!"]
+  "parameters": ["123456789@c.us", "Halo!"]
 }
 ```
 
-**Récupérer tous les chats :**
+**Ambil semua chat:**
 
 ```json
 {
@@ -93,7 +93,7 @@ Content-Type: application/json
 }
 ```
 
-**Récupérer un contact par ID :**
+**Ambil kontak berdasarkan ID:**
 
 ```json
 {
@@ -102,7 +102,7 @@ Content-Type: application/json
 }
 ```
 
-**Marquer un chat comme lu :**
+**Tandai chat sebagai dibaca:**
 
 ```json
 {
@@ -111,13 +111,13 @@ Content-Type: application/json
 }
 ```
 
-### 3. Vérifier le statut
+### 3. Periksa status
 
 ```bash
 GET http://localhost:3001/whatsapp/status
 ```
 
-Réponse :
+Respons:
 
 ```json
 {
@@ -125,18 +125,18 @@ Réponse :
   "hasQrCode": false,
   "state": {
     "wid": { ... },
-    "pushname": "Mon WhatsApp"
+    "pushname": "WhatsApp Saya"
   }
 }
 ```
 
-### 4. Configurer les webhooks
+### 4. Konfigurasi webhook
 
 ```bash
-# Récupérer les webhooks actuels
+# Ambil webhook saat ini
 GET http://localhost:3001/whatsapp/webhooks
 
-# Configurer de nouveaux webhooks
+# Konfigurasi webhook baru
 POST http://localhost:3001/whatsapp/webhooks
 Content-Type: application/json
 
@@ -148,49 +148,49 @@ Content-Type: application/json
 }
 ```
 
-## Événements Webhooks
+## Event Webhook
 
-Tous les événements suivants sont envoyés aux webhooks configurés :
+Semua event berikut dikirim ke webhook yang dikonfigurasi:
 
-### Authentification
+### Autentikasi
 
-- `qr` - QR code disponible
-- `ready` - Client prêt
-- `authenticated` - Authentification réussie
-- `auth_failure` - Échec d'authentification
-- `disconnected` - Déconnexion
+- `qr` - QR code tersedia
+- `ready` - Klien siap
+- `authenticated` - Autentikasi berhasil
+- `auth_failure` - Autentikasi gagal
+- `disconnected` - Terputus
 
-### Messages
+### Pesan
 
-- `message` - Message reçu
-- `message_create` - Message créé (envoyé ou reçu)
-- `message_ack` - Accusé de réception
-- `message_edit` - Message édité
-- `message_revoke_me` - Message supprimé (pour moi)
-- `message_revoke_everyone` - Message supprimé (pour tous)
-- `message_reaction` - Réaction à un message
-- `media_uploaded` - Média uploadé
+- `message` - Pesan diterima
+- `message_create` - Pesan dibuat (dikirim atau diterima)
+- `message_ack` - Konfirmasi penerimaan
+- `message_edit` - Pesan diedit
+- `message_revoke_me` - Pesan dihapus (untuk saya)
+- `message_revoke_everyone` - Pesan dihapus (untuk semua)
+- `message_reaction` - Reaksi pesan
+- `media_uploaded` - Media diupload
 
-### Groupes
+### Grup
 
-- `group_join` - Membre a rejoint le groupe
-- `group_leave` - Membre a quitté le groupe
-- `group_update` - Groupe mis à jour
-- `group_admin_changed` - Admin de groupe changé
-- `group_membership_request` - Demande d'adhésion au groupe
+- `group_join` - Anggota bergabung grup
+- `group_leave` - Anggota keluar grup
+- `group_update` - Grup diperbarui
+- `group_admin_changed` - Admin grup berubah
+- `group_membership_request` - Permintaan keanggotaan grup
 
-### Autres
+### Lainnya
 
-- `chat_archived` - Chat archivé
-- `chat_removed` - Chat supprimé
-- `contact_changed` - Contact modifié
-- `change_state` - Changement d'état
-- `incoming_call` - Appel entrant
-- `vote_update` - Vote mis à jour (sondages)
+- `chat_archived` - Chat diarsipkan
+- `chat_removed` - Chat dihapus
+- `contact_changed` - Kontak diubah
+- `change_state` - Perubahan status
+- `incoming_call` - Panggilan masuk
+- `vote_update` - Pembaruan suara (jajak pendapat)
 
-### Format des événements
+### Format event
 
-Tous les événements sont envoyés au format :
+Semua event dikirim dalam format:
 
 ```json
 {
@@ -207,43 +207,43 @@ Tous les événements sont envoyés au format :
 }
 ```
 
-## Documentation API
+## Dokumentasi API
 
-La documentation Swagger complète est disponible à :
+Dokumentasi Swagger lengkap tersedia di:
 
 ```
 http://localhost:3001/api
 ```
 
-## Architecture
+## Arsitektur
 
 ```
 src/
 ├── whatsapp/
-│   ├── whatsapp-client.service.ts  # Gestion du client WhatsApp
-│   ├── webhook.service.ts          # Gestion des webhooks
-│   ├── whatsapp.controller.ts      # Endpoints REST
-│   ├── whatsapp.module.ts          # Module NestJS
+│   ├── whatsapp-client.service.ts  # Manajemen klien WhatsApp
+│   ├── webhook.service.ts          # Manajemen webhook
+│   ├── whatsapp.controller.ts      # Endpoint REST
+│   ├── whatsapp.module.ts          # Modul NestJS
 │   └── dto/
 │       ├── execute-method.dto.ts
 │       └── set-webhooks.dto.ts
-├── health/                         # Health checks
+├── health/                         # Health check
 ├── app.module.ts
 └── main.ts
 ```
 
-## Notes importantes
+## Catatan penting
 
-- Le connector doit être mis à jour le moins souvent possible pour éviter les déconnexions WhatsApp
-- Les sessions sont stockées localement dans `WHATSAPP_SESSION_PATH`
-- Le service n'est pas exposé publiquement - il est utilisé uniquement par les agents
+- Connector harus diperbarui sesedikit mungkin untuk menghindari diskoneksi WhatsApp
+- Sesi disimpan secara lokal di `WHATSAPP_SESSION_PATH`
+- Layanan tidak diekspos secara publik - hanya digunakan oleh agent
 
-## Méthodes WhatsApp disponibles
+## Metode WhatsApp yang tersedia
 
-Consultez la documentation de whatsapp-web.js pour la liste complète :
+Lihat dokumentasi whatsapp-web.js untuk daftar lengkap:
 https://docs.wwebjs.dev/Client.html
 
-Exemples de méthodes courantes :
+Contoh metode umum:
 
 - `sendMessage(chatId, content)`
 - `getChats()`
@@ -258,23 +258,23 @@ Exemples de méthodes courantes :
 - `setDisplayName(displayName)`
 - `setProfilePicture(media)`
 
-Et bien d'autres...
+Dan banyak lagi...
 
-## Troubleshooting
+## Pemecahan Masalah
 
-### Le QR code n'apparaît pas
+### QR code tidak muncul
 
-- Vérifiez que `WHATSAPP_SESSION_PATH` est accessible en écriture
-- Supprimez le dossier de session et redémarrez
+- Pastikan `WHATSAPP_SESSION_PATH` dapat ditulis
+- Hapus folder sesi dan mulai ulang
 
-### Déconnexions fréquentes
+### Diskoneksi sering
 
-- Évitez de redémarrer le service trop souvent
-- Vérifiez que le serveur a suffisamment de ressources
-- Assurez-vous que Chromium/Puppeteer fonctionne correctement
+- Hindari mulai ulang layanan terlalu sering
+- Pastikan server memiliki sumber daya yang cukup
+- Pastikan Chromium/Puppeteer berfungsi dengan baik
 
-### Les webhooks ne reçoivent pas d'événements
+### Webhook tidak menerima event
 
-- Vérifiez que `WEBHOOK_URLS` est correctement configuré
-- Vérifiez les logs du service pour les erreurs HTTP
-- Testez les URLs avec curl/Postman
+- Pastikan `WEBHOOK_URLS` dikonfigurasi dengan benar
+- Periksa log layanan untuk error HTTP
+- Tes URL dengan curl/Postman

@@ -1,116 +1,116 @@
-# Image Processing Strategy - WhatsApp Agent
+# Strategi Pemrosesan Gambar - WhatsApp Agent
 
-## Overview
+## Gambaran Umum
 
-This document defines the production image matching flow used by the WhatsApp agent.
+Dokumen ini mendefinisikan flow pencocokan gambar produksi yang digunakan oleh WhatsApp agent.
 
-Goals:
-1. Identify products from incoming contact images with minimal cost.
-2. Stop early when a confident match is found.
-3. Keep one source of truth for both webhook runtime and test endpoint.
+Tujuan:
+1. Identifikasi produk dari gambar kontak masuk dengan biaya minimal.
+2. Berhenti lebih awal saat kecocokan yang yakin ditemukan.
+3. Pertahankan satu sumber kebenaran untuk runtime webhook dan endpoint tes.
 
-## Runtime Pipeline (single source of truth)
+## Pipeline Runtime (sumber kebenaran tunggal)
 
-The pipeline is implemented in `ImageProductMatchingService` and is reused by:
-1. Webhook image handler (`ImageMessageHandlerService`)
-2. Test endpoint (`POST /test/image-pipeline`)
+Pipeline diimplementasikan di `ImageProductMatchingService` dan digunakan kembali oleh:
+1. Handler gambar webhook (`ImageMessageHandlerService`)
+2. Endpoint tes (`POST /test/image-pipeline`)
 
-Execution order:
-1. OCR on original image buffer (no crop before OCR).
-2. Keyword extraction from OCR text.
-3. Retailer matching via backend `search-by-keywords` (retailer_id only).
-4. If no match:
-   - Crop with OpenCV (`SmartCropService.cropOpenCV`)
-   - Generate local CLIP image embedding
-   - Search in Qdrant `product-images`
-5. If still no match:
-   - Generate Gemini Vision description
-   - Generate Gemini text embedding from that description
-   - Search in Qdrant `product-text`
-6. Build `[IMAGE_CONTEXT]` block and payload for agent context.
+Urutan eksekusi:
+1. OCR pada buffer gambar asli (tanpa crop sebelum OCR).
+2. Ekstraksi kata kunci dari teks OCR.
+3. Pencocokan retailer via backend `search-by-keywords` (retailer_id saja).
+4. Jika tidak ada kecocokan:
+   - Crop dengan OpenCV (`SmartCropService.cropOpenCV`)
+   - Hasilkan embedding gambar CLIP lokal
+   - Cari di Qdrant `product-images`
+5. Jika masih tidak ada kecocokan:
+   - Hasilkan deskripsi Gemini Vision
+   - Hasilkan embedding teks Gemini dari deskripsi tersebut
+   - Cari di Qdrant `product-text`
+6. Bangun blok `[IMAGE_CONTEXT]` dan payload untuk konteks agent.
 
-Hard rule:
-- Gemini Vision description is not called when OCR retailer match or Qdrant image match already succeeded.
+Aturan keras:
+- Deskripsi Gemini Vision tidak dipanggil saat kecocokan retailer OCR atau kecocokan gambar Qdrant sudah berhasil.
 
-## Search Methods
+## Metode Pencarian
 
-Possible `searchMethod` values:
+Nilai `searchMethod` yang mungkin:
 1. `ocr_keywords`
 2. `qdrant_image`
 3. `qdrant_text`
 4. `none`
 5. `error`
 
-Returned payload contains:
-1. OCR text and extracted keywords
-2. Matched keywords
-3. Matched products
+Payload yang dikembalikan berisi:
+1. Teks OCR dan kata kunci yang diekstrak
+2. Kata kunci yang cocok
+3. Produk yang cocok
 4. Confidence / similarity
-5. Crop metadata
-6. Agent-ready context payload (`body`, `imageContextBlock`, etc.)
+5. Metadata crop
+6. Payload konteks siap agent (`body`, `imageContextBlock`, dll.)
 
-## Qdrant Collections
+## Koleksi Qdrant
 
-Collections:
-1. `product-images` -> image embeddings (local CLIP model)
-2. `product-text` -> text embeddings (Gemini text embedding)
+Koleksi:
+1. `product-images` -> embedding gambar (model CLIP lokal)
+2. `product-text` -> embedding teks (embedding teks Gemini)
 
-Reset endpoint (internal JWT protected):
+Endpoint reset (dilindungi JWT internal):
 - `POST /image-processing/reset-qdrant`
 
-Behavior:
-1. Delete both collections if they exist.
-2. Recreate both collections with configured vector sizes.
-3. Return collection names and dimensions.
+Perilaku:
+1. Hapus kedua koleksi jika ada.
+2. Buat ulang kedua koleksi dengan ukuran vektor yang dikonfigurasi.
+3. Kembalikan nama koleksi dan dimensi.
 
-## Catalog Indexing
+## Pengindeksan Katalog
 
-`ProductImageIndexingService` indexing behavior:
-1. For image collection (`product-images`):
-   - Download image
-   - Generate local CLIP image embedding
-   - Index image variant metadata
-2. For text collection (`product-text`):
-   - Build text from name + description + cover description
-   - Generate text embedding
-   - Index text metadata
+Perilaku pengindeksan `ProductImageIndexingService`:
+1. Untuk koleksi gambar (`product-images`):
+   - Unduh gambar
+   - Hasilkan embedding gambar CLIP lokal
+   - Indeks metadata varian gambar
+2. Untuk koleksi teks (`product-text`):
+   - Bangun teks dari name + description + cover description
+   - Hasilkan embedding teks
+   - Indeks metadata teks
 
-Cover description generation by Gemini Vision is used only for text enrichment when needed.
+Pembuatan deskripsi sampul oleh Gemini Vision hanya digunakan untuk pengayaan teks saat diperlukan.
 
-## OCR Product Search Rule
+## Aturan Pencarian Produk OCR
 
-Backend OCR keyword search is retailer-only.
+Pencarian kata kunci OCR backend hanya untuk retailer.
 
 `ProductsService.searchByKeywords`:
 1. Input: `userId`, `keywords`
-2. Match only against `retailer_id`
-3. Returns matching products and matched keywords
+2. Cocokkan hanya dengan `retailer_id`
+3. Kembalikan produk yang cocok dan kata kunci yang cocok
 
-No matching on `name`, `description`, or `category`.
+Tidak ada pencocokan pada `name`, `description`, atau `category`.
 
-## Test Endpoint
+## Endpoint Tes
 
-Public test endpoint:
+Endpoint tes publik:
 - `POST /test/image-pipeline`
 
-Purpose:
-1. Run the exact production pipeline on an uploaded image.
-2. Return full pipeline output for debugging and iteration.
+Tujuan:
+1. Jalankan pipeline produksi yang sama persis pada gambar yang diupload.
+2. Kembalikan output pipeline lengkap untuk debugging dan iterasi.
 
-All previous legacy debug endpoints (OCR/Qdrant/crop split endpoints) are removed.
+Semua endpoint debug lama (endpoint terpisah OCR/Qdrant/crop) telah dihapus.
 
-## Upload Image Object Key
+## Object Key Upload Gambar
 
-Catalog image upload now stores files without `collectionId` in path.
+Upload gambar katalog sekarang menyimpan file tanpa `collectionId` di path.
 
-Object key format:
+Format object key:
 - `{agentId}/catalog/images/{userId}-{productId}-{imageIndex}.{ext}`
 
-`collectionId` is no longer required in `POST /catalog/upload-image` payload.
+`collectionId` tidak lagi diperlukan dalam payload `POST /catalog/upload-image`.
 
-## Environment Variables
+## Variabel Lingkungan
 
-Common keys:
+Kunci umum:
 1. `GEMINI_API_KEY`
 2. `CLIP_IMAGE_MODEL` (default `Xenova/clip-vit-base-patch16`)
 3. `GEMINI_VISION_MODEL`
@@ -118,18 +118,18 @@ Common keys:
 5. `QDRANT_API_KEY`
 6. `QDRANT_IMAGE_COLLECTION` (default `product-images`)
 7. `QDRANT_TEXT_COLLECTION` (default `product-text`)
-8. `QDRANT_IMAGE_VECTOR_SIZE` (recommended: align with the active image model output dimension)
+8. `QDRANT_IMAGE_VECTOR_SIZE` (rekomendasi: selaraskan dengan dimensi output model gambar aktif)
 9. `QDRANT_TEXT_VECTOR_SIZE` (default `768`)
 10. `QDRANT_IMAGE_THRESHOLD`
 11. `QDRANT_TEXT_THRESHOLD`
 12. `IMAGE_CROPPER_URL`
 
-## Acceptance Checklist
+## Checklist Penerimaan
 
-1. OCR retailer-only returns matches only when retailer_id contains OCR keywords.
-2. If OCR match succeeds, no Qdrant or Gemini Vision fallback call.
-3. If OCR fails and Qdrant image succeeds, no Gemini Vision description call.
-4. If both fail, Gemini Vision + Qdrant text fallback runs.
-5. Test endpoint output is consistent with webhook behavior.
-6. Qdrant reset endpoint recreates both collections.
-7. Catalog image upload works without `collectionId`.
+1. OCR hanya-retailer mengembalikan kecocokan hanya saat retailer_id mengandung kata kunci OCR.
+2. Jika kecocokan OCR berhasil, tidak ada panggilan fallback Qdrant atau Gemini Vision.
+3. Jika OCR gagal dan Qdrant image berhasil, tidak ada panggilan deskripsi Gemini Vision.
+4. Jika keduanya gagal, fallback Gemini Vision + Qdrant text dijalankan.
+5. Output endpoint tes konsisten dengan perilaku webhook.
+6. Endpoint reset Qdrant membuat ulang kedua koleksi.
+7. Upload gambar katalog berfungsi tanpa `collectionId`.

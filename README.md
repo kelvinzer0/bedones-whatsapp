@@ -1,102 +1,102 @@
 # Monorepo
 
-A modern pnpm monorepo containing frontend and backend applications with shared packages.
+Monorepo pnpm modern yang berisi aplikasi frontend dan backend dengan package bersama.
 
-## Project Structure
+## Struktur Proyek
 
 ```
 monorepo/
 ├── apps/
-│   ├── frontend/          # React Router v7 application
-│   └── backend/           # NestJS + Prisma + Swagger backend
+│   ├── frontend/          # Aplikasi React Router v7
+│   └── backend/           # Backend NestJS + Prisma + Swagger
 ├── packages/
-│   └── common/            # Shared enums, constants, and utilities
-├── package.json           # Root workspace configuration
-├── pnpm-workspace.yaml    # pnpm workspace definition
-├── docker-compose.yml     # Development environment
-└── README.md             # This file
+│   └── common/            # Enum, konstanta, dan utilitas bersama
+├── package.json           # Konfigurasi workspace root
+├── pnpm-workspace.yaml    # Definisi workspace pnpm
+├── docker-compose.yml     # Lingkungan pengembangan
+└── README.md             # File ini
 ```
 
-## Getting Started
+## Memulai
 
-### Prerequisites
+### Prasyarat
 
 - Node.js 18+
 - pnpm 8+
 - Docker & Docker Compose
 
-### Installation
+### Instalasi
 
-1. Install dependencies:
+1. Pasang dependensi:
 
 ```bash
 pnpm install
 ```
 
-2. Set up environment variables:
+2. Atur variabel lingkungan:
 
 ```bash
 cp apps/backend/.env.example apps/backend/.env
-# Edit the .env file with your configuration
-# Database: app_db, User: app_user, Password: (set your own)
+# Edit file .env dengan konfigurasi Anda
+# Database: app_db, User: app_user, Password: (atur sendiri)
 ```
 
-3. Start the development environment:
+3. Jalankan lingkungan pengembangan:
 
 ```bash
-# Option 1: Using Docker (Recommended)
+# Opsi 1: Menggunakan Docker (Disarankan)
 docker compose up
 
-# Generate migration
-docker exec apps-backend pnpx prisma@6.16.2 migrate dev --name [migration-name]
+# Generate migrasi
+docker exec apps-backend pnpx prisma@6.16.2 migrate dev --name [nama-migrasi]
 
-# Run database migrations (inside Docker container)
+# Jalankan migrasi database (di dalam container Docker)
 docker exec apps-backend pnpx prisma@6.16.2 migrate deploy
 
-# Start frontend development server (locally)
+# Jalankan server pengembangan frontend (lokal)
 pnpm --filter frontend run dev
 ```
 
-### Services
+### Layanan
 
 - **Backend**: http://localhost:3005
-- **API Documentation**: http://localhost:3005/api
-- **Database**: PostgreSQL on port 5432
-- **Frontend**: http://localhost:5173 (when running locally)
+- **Dokumentasi API**: http://localhost:3005/api
+- **Database**: PostgreSQL pada port 5432
+- **Frontend**: http://localhost:5173 (saat dijalankan secara lokal)
 
-## Architecture
+## Arsitektur
 
 ### Frontend (apps/frontend)
 
 - **Framework**: React Router v7
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS and Ant Design
-- **State Management**: React Query/SWR for server state
+- **Bahasa**: TypeScript
+- **Styling**: Tailwind CSS dan Ant Design
+- **State Management**: React Query/SWR untuk state server
 - **Build Tool**: Vite
 
 ### Backend (apps/backend)
 
 - **Framework**: NestJS
-- **Database**: PostgreSQL with Prisma ORM
-- **API Documentation**: Swagger/OpenAPI
-- **Authentication**: JWT-based authentication with Passport
-- **Validation**: Class-validator with DTOs
-- **Email**: Nodemailer integration for transactional emails
-- **Health Checks**: Terminus for service health monitoring
-- **Internationalization**: i18n support with French translations
-- **Modules**: Auth, Users, Email, Health, Prisma, i18n
+- **Database**: PostgreSQL dengan Prisma ORM
+- **Dokumentasi API**: Swagger/OpenAPI
+- **Autentikasi**: Autentikasi berbasis JWT dengan Passport
+- **Validasi**: Class-validator dengan DTO
+- **Email**: Integrasi Nodemailer untuk email transaksional
+- **Health Checks**: Terminus untuk pemantauan kesehatan layanan
+- **Internasionalisasi**: Dukungan i18n dengan terjemahan Indonesia
+- **Modul**: Auth, Users, Email, Health, Prisma, i18n
 
-### Shared Package (packages/common)
+### Package Bersama (packages/common)
 
-- **Types**: Shared TypeScript interfaces and types
-- **Enums**: Common enumerations
-- **Constants**: Application-wide constants
-- **Utilities**: Shared utility functions
+- **Tipe**: Interface dan tipe TypeScript bersama
+- **Enum**: Enumerasi umum
+- **Konstanta**: Konstanta tingkat aplikasi
+- **Utilitas**: Fungsi utilitas bersama
 
-## Code Quality
+## Kualitas Kode
 
-The project uses shared configurations for:
+Proyek ini menggunakan konfigurasi bersama untuk:
 
-- **ESLint**: Consistent code linting across all packages
-- **Prettier**: Code formatting
-- **TypeScript**: Type checking and compilation
+- **ESLint**: Linting kode yang konsisten di semua package
+- **Prettier**: Format kode
+- **TypeScript**: Pemeriksaan tipe dan kompilasi

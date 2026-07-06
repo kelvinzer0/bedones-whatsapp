@@ -1,88 +1,88 @@
-# WhatsApp Agent 🤖
+# WhatsApp Agent
 
-Agent IA intelligent pour gérer automatiquement les conversations WhatsApp Business.  
-Construit avec **NestJS**, **LangChain**, **PostgreSQL**, **Redis** et **Bull Queue**.
+Agent AI cerdas untuk mengelola percakapan WhatsApp Business secara otomatis.
+Dibangun dengan **NestJS**, **LangChain**, **PostgreSQL**, **Redis**, dan **Bull Queue**.
 
-## ✨ Résumé de l'implémentation
+## Ringkasan Implementasi
 
-✅ **Implémentation complète de l'agent WhatsApp selon le plan d'architecture !**
+**Implementasi lengkap WhatsApp agent sesuai rencana arsitektur!**
 
-Tous les modules, tools et services sont en place:
+Semua modul, tool, dan layanan sudah ada:
 
-- ✅ Infrastructure Prisma + PostgreSQL (mémoires, messages programmés, catalogue)
-- ✅ Bull Queue + Redis (rappels automatiques)
-- ✅ Sécurité (sanitization, rate limiting)
-- ✅ 17+ tools LangChain opérationnels
-- ✅ Service principal avec Grok + Gemini fallback
-- ✅ Webhook handler intégré
-- ✅ **Recherche sémantique du catalogue avec embeddings** 🆕
-- ✅ Type-check passant ✓
+- Infrastruktur Prisma + PostgreSQL (memori, pesan terjadwal, katalog)
+- Bull Queue + Redis (pengingat otomatis)
+- Keamanan (sanitasi, rate limiting)
+- 17+ tool LangChain beroperasi
+- Layanan utama dengan Grok + Gemini fallback
+- Webhook handler terintegrasi
+- **Pencarian semantik katalog dengan embedding** (baru)
+- Type-check lolos
 
-**Note**: `createAgent` de LangChain v1 est temporairement commenté (en attente de stabilité). Le système utilise une invocation simple pour l'instant.
+**Catatan**: `createAgent` dari LangChain v1 dikomentari sementara (menunggu stabilitas). Sistem menggunakan invokasi sederhana untuk saat ini.
 
-Voir [WHATSAPP_AGENT_PLAN.md](../../WHATSAPP_AGENT_PLAN.md) pour l'architecture complète.
+Lihat [WHATSAPP_AGENT_PLAN.md](../../WHATSAPP_AGENT_PLAN.md) untuk arsitektur lengkap.
 
-## 🧠 Recherche sémantique du catalogue (Nouveauté)
+## Pencarian Semantik Katalog (Baru)
 
-Le whatsapp-agent intègre une **knowledge base locale avec embeddings** pour la recherche de produits :
+whatsapp-agent mengintegrasikan **knowledge base lokal dengan embedding** untuk pencarian produk:
 
-### ✨ Fonctionnalités
+### Fitur
 
-- **Synchronisation automatique** : Le catalogue WhatsApp est synchronisé automatiquement au démarrage du connector et toutes les heures
-- **Embeddings avec Gemini** : Utilise `text-embedding-004` (gratuit) pour générer des vecteurs sémantiques
-- **Recherche intelligente** : Comprend les synonymes et le contexte (ex: "robe élégante pour soirée")
-- **Fallback automatique** : Si les embeddings ne sont pas disponibles, bascule sur la recherche directe WhatsApp
-- **Architecture décentralisée** : Appelle directement le connector via `execute-script` (pas de round-trip au backend)
+- **Sinkronisasi otomatis**: Katalog WhatsApp disinkronkan otomatis saat connector dimulai dan setiap jam
+- **Embedding dengan Gemini**: Menggunakan `text-embedding-004` (gratis) untuk menghasilkan vektor semantik
+- **Pencarian cerdas**: Memahami sinonim dan konteks (mis: "gaun elegan untuk pesta")
+- **Fallback otomatis**: Jika embedding tidak tersedia, beralih ke pencarian langsung WhatsApp
+- **Arsitektur terdesentralisasi**: Memanggil connector langsung via `execute-script` (tanpa round-trip ke backend)
 
-### 🔧 Configuration
+### Konfigurasi
 
 ```bash
-# Optionnel - Pour activer la recherche sémantique
+# Opsional - Untuk mengaktifkan pencarian semantik
 GEMINI_API_KEY=your-api-key-here
 
-# Sans cette clé, le système fonctionne quand même avec recherche directe WhatsApp
+# Tanpa kunci ini, sistem tetap berfungsi dengan pencarian langsung WhatsApp
 ```
 
-Pour obtenir une clé API Gemini gratuite : [https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey)
+Untuk mendapatkan kunci API Gemini gratis: https://makersuite.google.com/app/apikey
 
-### 📊 Performance
+### Performa
 
-- **Sync initiale** : ~20-30s pour 100 produits
-- **Recherche sémantique** : ~200ms (locale, pas d'API call)
-- **Fallback WhatsApp** : ~1-2s (API call au connector)
+- **Sinkronisasi awal**: ~20-30s untuk 100 produk
+- **Pencarian semantik**: ~200ms (lokal, tanpa API call)
+- **Fallback WhatsApp**: ~1-2s (API call ke connector)
 
-La synchronisation s'effectue en arrière-plan sans bloquer l'agent.
+Sinkronisasi berjalan di latar belakang tanpa memblokir agent.
 
-## 🚀 Démarrage rapide
+## Memulai Cepat
 
-\`\`\`bash
+```bash
 
-# 1. Installation
+# 1. Instalasi
 
 pnpm install
 
-# 2. Configuration
+# 2. Konfigurasi
 
 cp .env.example .env
 
-# Éditer .env avec vos clés API:
+# Edit .env dengan kunci API Anda:
 
-# - GROK_API_KEY (requis)
+# - GROK_API_KEY (wajib)
 
-# - GEMINI_API_KEY (optionnel, pour recherche sémantique)
+# - GEMINI_API_KEY (opsional, untuk pencarian semantik)
 
 # - DATABASE_URL (PostgreSQL)
 
 # - REDIS_URL (Redis)
 
-# 3. Base de données
+# 3. Database
 
 pnpm prisma:generate
 pnpm prisma:migrate
 
-# 4. Démarrage
+# 4. Mulai
 
 pnpm start:dev
-\`\`\`
+```
 
-Voir le README complet ci-dessous pour les détails.
+Lihat README lengkap di bawah untuk detail.

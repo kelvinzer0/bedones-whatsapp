@@ -1,48 +1,48 @@
-# Sécurité : Tokens JWT avec clientId encodé
+# Keamanan: Token JWT dengan clientId yang dienkode
 
-## 🔐 Problème de sécurité identifié
+## Masalah Keamanan yang Teridentifikasi
 
-### ❌ Approche initiale (non sécurisée)
+### Pendekatan awal (tidak aman)
 
 ```typescript
-// Script dans le navigateur
-formData.append('clientId', CLIENT_ID);  // ❌ DANGEREUX!
+// Skrip di browser
+formData.append('clientId', CLIENT_ID);  // BAHAYA!
 
 // Backend
 async uploadImage(@Body('clientId') clientId: string) {
-  // Utilise directement le clientId envoyé
+  // Menggunakan clientId yang dikirim langsung
 }
 ```
 
-**Vulnérabilité** :
+**Kerentanan**:
 
-- Un attaquant qui intercepte un token peut spécifier n'importe quel `clientId`
-- Il peut uploader des images en se faisant passer pour un autre client
-- Usurpation d'identité possible
+- Penyerang yang mencegat token dapat menentukan `clientId` apa pun
+- Penyerang dapat mengupload gambar dengan menyamar sebagai klien lain
+- Pencurian identitas dimungkinkan
 
-### ✅ Solution implémentée (sécurisée)
+### Solusi yang diimplementasikan (aman)
 
 ```typescript
-// Script dans le navigateur
-// clientId n'est PAS envoyé dans le FormData
+// Skrip di browser
+// clientId TIDAK dikirim dalam FormData
 
 // Backend
 @UseGuards(CatalogUploadGuard)
 async uploadImage(@ClientId() clientId: string) {
-  // clientId est EXTRAIT du token JWT signé
+  // clientId DIEKSTRAK dari token JWT yang ditandatangani
 }
 ```
 
-**Sécurité** :
+**Keamanan**:
 
-- Le `clientId` est encodé dans le token JWT signé
-- Le backend vérifie la signature et extrait le `clientId`
-- Impossible de modifier le `clientId` sans invalider le token
-- Protection contre l'usurpation d'identité
+- `clientId` dienkode dalam token JWT yang ditandatangani
+- Backend memverifikasi tanda tangan dan mengekstrak `clientId`
+- Tidak mungkin mengubah `clientId` tanpa membatalkan token
+- Perlindungan terhadap pencurian identitas
 
 ---
 
-## 🏗️ Architecture de sécurité
+## Arsitektur Keamanan
 
 ### Workflow
 
@@ -50,29 +50,29 @@ async uploadImage(@ClientId() clientId: string) {
 sequenceDiagram
     Backend->>TokenService: generateCatalogUploadToken(clientId)
     TokenService->>TokenService: jwt.sign({ clientId, type }, JWT_SECRET)
-    TokenService->>Backend: Token JWT signé
-    Backend->>Connector: Envoie script avec TOKEN
-    Connector->>Connector: Execute script dans navigateur
+    TokenService->>Backend: Token JWT yang ditandatangani
+    Backend->>Connector: Kirim skrip dengan TOKEN
+    Connector->>Connector: Jalankan skrip di browser
 
-    Note over Connector: Upload d'image
-    Connector->>Backend: POST /catalog/upload-image<br/>Authorization: Bearer TOKEN<br/>FormData (sans clientId!)
+    Note over Connector: Upload gambar
+    Connector->>Backend: POST /catalog/upload-image<br/>Authorization: Bearer TOKEN<br/>FormData (tanpa clientId!)
 
-    Backend->>CatalogUploadGuard: Vérifie token
+    Backend->>CatalogUploadGuard: Verifikasi token
     CatalogUploadGuard->>CatalogUploadGuard: jwt.verify(token, JWT_SECRET)
-    CatalogUploadGuard->>CatalogUploadGuard: Extrait clientId du payload
-    CatalogUploadGuard->>Request: Injecte request.clientId
+    CatalogUploadGuard->>CatalogUploadGuard: Ekstrak clientId dari payload
+    CatalogUploadGuard->>Request: Suntik request.clientId
 
     Backend->>CatalogController: uploadImage(@ClientId() clientId)
-    Note over CatalogController: clientId est SÉCURISÉ
+    Note over CatalogController: clientId AMAN
 ```
 
 ---
 
-## 📁 Fichiers créés
+## File yang Dibuat
 
 ### 1. TokenService
 
-**Fichier** : `src/common/services/token.service.ts`
+**File**: `src/common/services/token.service.ts`
 
 ```typescript
 generateCatalogUploadToken(clientId: string): string {
@@ -82,20 +82,20 @@ generateCatalogUploadToken(clientId: string): string {
   };
 
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: '1h',  // Token expire après 1h
+    expiresIn: '1h',  // Token kedaluwarsa setelah 1 jam
   });
 }
 ```
 
-**Responsabilités** :
+**Tanggung Jawab**:
 
-- Génère des tokens JWT signés avec `clientId`
-- Type de token : `catalog-upload` (pour différencier des autres tokens)
-- Expiration : 1 heure
+- Menghasilkan token JWT yang ditandatangani dengan `clientId`
+- Tipe token: `catalog-upload` (untuk membedakan dari token lain)
+- Kedaluwarsa: 1 jam
 
 ### 2. CatalogUploadGuard
 
-**Fichier** : `src/common/guards/catalog-upload.guard.ts`
+**File**: `src/common/guards/catalog-upload.guard.ts`
 
 ```typescript
 @Injectable()
@@ -104,12 +104,12 @@ export class CatalogUploadGuard implements CanActivate {
     const token = extractTokenFromHeader(request)
     const payload = jwt.verify(token, JWT_SECRET)
 
-    // Vérifie le type
+    // Verifikasi tipe
     if (payload.type !== 'catalog-upload') {
       throw new UnauthorizedException()
     }
 
-    // Injecte le clientId dans la requête
+    // Suntik clientId ke request
     request.clientId = payload.clientId
 
     return true
@@ -117,50 +117,50 @@ export class CatalogUploadGuard implements CanActivate {
 }
 ```
 
-**Responsabilités** :
+**Tanggung Jawab**:
 
-- Vérifie la signature du token JWT
-- Vérifie que le token est de type `catalog-upload`
-- Extrait le `clientId` du payload
-- Injecte `clientId` dans l'objet `request`
+- Memverifikasi tanda tangan token JWT
+- Memverifikasi bahwa token bertipe `catalog-upload`
+- Mengekstrak `clientId` dari payload
+- Menyuntik `clientId` ke objek `request`
 
 ### 3. ClientId Decorator
 
-**Fichier** : `src/common/decorators/client-id.decorator.ts`
+**File**: `src/common/decorators/client-id.decorator.ts`
 
 ```typescript
 export const ClientId = createParamDecorator((data: unknown, ctx: ExecutionContext): string => {
   const request = ctx.switchToHttp().getRequest()
-  return request.clientId // Injecté par le guard
+  return request.clientId // Disuntik oleh guard
 })
 ```
 
-**Usage** :
+**Penggunaan**:
 
 ```typescript
 @Post('upload-image')
 @UseGuards(CatalogUploadGuard)
 async uploadImage(@ClientId() clientId: string) {
-  // clientId est garanti d'être authentique
+  // clientId dijamin otentik
 }
 ```
 
 ---
 
-## 🔒 Flux de sécurité détaillé
+## Flow Keamanan Detail
 
-### Étape 1 : Génération du token (Backend)
+### Langkah 1: Pembuatan token (Backend)
 
 ```typescript
 // webhooks.controller.ts
 const clientId = '237697020290@c.us'
 const token = this.tokenService.generateCatalogUploadToken(clientId)
 
-// Token généré :
+// Token yang dihasilkan:
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjIzNzY5NzAyMDI5MEBjLnVzIiwidHlwZSI6ImNhdGFsb2ctdXBsb2FkIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.SIGNATURE
 ```
 
-**Payload décodé** :
+**Payload yang didekode**:
 
 ```json
 {
@@ -171,7 +171,7 @@ const token = this.tokenService.generateCatalogUploadToken(clientId)
 }
 ```
 
-### Étape 2 : Exécution du script (Connector)
+### Langkah 2: Eksekusi skrip (Connector)
 
 ```javascript
 // getCatalog.ts
@@ -180,73 +180,73 @@ const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 await fetch(`${BACKEND_URL}/catalog/upload-image`, {
   method: 'POST',
   headers: {
-    Authorization: `Bearer ${TOKEN}`, // ✅ Token dans header
+    Authorization: `Bearer ${TOKEN}`, // Token di header
   },
-  body: formData, // ❌ PAS de clientId dans le body
+  body: formData, // TIDAK ada clientId di body
 })
 ```
 
-### Étape 3 : Vérification (Backend)
+### Langkah 3: Verifikasi (Backend)
 
 ```typescript
-// 1. CatalogUploadGuard s'exécute
+// 1. CatalogUploadGuard dijalankan
 @UseGuards(CatalogUploadGuard)
 
-// 2. Le guard vérifie le token
+// 2. Guard memverifikasi token
 const payload = jwt.verify(token, JWT_SECRET);
-// → Échec si token invalide, expiré, ou signature incorrecte
+// → Gagal jika token tidak valid, kedaluwarsa, atau tanda tangan salah
 
-// 3. Le guard extrait le clientId
+// 3. Guard mengekstrak clientId
 request.clientId = payload.clientId;
 // → '237697020290@c.us'
 
-// 4. Le decorator récupère le clientId
+// 4. Decorator mengambil clientId
 @ClientId() clientId: string
-// → '237697020290@c.us' (sécurisé!)
+// → '237697020290@c.us' (aman!)
 ```
 
 ---
 
-## 🛡️ Protections implémentées
+## Proteksi yang Diimplementasikan
 
-### 1. Signature cryptographique
+### 1. Tanda tangan kriptografis
 
-- Le token est signé avec `JWT_SECRET`
-- Impossible de modifier le payload sans invalider la signature
-- Algorithme : HMAC-SHA256
+- Token ditandatangani dengan `JWT_SECRET`
+- Tidak mungkin mengubah payload tanpa membatalkan tanda tangan
+- Algoritma: HMAC-SHA256
 
-### 2. Type de token
+### 2. Tipe token
 
-- Chaque token a un `type` spécifique
-- Le guard vérifie `type === 'catalog-upload'`
-- Empêche l'utilisation de tokens d'autres services
+- Setiap token memiliki `type` spesifik
+- Guard memverifikasi `type === 'catalog-upload'`
+- Mencegah penggunaan token dari layanan lain
 
-### 3. Expiration
+### 3. Kedaluwarsa
 
-- Tokens valides pendant 1 heure seulement
-- Réduit la fenêtre d'attaque en cas de fuite
-- `exp` vérifié automatiquement par `jwt.verify()`
+- Token hanya valid selama 1 jam
+- Mengurangi jendela serangan jika terjadi kebocoran
+- `exp` diperiksa otomatis oleh `jwt.verify()`
 
-### 4. Pas de clientId dans le body
+### 4. Tidak ada clientId di body
 
-- Le script n'envoie JAMAIS le `clientId` en clair
-- Impossible pour un attaquant de le modifier
-- Source unique de vérité : le token signé
+- Skrip TIDAK PERNAH mengirim `clientId` dalam plaintext
+- Tidak mungkin bagi penyerang untuk mengubahnya
+- Sumber kebenaran tunggal: token yang ditandatangani
 
 ---
 
-## ⚠️ Cas d'attaque bloqués
+## Kasus Serangan yang Diblokir
 
-### Attaque 1 : Token volé + clientId modifié
+### Serangan 1: Token dicuri + clientId diubah
 
-**Tentative** :
+**Percobaan**:
 
 ```javascript
-// Attaquant intercepte le token
+// Penyerang mencegat token
 const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 
-// Attaquant essaie de se faire passer pour un autre client
-formData.append('clientId', 'AUTRE_CLIENT@c.us') // ❌ IGNORÉ
+// Penyerang mencoba menyamar sebagai klien lain
+formData.append('clientId', 'KLIEN_LAIN@c.us') // DIABAIKAN
 
 fetch('/catalog/upload-image', {
   headers: { Authorization: `Bearer ${TOKEN}` },
@@ -254,52 +254,52 @@ fetch('/catalog/upload-image', {
 })
 ```
 
-**Résultat** : ✅ **Bloqué**
+**Hasil**: **Diblokir**
 
-- Le backend n'utilise PAS le `clientId` du FormData
-- Il extrait le `clientId` du token : `237697020290@c.us`
-- L'attaquant ne peut pas changer d'identité
+- Backend TIDAK menggunakan `clientId` dari FormData
+- Backend mengekstrak `clientId` dari token: `237697020290@c.us`
+- Penyerang tidak dapat mengubah identitas
 
-### Attaque 2 : Token modifié
+### Serangan 2: Token dimodifikasi
 
-**Tentative** :
+**Percobaan**:
 
 ```javascript
-// Attaquant décode le token et modifie le clientId
+// Penyerang mendekode token dan mengubah clientId
 const payload = {
-  clientId: 'AUTRE_CLIENT@c.us', // ❌ Modifié
+  clientId: 'KLIEN_LAIN@c.us', // Diubah
   type: 'catalog-upload',
 }
 
 const fakeToken = jwt.sign(payload, 'WRONG_SECRET')
 ```
 
-**Résultat** : ✅ **Bloqué**
+**Hasil**: **Diblokir**
 
-- `jwt.verify()` échoue car la signature est invalide
-- `UnauthorizedException` lancée
-- Impossible de créer un token valide sans `JWT_SECRET`
+- `jwt.verify()` gagal karena tanda tangan tidak valid
+- `UnauthorizedException` dilemparkan
+- Tidak mungkin membuat token valid tanpa `JWT_SECRET`
 
-### Attaque 3 : Token expiré
+### Serangan 3: Token kedaluwarsa
 
-**Tentative** :
+**Percobaan**:
 
 ```javascript
-// Attaquant utilise un token qui a expiré (> 1h)
+// Penyerang menggunakan token yang sudah kedaluwarsa (> 1 jam)
 const oldToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
 ```
 
-**Résultat** : ✅ **Bloqué**
+**Hasil**: **Diblokir**
 
-- `jwt.verify()` vérifie automatiquement `exp`
-- `TokenExpiredError` lancée
-- Obligation de demander un nouveau token
+- `jwt.verify()` memeriksa `exp` secara otomatis
+- `TokenExpiredError` dilemparkan
+- Harus meminta token baru
 
 ---
 
-## 🧪 Tests de sécurité
+## Tes Keamanan
 
-### Test 1 : Token valide
+### Tes 1: Token valid
 
 ```bash
 curl -X POST http://localhost:3000/catalog/upload-image \
@@ -308,56 +308,56 @@ curl -X POST http://localhost:3000/catalog/upload-image \
   -F "productId=123" \
   -F "collectionId=456"
 
-# ✅ 200 OK - Image uploadée pour le bon clientId
+# 200 OK - Gambar diupload untuk clientId yang benar
 ```
 
-### Test 2 : Token invalide
+### Tes 2: Token tidak valid
 
 ```bash
 curl -X POST http://localhost:3000/catalog/upload-image \
   -H "Authorization: Bearer INVALID_TOKEN" \
   -F "image=@test.jpg"
 
-# ❌ 401 Unauthorized - "Invalid token"
+# 401 Unauthorized - "Invalid token"
 ```
 
-### Test 3 : Sans token
+### Tes 3: Tanpa token
 
 ```bash
 curl -X POST http://localhost:3000/catalog/upload-image \
   -F "image=@test.jpg"
 
-# ❌ 401 Unauthorized - "Missing or invalid token"
+# 401 Unauthorized - "Missing or invalid token"
 ```
 
-### Test 4 : Token expiré
+### Tes 4: Token kedaluwarsa
 
 ```bash
 curl -X POST http://localhost:3000/catalog/upload-image \
   -H "Authorization: Bearer EXPIRED_TOKEN" \
   -F "image=@test.jpg"
 
-# ❌ 401 Unauthorized - "Token expired"
+# 401 Unauthorized - "Token expired"
 ```
 
 ---
 
-## 🔧 Configuration
+## Konfigurasi
 
-### Variables d'environnement
+### Variabel lingkungan
 
 ```env
 # .env (Backend)
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 ```
 
-**IMPORTANT** :
+**PENTING**:
 
-- `JWT_SECRET` doit être une clé aléatoire forte (>= 32 caractères)
-- Ne JAMAIS commit le secret dans git
-- Utiliser des secrets différents en dev/staging/prod
+- `JWT_SECRET` harus berupa kunci acak yang kuat (≥ 32 karakter)
+- JANGAN PERNAH commit secret ke git
+- Gunakan secret berbeda di dev/staging/prod
 
-### Génération d'un secret fort
+### Membuat secret yang kuat
 
 ```bash
 # Node.js
@@ -366,119 +366,118 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 # OpenSSL
 openssl rand -hex 32
 
-# Résultat :
+# Hasil:
 # 8f7d3a9e4b2c1f6d8a5e3c7b9f1d4a6e2c8b5f3a7d9e1c4b6f8a2d5e3c7b9f1d
 ```
 
 ---
 
-## 📊 Comparaison Avant/Après
+## Perbandingan Sebelum/Sesudah
 
-| Aspect                              | ❌ Avant            | ✅ Après               |
-| ----------------------------------- | ------------------- | ---------------------- |
-| **clientId dans FormData**          | Oui                 | Non                    |
-| **Source de clientId**              | Body (non sécurisé) | Token JWT (signé)      |
-| **Vérification**                    | Aucune              | Signature + expiration |
-| **Usurpation possible**             | Oui                 | Non                    |
-| **Token volé = accès autre client** | Oui                 | Non                    |
-| **Durée de vie token**              | Infinie             | 1 heure                |
+| Aspek                              | Sebelum            | Sesudah                |
+| ----------------------------------- | ------------------ | ---------------------- |
+| **clientId di FormData**            | Ya                 | Tidak                  |
+| **Sumber clientId**                 | Body (tidak aman)  | Token JWT (ditandatangani) |
+| **Verifikasi**                      | Tidak ada          | Tanda tangan + kedaluwarsa |
+| **Pencurian identitas dimungkinkan**| Ya                 | Tidak                  |
+| **Token dicuri = akses klien lain** | Ya                 | Tidak                  |
+| **Umur token**                      | Tak terbatas       | 1 jam                  |
 
 ---
 
-## 🚀 Bonnes pratiques
+## Praktik Terbaik
 
-### ✅ DO
+### YANG HARUS DILAKUKAN
 
-1. **Toujours utiliser JWT_SECRET fort**
+1. **Selalu gunakan JWT_SECRET yang kuat**
 
    ```typescript
-   // ✅ Bon : Secret aléatoire de 32+ caractères
+   // Benar: Secret acak 32+ karakter
    JWT_SECRET=8f7d3a9e4b2c1f6d8a5e3c7b9f1d4a6e
    ```
 
-2. **Limiter la durée de vie des tokens**
+2. **Batasi umur token**
 
    ```typescript
-   // ✅ Bon : Expiration courte
+   // Benar: Kedaluwarsa pendek
    jwt.sign(payload, secret, { expiresIn: '1h' })
    ```
 
-3. **Vérifier le type de token**
+3. **Verifikasi tipe token**
 
    ```typescript
-   // ✅ Bon : Vérifier que c'est le bon type
+   // Benar: Verifikasi bahwa tipe benar
    if (payload.type !== 'catalog-upload') {
      throw new UnauthorizedException()
    }
    ```
 
-4. **Ne jamais faire confiance au body**
+4. **Jangan pernah mempercayai body**
 
    ```typescript
-   // ✅ Bon : Extraire du token
+   // Benar: Ekstrak dari token
    @ClientId() clientId: string
 
-   // ❌ Mauvais : Utiliser le body
+   // Salah: Gunakan body
    @Body('clientId') clientId: string
    ```
 
-### ❌ DON'T
+### YANG TIDAK BOLEH DILAKUKAN
 
-1. **Ne jamais commit JWT_SECRET**
+1. **Jangan pernah commit JWT_SECRET**
 
    ```bash
-   # ❌ Mauvais
+   # Salah
    git add .env
 
-   # ✅ Bon
-   .env dans .gitignore
+   # Benar
+   .env di .gitignore
    ```
 
-2. **Ne pas utiliser de secrets faibles**
+2. **Jangan gunakan secret lemah**
 
    ```typescript
-   // ❌ Mauvais
+   // Salah
    JWT_SECRET=secret123
 
-   // ✅ Bon
+   // Benar
    JWT_SECRET=8f7d3a9e4b2c1f6d8a5e3c7b9f1d4a6e
    ```
 
-3. **Ne pas désactiver la vérification**
+3. **Jangan nonaktifkan verifikasi**
 
    ```typescript
-   // ❌ Mauvais
+   // Salah
    jwt.verify(token, secret, { ignoreExpiration: true })
 
-   // ✅ Bon
+   // Benar
    jwt.verify(token, secret)
    ```
 
 ---
 
-## 📚 Ressources
+## Sumber Daya
 
-- **JWT.io** : https://jwt.io/ (déboguer vos tokens)
-- **jsonwebtoken** : https://github.com/auth0/node-jsonwebtoken
-- **OWASP JWT Cheat Sheet** :
+- **JWT.io**: https://jwt.io/ (debug token Anda)
+- **jsonwebtoken**: https://github.com/auth0/node-jsonwebtoken
+- **OWASP JWT Cheat Sheet**:
   https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html
 
 ---
 
-## ✅ Checklist de sécurité
+## Checklist Keamanan
 
-- [x] Token JWT signé avec HMAC-SHA256
-- [x] `clientId` encodé dans le payload du token
-- [x] Guard qui vérifie la signature du token
-- [x] Vérification du type de token (`catalog-upload`)
-- [x] Expiration du token (1 heure)
-- [x] `clientId` extrait du token, jamais du body
-- [x] Decorator `@ClientId()` pour injecter le clientId sécurisé
-- [x] `JWT_SECRET` configuré dans `.env`
-- [x] Documentation de la sécurité
-- [x] Tests de non-régression
+- [x] Token JWT ditandatangani dengan HMAC-SHA256
+- [x] `clientId` dienkode dalam payload token
+- [x] Guard yang memverifikasi tanda tangan token
+- [x] Verifikasi tipe token (`catalog-upload`)
+- [x] Kedaluwarsa token (1 jam)
+- [x] `clientId` diekstrak dari token, tidak pernah dari body
+- [x] Decorator `@ClientId()` untuk menyuntikkan clientId yang aman
+- [x] `JWT_SECRET` dikonfigurasi di `.env`
+- [x] Dokumentasi keamanan
+- [x] Tes non-regresi
 
 ---
 
-**Conclusion** : Le système de tokens JWT avec `clientId` encodé garantit qu'un attaquant ne peut
-**jamais** usurper l'identité d'un autre client, même s'il intercepte un token valide. 🔐
+**Kesimpulan**: Sistem token JWT dengan `clientId` yang dienkode menjamin bahwa penyerang **tidak pernah** dapat mencuri identitas klien lain, bahkan jika ia mencegat token yang valid.

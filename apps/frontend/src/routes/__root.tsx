@@ -6,9 +6,9 @@ import {
 } from '@tanstack/react-router'
 import AntdApp from 'antd/es/app'
 import ConfigProvider from 'antd/es/config-provider'
-import frFR from 'antd/es/locale/fr_FR'
+import idID from 'antd/es/locale/id_ID'
 import dayjs from 'dayjs'
-import 'dayjs/locale/fr'
+import 'dayjs/locale/id'
 import type { ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
 
@@ -26,7 +26,7 @@ import {
 import TanStackQueryProvider from '../integrations/tanstack-query/root-provider'
 import legacyAppCss from '../app/app.css?url'
 
-dayjs.locale('fr')
+dayjs.locale('id')
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -41,7 +41,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'description',
         content:
-          'WhatsApp Agent frontend migrate vers TanStack Start, React 19 et Cloudflare.',
+          'Frontend WhatsApp Agent yang dimigrasi ke TanStack Start, React 19, dan Cloudflare.',
       },
     ],
     links: [
@@ -56,13 +56,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="id">
       <head>
         <HeadContent />
       </head>
       <body>
         <TanStackQueryProvider>
-          <ConfigProvider {...antdProviderProps} locale={frFR}>
+          <ConfigProvider {...antdProviderProps} locale={idID}>
             <AntdApp>
               <AuthProvider>
                 <GoogleAnalyticsTracker />

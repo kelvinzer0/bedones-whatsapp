@@ -1,34 +1,34 @@
-# Live Agent Tests
+# Tes Live Agent
 
-This folder documents the live-model end-to-end test suites.
+Folder ini mendokumentasikan suite tes end-to-end live.
 
-## Goal
+## Tujuan
 
-Run the agents with real LLM providers (Gemini/OpenAI/xAI), while mocking tool implementations and external API calls.
+Menjalankan agent dengan provider LLM nyata (Gemini/OpenAI/xAI), sambil mengejek implementasi tool dan panggilan API eksternal.
 
-This validates:
+Ini memvalidasi:
 
-- Tool selection logic by the model
-- Multi-tool execution in the same run
-- History-aware routing behavior
-- Agent middleware + LangGraph execution path
+- Logika pemilihan tool oleh model
+- Eksekusi multi-tool dalam satu run
+- Perilaku routing yang sadar riwayat
+- Path eksekusi middleware agent + LangGraph
 
-## Suites
+## Suite
 
-- WhatsApp agent live tests:
+- Tes live WhatsApp agent:
   - `apps/whatsapp-agent/_TESTS_/live-agent/whatsapp-agent.live.e2e.test.ts`
-- Backend onboarding agent live tests:
+- Tes live onboarding agent backend:
   - `apps/backend/_TESTS_/live-agent/onboarding-agent.live.e2e.test.ts`
 
-## Run
+## Menjalankan
 
-Enable live tests explicitly:
+Aktifkan tes live secara eksplisit:
 
 ```bash
 AGENT_LIVE_TESTS=true pnpm test:agents:live
 ```
 
-Or run one side:
+Atau jalankan salah satu sisi:
 
 ```bash
 AGENT_LIVE_TESTS=true pnpm --filter whatsapp-agent test:agent:live
@@ -37,8 +37,8 @@ AGENT_LIVE_TESTS=true pnpm --filter backend test:agent:live
 
 ## Tracing
 
-LangSmith tracing is enabled when:
+Tracing LangSmith diaktifkan saat:
 
 - `AGENT_LIVE_TESTS=true`
-- `LANGSMITH_TRACING=true` (or omitted and auto-enabled in test setup)
-- `LANGSMITH_API_KEY` is available
+- `LANGSMITH_TRACING=true` (atau diabaikan dan diaktifkan otomatis dalam setup tes)
+- `LANGSMITH_API_KEY` tersedia

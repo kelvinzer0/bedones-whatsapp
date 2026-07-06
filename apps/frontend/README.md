@@ -1,25 +1,25 @@
-Welcome to your new TanStack Start app! 
+Selamat datang di aplikasi TanStack Start baru Anda!
 
-# Getting Started
+# Memulai
 
-To run this application:
+Untuk menjalankan aplikasi ini:
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-# Building For Production
+# Build untuk Produksi
 
-To build this application for production:
+Untuk build aplikasi ini untuk produksi:
 
 ```bash
 pnpm build
 ```
 
-## Testing
+## Pengujian
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Proyek ini menggunakan [Vitest](https://vitest.dev/) untuk pengujian. Anda dapat menjalankan tes dengan:
 
 ```bash
 pnpm test
@@ -27,21 +27,20 @@ pnpm test
 
 ## Styling
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+Proyek ini menggunakan [Tailwind CSS](https://tailwindcss.com/) untuk styling.
 
-### Removing Tailwind CSS
+### Menghapus Tailwind CSS
 
-If you prefer not to use Tailwind CSS:
+Jika Anda tidak ingin menggunakan Tailwind CSS:
 
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `pnpm add @tailwindcss/vite tailwindcss --dev`
+1. Hapus halaman demo di `src/routes/demo/`
+2. Ganti impor Tailwind di `src/styles.css` dengan style Anda sendiri
+3. Hapus `tailwindcss()` dari array plugins di `vite.config.ts`
+4. Uninstall paket: `pnpm add @tailwindcss/vite tailwindcss --dev`
 
 ## Linting & Formatting
 
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+Proyek ini menggunakan [eslint](https://eslint.org/) dan [prettier](https://prettier.io/) untuk linting dan formatting. Eslint dikonfigurasi menggunakan [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). Skrip berikut tersedia:
 
 ```bash
 pnpm lint
@@ -49,43 +48,41 @@ pnpm format
 pnpm check
 ```
 
-
-
 ## Routing
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+Proyek ini menggunakan [TanStack Router](https://tanstack.com/router) dengan routing berbasis file. Route dikelola sebagai file di `src/routes`.
 
-### Adding A Route
+### Menambahkan Route
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+Untuk menambahkan route baru ke aplikasi Anda, cukup tambahkan file baru di direktori `./src/routes`.
 
-TanStack will automatically generate the content of the route file for you.
+TanStack akan secara otomatis menghasilkan konten file route untuk Anda.
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+Sekarang setelah Anda memiliki dua route, Anda dapat menggunakan komponen `Link` untuk navigasi di antaranya.
 
-### Adding Links
+### Menambahkan Link
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+Untuk menggunakan navigasi SPA (Single Page Application), Anda perlu mengimpor komponen `Link` dari `@tanstack/react-router`.
 
 ```tsx
 import { Link } from "@tanstack/react-router";
 ```
 
-Then anywhere in your JSX you can use it like so:
+Kemudian di mana saja dalam JSX Anda dapat menggunakannya seperti ini:
 
 ```tsx
-<Link to="/about">About</Link>
+<Link to="/about">Tentang</Link>
 ```
 
-This will create a link that will navigate to the `/about` route.
+Ini akan membuat link yang akan menavigasi ke route `/about`.
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+Informasi lebih lanjut tentang komponen `Link` dapat ditemukan di [dokumentasi Link](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
 
-### Using A Layout
+### Menggunakan Layout
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+Dalam setup File Based Routing, layout berada di `src/routes/__root.tsx`. Apa pun yang Anda tambahkan ke route root akan muncul di semua route. Konten route akan muncul di JSX di mana Anda merender `{children}` dalam `shellComponent`.
 
-Here is an example layout that includes a header:
+Berikut adalah contoh layout yang menyertakan header:
 
 ```tsx
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
@@ -95,19 +92,19 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
+      { title: 'Aplikasi Saya' },
     ],
   }),
   shellComponent: ({ children }) => (
-    <html lang="en">
+    <html lang="id">
       <head>
         <HeadContent />
       </head>
       <body>
         <header>
           <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
+            <Link to="/">Beranda</Link>
+            <Link to="/about">Tentang</Link>
           </nav>
         </header>
         {children}
@@ -118,11 +115,11 @@ export const Route = createRootRoute({
 })
 ```
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+Informasi lebih lanjut tentang layout dapat ditemukan di [dokumentasi Layouts](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
 
 ## Server Functions
 
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
+TanStack Start menyediakan server functions yang memungkinkan Anda menulis kode server-side yang terintegrasi mulus dengan komponen klien Anda.
 
 ```tsx
 import { createServerFn } from '@tanstack/react-start'
@@ -133,21 +130,21 @@ const getServerTime = createServerFn({
   return new Date().toISOString()
 })
 
-// Use in a component
+// Gunakan dalam komponen
 function MyComponent() {
   const [time, setTime] = useState('')
-  
+
   useEffect(() => {
     getServerTime().then(setTime)
   }, [])
-  
-  return <div>Server time: {time}</div>
+
+  return <div>Waktu server: {time}</div>
 }
 ```
 
 ## API Routes
 
-You can create API routes by using the `server` property in your route definitions:
+Anda dapat membuat API route dengan menggunakan properti `server` dalam definisi route Anda:
 
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
@@ -156,7 +153,7 @@ import { json } from '@tanstack/react-start'
 export const Route = createFileRoute('/api/hello')({
   server: {
     handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
+      GET: () => json({ message: 'Halo, Dunia!' }),
     },
   },
 })
@@ -164,9 +161,9 @@ export const Route = createFileRoute('/api/hello')({
 
 ## Data Fetching
 
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
+Ada beberapa cara untuk mengambil data dalam aplikasi Anda. Anda dapat menggunakan TanStack Query untuk mengambil data dari server. Tetapi Anda juga dapat menggunakan fungsi `loader` yang dibangun ke dalam TanStack Router untuk memuat data untuk route sebelum dirender.
 
-For example:
+Contoh:
 
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
@@ -191,14 +188,14 @@ function PeopleComponent() {
 }
 ```
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
+Loader secara dramatis menyederhanakan logika data fetching Anda. Lihat informasi lebih lanjut di [dokumentasi Loader](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
 
-# Demo files
+# File Demo
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+File dengan prefix `demo` dapat dihapus dengan aman. Mereka ada untuk memberikan titik awal agar Anda dapat bermain dengan fitur yang Anda instal.
 
-# Learn More
+# Pelajari Lebih Lanjut
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+Anda dapat mempelajari lebih lanjut tentang semua yang ditawarkan TanStack di [dokumentasi TanStack](https://tanstack.com).
 
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+Untuk dokumentasi spesifik TanStack Start, kunjungi [TanStack Start](https://tanstack.com/start).

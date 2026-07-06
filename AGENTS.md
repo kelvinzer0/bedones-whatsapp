@@ -1,24 +1,24 @@
-# AGENTS Instructions
+# Instruksi AGENTS
 
-## Prisma Migrations (Mandatory)
+## Migrasi Prisma (Wajib)
 
-- Never write Prisma migrations by hand.
-- Never create or edit `migration.sql` manually.
-- Always generate migrations with Prisma CLI only.
+- Jangan pernah menulis migrasi Prisma secara manual.
+- Jangan pernah membuat atau mengedit `migration.sql` secara manual.
+- Selalu hasilkan migrasi dengan Prisma CLI saja.
 
-Use this command pattern:
+Gunakan pola perintah ini:
 
 ```bash
-pnpm --filter backend prisma:migrate -- --name <migration_name>
+pnpm --filter backend prisma:migrate -- --name <nama_migrasi>
 ```
 
-If migration generation fails (DB unavailable, schema engine error, permissions, etc.):
+Jika pembuatan migrasi gagal (DB tidak tersedia, error engine schema, izin, dll.):
 
-- Stop and report the blocker.
-- Do not create a manual migration as a workaround.
+- Berhenti dan laporkan pemblokir.
+- Jangan buat migrasi manual sebagai workaround.
 
-## Prisma Raw SQL Safety (Mandatory)
+## Keamanan Raw SQL Prisma (Wajib)
 
-- Never use `this.prisma.$executeRaw`, `this.prisma.$queryRaw`, `this.prisma.$executeRawUnsafe`, or `this.prisma.$queryRawUnsafe` in application code.
-- Prefer Prisma ORM methods (`findMany`, `update`, `updateMany`, `createMany`, etc.).
-- If you think raw SQL is absolutely necessary, stop and ask for explicit approval first.
+- Jangan pernah gunakan `this.prisma.$executeRaw`, `this.prisma.$queryRaw`, `this.prisma.$executeRawUnsafe`, atau `this.prisma.$queryRawUnsafe` dalam kode aplikasi.
+- Utamakan metode ORM Prisma (`findMany`, `update`, `updateMany`, `createMany`, dll.).
+- Jika Anda merasa raw SQL benar-benar diperlukan, berhenti dan minta persetujuan eksplisit terlebih dahulu.

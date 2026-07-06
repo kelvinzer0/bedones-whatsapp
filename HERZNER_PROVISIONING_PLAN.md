@@ -1,40 +1,40 @@
-# Plan Herzner pour Bedones WhatsApp
+# Rencana Hetzner untuk Bedones WhatsApp
 
-## Objectif
+## Tujuan
 
-Préparer un provisioning piloté par le backend pour des VPS Hetzner qui hébergent des stacks
-`connector + whatsapp-agent + postgres + qdrant + cropper`, pendant que le backend central reste
-déployé séparément. Le backend parle directement à l’API Hetzner pour créer le VPS et suivre
-l’`actionId`, puis déclenche un `workflow_dispatch` GitHub sur un self-hosted runner uniquement
-quand le serveur est prêt à recevoir la stack.
+Menyiapkan provisioning yang dikendalikan oleh backend untuk VPS Hetzner yang meng-host stack
+`connector + whatsapp-agent + postgres + qdrant + cropper`, sementara backend pusat tetap
+dideploy terpisah. Backend berbicara langsung ke API Hetzner untuk membuat VPS dan melacak
+`actionId`, lalu memicu `workflow_dispatch` GitHub pada self-hosted runner hanya
+saat server siap menerima stack.
 
-## Découpage cible
+## Pembagian target
 
-- `backend` central:
+- `backend` pusat:
   - onboarding
-  - facturation
-  - orchestration des stacks
-  - suivi d’état des agents
-- `connector node`:
+  - penagihan
+  - orkestrasi stack
+  - pelacakan status agent
+- `node connector`:
   - `whatsapp-connector`
   - `whatsapp-agent`
   - `postgres`
   - `redis`
   - `qdrant`
   - `cropper`
-  - une base Postgres locale par stack, supprimée avec la stack
+  - satu basis Postgres lokal per stack, dihapus bersama stack
 
-## Contrainte réseau retenue
+## Batasan jaringan yang dipilih
 
-- Le backend central reste hors Hetzner.
-- Les VPS Hetzner gardent une IP publique pour le bootstrap, `docker pull` et SSH.
-- Les communications `backend ↔ connector/agent` passent par IP publique + mTLS `step-ca` +
-  firewall strict.
-- Le réseau privé Hetzner n’est plus requis dans cette phase.
+- Backend pusat tetap di luar Hetzner.
+- VPS Hetzner mempertahankan IP publik untuk bootstrap, `docker pull`, dan SSH.
+- Komunikasi `backend ↔ connector/agent` melalui IP publik + mTLS `step-ca` +
+  firewall ketat.
+- Jaringan privat Hetzner tidak lagi diperlukan pada fase ini.
 
-## Variables backend à prévoir
+## Variabel backend yang harus disiapkan
 
-Ces variables vivent dans le backend central pour piloter la capacité et les dispatchs GitHub.
+Variabel-variabel ini ada di backend pusat untuk mengendalikan kapasitas dan dispatch GitHub.
 
 ```env
 STACK_POOL_PROVISION_ON_BOOT=true
@@ -56,9 +56,9 @@ GITHUB_RELEASE_WORKFLOW_FILE=release-bedones-whatsapp-agent.yml
 STACK_INFRA_CALLBACK_SECRET=
 ```
 
-## Secrets runner / workflows
+## Secret runner / workflow
 
-Ces valeurs vivent côté GitHub Actions / self-hosted runner:
+Nilai-nilai ini ada di sisi GitHub Actions / self-hosted runner:
 
 ```env
 STACK_INFRA_CALLBACK_SECRET=
@@ -71,70 +71,70 @@ STEP_CA_PROVISIONER_NAME=github-actions
 STEP_CA_PROVISIONER_PASSWORD=
 ```
 
-## Modèle de données retenu
+## Model data yang dipilih
 
-Le modèle `WhatsAppAgent` reste le point d’entrée applicatif, mais il sert aussi d’inventaire de
-stack réservable. On ajoute:
+Model `WhatsAppAgent` tetap menjadi titik masuk aplikasi, tetapi juga berfungsi sebagai inventaris
+stack yang dapat dipesan. Kami menambahkan:
 
 - `ProvisioningServer`
-  - état du VPS Hetzner
-  - IP publique / privée
-  - type, location, nombre de stacks planifiées
+  - status VPS Hetzner
+  - IP publik / privat
+  - tipe, lokasi, jumlah stack yang direncanakan
 - `ProvisioningWorkflowRun`
-  - type `PROVISION_CAPACITY` ou `RELEASE_CAPACITY`
-  - mapping avec le `workflow_dispatch` GitHub
-  - progression, étape courante, callback vers le backend
+  - tipe `PROVISION_CAPACITY` atau `RELEASE_CAPACITY`
+  - pemetaan dengan `workflow_dispatch` GitHub
+  - progres, langkah saat ini, callback ke backend
 - `WhatsAppAgent`
-  - champs `serverId`, `stackSlot`, `stackLabel`
+  - field `serverId`, `stackSlot`, `stackLabel`
   - `assignmentStatus` (`FREE`, `RESERVED`, `ALLOCATED`, ...)
   - `reservationExpiresAt`, `allocatedAt`, `releasedAt`
 
-## Workflow backend retenu
+## Workflow backend yang dipilih
 
-1. Le backend démarre et vérifie le stock libre.
-2. Si le stock libre est sous le seuil, il crée un VPS Hetzner via l’API Cloud.
-3. Le backend poll l’`actionId` Hetzner jusqu’à ce que le serveur soit prêt.
-4. Quand le serveur est prêt, le backend déclenche `install-bedones-whatsapp-agent.yml`.
-5. Le workflow rend la stack depuis
-   `.github/stack-templates/bedones-whatsapp-agent/stack.template.yml`, émet les certificats
-   `step-ca` et déploie la stack.
-6. Le workflow appelle `POST /stack-pool/workflows/callback`.
-7. Le backend enregistre les stacks libres, vérifie `/health` sur `whatsapp-agent`
-   et `whatsapp-connector`, puis affecte une stack si un utilisateur attend déjà.
+1. Backend memulai dan memeriksa stok bebas.
+2. Jika stok bebas di bawah ambang, backend membuat VPS Hetzner via API Cloud.
+3. Backend melakukan poll `actionId` Hetzner hingga server siap.
+4. Saat server siap, backend memicu `install-bedones-whatsapp-agent.yml`.
+5. Workflow merender stack dari
+   `.github/stack-templates/bedones-whatsapp-agent/stack.template.yml`, menerbitkan sertifikat
+   `step-ca` dan men-deploy stack.
+6. Workflow memanggil `POST /stack-pool/workflows/callback`.
+7. Backend mencatat stack bebas, memeriksa `/health` pada `whatsapp-agent`
+   dan `whatsapp-connector`, lalu menetapkan stack jika pengguna sudah menunggu.
 
-## Réseau
+## Jaringan
 
-- Le backend central parle au `connector` et au `whatsapp-agent` via l’IP publique du VPS.
-- Chaque stack publie uniquement 2 ports TLS:
-  - un port `agent`
-  - un port `connector`
-- `redis`, `postgres`, `qdrant` et `cropper` restent internes à la stack.
-- Les firewalls Hetzner doivent limiter les entrées aux IPs autorisées du backend et d’admin.
+- Backend pusat berbicara ke `connector` dan `whatsapp-agent` via IP publik VPS.
+- Setiap stack hanya mempublikasikan 2 port TLS:
+  - satu port `agent`
+  - satu port `connector`
+- `redis`, `postgres`, `qdrant`, dan `cropper` tetap internal ke stack.
+- Firewall Hetzner harus membatasi akses masuk ke IP backend dan admin yang diizinkan.
 
-## Politique de placement
+## Kebijakan penempatan
 
-- Un VPS = plusieurs stacks clients.
-- Le backend réserve une stack libre existante au moment où l’utilisateur clique sur suivant.
-- Juste après une réservation, le backend déclenche de nouveau le provisioning si le stock libre
-  redescend sous `STACK_POOL_MIN_FREE_STACKS`.
-- Garder le type de machine configurable via `STACK_POOL_DEFAULT_SERVER_TYPE`.
+- Satu VPS = beberapa stack klien.
+- Backend memesan stack bebas yang ada saat pengguna mengklik lanjut.
+- Segera setelah pemesanan, backend memicu provisioning lagi jika stok bebas
+  turun di bawah `STACK_POOL_MIN_FREE_STACKS`.
+- Pertahankan tipe mesin dapat dikonfigurasi via `STACK_POOL_DEFAULT_SERVER_TYPE`.
 
-## Mise à jour des connectors plus tard
+## Update connector di masa depan
 
-Le point sensible est la session WhatsApp. La stratégie la plus sûre:
+Poin sensitif adalah sesi WhatsApp. Strategi teraman:
 
-1. Stocker les sessions sur volume persistant dédié par stack.
-2. Déployer une nouvelle image sur la stack existante, jamais sur un nouveau volume.
-3. Faire une mise à jour progressive service par service.
-4. Vérifier `/health` puis l’état `ready` avant de considérer la mise à jour réussie.
-5. Prévoir un rollback immédiat sur le tag précédent si la session n’est pas restaurée.
+1. Simpan sesi pada volume persisten khusus per stack.
+2. Deploy image baru ke stack yang ada, tidak pernah ke volume baru.
+3. Lakukan update bertahap service per service.
+4. Verifikasi `/health` lalu status `ready` sebelum menganggap update berhasil.
+5. Siapkan rollback langsung ke tag sebelumnya jika sesi tidak dipulihkan.
 
-## Étapes suivantes
+## Langkah berikutnya
 
-1. Ajouter la page pricing auth-friendly si `existing user && crédits épuisés`.
-2. Remplacer la diffusion QR “fallback broadcast” par un routage strict par `connectorInstanceId`
-   pour toutes les stacks.
-3. Ajouter un release intelligent qui supprime aussi le VPS si toutes ses stacks sont libres.
-4. Brancher la télémétrie GitHub Actions plus finement si on veut afficher plus que 3 étapes métier
-   côté frontend.
-5. Ajouter la rotation de tags d’images côté backend pour les mises à jour contrôlées.
+1. Tambahkan halaman pricing auth-friendly jika `existing user && kredit habis`.
+2. Ganti siaran QR "fallback broadcast" dengan routing ketat per `connectorInstanceId`
+   untuk semua stack.
+3. Tambahkan release cerdas yang juga menghapus VPS jika semua stack-nya bebas.
+4. Hubungkan telemetri GitHub Actions lebih halus jika ingin menampilkan lebih dari 3 langkah bisnis
+   di sisi frontend.
+5. Tambahkan rotasi tag image di sisi backend untuk update terkontrol.

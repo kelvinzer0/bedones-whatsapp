@@ -35,7 +35,7 @@ import { WhatsAppAgentModule } from './whatsapp-agent/whatsapp-agent.module';
   imports: [
     SentryModule.forRoot(),
     I18nModule.forRoot({
-      fallbackLanguage: 'fr',
+      fallbackLanguage: 'id',
       loaderOptions: {
         path: path.join(__dirname, '/i18n/'),
         watch: true,

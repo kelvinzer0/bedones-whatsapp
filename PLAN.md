@@ -1,69 +1,69 @@
-# Plan de développement - Outil de réponse automatique aux messages réseaux sociaux
+# Rencana Pengembangan - Alat Balasan Otomatis Pesan Media Sosial
 
-## 📋 Vue d'ensemble du projet
+## Gambaran Umum Proyek
 
-Développement d'un système de réponse automatique multi-plateforme utilisant l'IA pour gérer les
-conversations sur WhatsApp, Messenger et Instagram. Le système repose sur une architecture
-distribuée avec un serveur central de gestion et des serveurs clients pour l'hébergement des
-instances WhatsApp.
+Pengembangan sistem balasan otomatis multi-platform menggunakan AI untuk mengelola
+percakapan di WhatsApp, Messenger, dan Instagram. Sistem ini berbasis arsitektur
+terdistribusi dengan server pusat untuk manajemen dan server klien untuk hosting
+instance WhatsApp.
 
-### Objectifs principaux
+### Tujuan Utama
 
-- ✅ Réponses automatiques intelligentes via LangChain
-- ✅ Architecture scalable et isolée pour limiter les risques de bannissement
-- ✅ Gestion centralisée des utilisateurs, souscriptions et crédits
-- ✅ Déploiement dynamique des instances client
-- ✅ Système de facturation basé sur l'utilisation des tokens
+- Balasan otomatis cerdas melalui LangChain
+- Arsitektur skalabel dan terisolasi untuk membatasi risiko pemblokiran
+- Manajemen terpusat pengguna, langganan, dan kredit
+- Deployment dinamis instance klien
+- Sistem penagihan berbasis penggunaan token
 
 ---
 
-## 🏗️ Architecture technique
+## Arsitektur Teknis
 
-### 1. Serveur Central (apps/backend + apps/frontend)
+### 1. Server Pusat (apps/backend + apps/frontend)
 
-**Responsabilités:**
+**Tanggung Jawab:**
 
-- Gestion des utilisateurs et authentification
-- Dashboard et site vitrine
-- Gestion des souscriptions et crédits
-- Réception et stockage des métriques
-- Orchestration des serveurs clients (API Contabo + SSH + Docker Swarm)
-- Contrôle des autorisations de traitement
-- Facturation et décompte des crédits
+- Manajemen pengguna dan autentikasi
+- Dashboard dan situs vitrin
+- Manajemen langganan dan kredit
+- Penerimaan dan penyimpanan metrik
+- Orkestrasi server klien (API Contabo + SSH + Docker Swarm)
+- Kontrol otorisasi pemrosesan
+- Penagihan dan pemotongan kredit
 
-**Stack technique:**
+**Stack Teknis:**
 
-- Backend: NestJS (existant)
-- Frontend: React Router v7 (existant)
-- Base de données: PostgreSQL via Prisma
+- Backend: NestJS (ada)
+- Frontend: React Router v7 (ada)
+- Database: PostgreSQL via Prisma
 - Cache: Redis
 - API: REST + Swagger
 
-### 2. Microservices WhatsApp
+### 2. Mikroservis WhatsApp
 
 #### 2.1. whatsapp-connector (apps/whatsapp-connector)
 
-**Responsabilités:**
+**Tanggung Jawab:**
 
-- Connexion et maintien du client WhatsApp via wwebjs.dev
-- Exposition d'endpoints HTTP pour envoyer des messages
-- Réception des messages entrants
-- Transmission des messages via webhook vers whatsapp-agent
-- Gestion du QR code et de l'état de connexion
-- Minimisation des mises à jour pour garantir la stabilité
+- Koneksi dan menjaga klien WhatsApp via wwebjs.dev
+- Menyediakan endpoint HTTP untuk mengirim pesan
+- Penerimaan pesan masuk
+- Pengiriman pesan via webhook ke whatsapp-agent
+- Pengelolaan QR code dan status koneksi
+- Meminimalkan update untuk menjamin stabilitas
 
-**Points d'intégration:**
+**Titik Integrasi:**
 
-- ← Reçoit les demandes d'envoi de message via HTTP (depuis whatsapp-agent)
-- → Envoie les messages reçus via webhook (vers whatsapp-agent)
+- Menerima permintaan kirim pesan via HTTP (dari whatsapp-agent)
+- Mengirim pesan yang diterima via webhook (ke whatsapp-agent)
 
-**Stack technique:**
+**Stack Teknis:**
 
 - Framework: NestJS
-- Librairie WhatsApp: wwebjs.dev
-- Communication: HTTP + Webhooks
+- Library WhatsApp: wwebjs.dev
+- Komunikasi: HTTP + Webhook
 
-**Configuration (.env):**
+**Konfigurasi (.env):**
 
 ```
 PORT=3001
@@ -71,40 +71,40 @@ AGENT_WEBHOOK_URL=http://whatsapp-agent:3002/webhook/message
 WHATSAPP_SESSION_PATH=/data/sessions
 ```
 
-**Endpoints exposés:**
+**Endpoint yang disediakan:**
 
-- `POST /send` - Envoyer un message
-- `POST /send-media` - Envoyer un média
-- `GET /status` - État de la connexion
-- `GET /qr` - Récupérer le QR code
-- `GET /contacts` - Liste des contacts
-- `GET /chats` - Liste des conversations
-- `POST /mark-read` - Marquer comme lu
+- `POST /send` - Kirim pesan
+- `POST /send-media` - Kirim media
+- `GET /status` - Status koneksi
+- `GET /qr` - Ambil QR code
+- `GET /contacts` - Daftar kontak
+- `GET /chats` - Daftar percakapan
+- `POST /mark-read` - Tandai sebagai dibaca
 - `GET /health` - Health check
 
 #### 2.2. whatsapp-agent (apps/whatsapp-agent)
 
-**Responsabilités:**
+**Tanggung Jawab:**
 
-- Réception des messages via webhook (depuis whatsapp-connector)
-- Analyse et génération de réponses via LangChain
-- Vérification des crédits auprès du serveur central
-- Reporting de l'utilisation des tokens
-- Envoi des réponses via HTTP au connector
+- Penerimaan pesan via webhook (dari whatsapp-connector)
+- Analisis dan pembuatan balasan via LangChain
+- Verifikasi kredit dengan server pusat
+- Pelaporan penggunaan token
+- Pengiriman balasan via HTTP ke connector
 
-**Points d'intégration:**
+**Titik Integrasi:**
 
-- ← Reçoit les messages via webhook (depuis whatsapp-connector)
-- → Envoie les réponses via HTTP (vers whatsapp-connector)
-- ↔️ Vérifie les crédits et reporte l'utilisation (vers serveur central)
+- Menerima pesan via webhook (dari whatsapp-connector)
+- Mengirim balasan via HTTP (ke whatsapp-connector)
+- Memeriksa kredit dan melaporkan penggunaan (ke server pusat)
 
-**Stack technique:**
+**Stack Teknis:**
 
 - Framework: NestJS
-- IA: LangChain + OpenAI/Anthropic
-- Communication: HTTP + Webhooks
+- AI: LangChain + OpenAI/Anthropic
+- Komunikasi: HTTP + Webhook
 
-**Configuration (.env):**
+**Konfigurasi (.env):**
 
 ```
 PORT=3002
@@ -115,29 +115,29 @@ CLIENT_SECRET=secret-key
 OPENAI_API_KEY=sk-...
 ```
 
-**Endpoints exposés:**
+**Endpoint yang disediakan:**
 
-- `POST /webhook/message` - Réception des messages
+- `POST /webhook/message` - Penerimaan pesan
 - `GET /health` - Health check
 
-### 3. Microservices Messenger et Instagram
+### 3. Mikroservis Messenger dan Instagram
 
 #### 3.1. messenger-agent (apps/messenger-agent)
 
-**Responsabilités:**
+**Tanggung Jawab:**
 
-- Intégration avec l'API Messenger de Meta
-- Réception des webhooks Messenger
-- Génération de réponses via LangChain
-- Vérification des crédits et reporting
+- Integrasi dengan API Messenger dari Meta
+- Penerimaan webhook Messenger
+- Pembuatan balasan via LangChain
+- Verifikasi kredit dan pelaporan
 
-**Stack technique:**
+**Stack Teknis:**
 
 - Framework: NestJS
 - API: Meta Messenger Platform
-- IA: LangChain
+- AI: LangChain
 
-**Configuration (.env):**
+**Konfigurasi (.env):**
 
 ```
 PORT=3003
@@ -151,20 +151,20 @@ OPENAI_API_KEY=sk-...
 
 #### 3.2. instagram-agent (apps/instagram-agent)
 
-**Responsabilités:**
+**Tanggung Jawab:**
 
-- Intégration avec l'API Instagram Messaging
-- Réception des webhooks Instagram
-- Génération de réponses via LangChain
-- Vérification des crédits et reporting
+- Integrasi dengan API Instagram Messaging
+- Penerimaan webhook Instagram
+- Pembuatan balasan via LangChain
+- Verifikasi kredit dan pelaporan
 
-**Stack technique:**
+**Stack Teknis:**
 
 - Framework: NestJS
 - API: Instagram Graph API
-- IA: LangChain
+- AI: LangChain
 
-**Configuration (.env):**
+**Konfigurasi (.env):**
 
 ```
 PORT=3004
@@ -176,371 +176,371 @@ CENTRAL_SERVER_URL=https://central.example.com
 OPENAI_API_KEY=sk-...
 ```
 
-### 4. Serveurs Clients
+### 4. Server Klien
 
-**Composition:**
+**Komposisi:**
 
-- 1 instance whatsapp-connector + 1 instance whatsapp-agent = 1 stack client
-- Maximum 3 stacks par serveur
-- Déploiement via Docker Swarm
+- 1 instance whatsapp-connector + 1 instance whatsapp-agent = 1 stack klien
+- Maksimum 3 stack per server
+- Deployment via Docker Swarm
 
-**Responsabilités:**
+**Tanggung Jawab:**
 
-- Hébergement des clients WhatsApp isolés
-- Isolation des IP pour réduire les risques de bannissement
-- Communication avec le serveur central
+- Hosting klien WhatsApp terisolasi
+- Isolasi IP untuk mengurangi risiko pemblokiran
+- Komunikasi dengan server pusat
 
 ---
 
-## 🔄 Flux de communication
+## Alur Komunikasi
 
-### Flow WhatsApp - Message entrant
+### Flow WhatsApp - Pesan Masuk
 
 ```
 WhatsApp → wwebjs → whatsapp-connector → [webhook] → whatsapp-agent
                                                            ↓
-                                                    [Vérification crédits]
+                                                    [Verifikasi kredit]
                                                            ↓
-                                                    serveur central
+                                                    server pusat
                                                            ↓
-                                                    [Autorisation OK]
+                                                    [Otorisasi OK]
                                                            ↓
-                                                    [Analyse LangChain]
+                                                    [Analisis LangChain]
                                                            ↓
 whatsapp-connector ← [HTTP POST /send] ← whatsapp-agent
         ↓
     WhatsApp
         ↓
-[Report utilisation] → serveur central → [Décompte crédits]
+[Laporan penggunaan] → server pusat → [Pemotongan kredit]
 ```
 
-### Flow Messenger/Instagram - Message entrant
+### Flow Messenger/Instagram - Pesan Masuk
 
 ```
 Messenger/Instagram → [Webhook] → messenger/instagram-agent
                                            ↓
-                                   [Vérification crédits]
+                                   [Verifikasi kredit]
                                            ↓
-                                   serveur central
+                                   server pusat
                                            ↓
-                                   [Autorisation OK]
+                                   [Otorisasi OK]
                                            ↓
-                                   [Analyse LangChain]
+                                   [Analisis LangChain]
                                            ↓
-                                   [Réponse API Meta]
+                                   [Balasan API Meta]
                                            ↓
                                    Messenger/Instagram
                                            ↓
-                            [Report utilisation] → serveur central
+                            [Laporan penggunaan] → server pusat
 ```
 
 ---
 
-## 📦 Structure du monorepo
+## Struktur Monorepo
 
 ```
 whatsapp-agent/
 ├── apps/
-│   ├── backend/                 # Serveur central (existant)
-│   ├── frontend/                # Dashboard & site vitrine (existant)
-│   ├── whatsapp-connector/      # 🆕 Connector WhatsApp
-│   ├── whatsapp-agent/          # 🆕 Agent WhatsApp
-│   ├── messenger-agent/         # 🆕 Agent Messenger
-│   └── instagram-agent/         # 🆕 Agent Instagram
+│   ├── backend/                 # Server pusat (ada)
+│   ├── frontend/                # Dashboard & situs vitrin (ada)
+│   ├── whatsapp-connector/      # Connector WhatsApp
+│   ├── whatsapp-agent/          # Agent WhatsApp
+│   ├── messenger-agent/         # Agent Messenger
+│   └── instagram-agent/         # Agent Instagram
 ├── packages/
-│   └── common/                  # Code partagé
+│   └── common/                  # Kode bersama
 ├── docker/
-│   ├── whatsapp-stack.yml       # Stack Docker pour WhatsApp
-│   ├── central.yml              # Stack serveur central
-│   └── agents.yml               # Stack agents Messenger/Instagram
+│   ├── whatsapp-stack.yml       # Stack Docker untuk WhatsApp
+│   ├── central.yml              # Stack server pusat
+│   └── agents.yml               # Stack agent Messenger/Instagram
 ├── scripts/
-│   ├── deploy-client.sh         # Script déploiement client
-│   └── provision-vps.sh         # Script provisioning VPS
-├── PLAN.md                      # Ce document
+│   ├── deploy-client.sh         # Skrip deployment klien
+│   └── provision-vps.sh         # Skrip provisioning VPS
+├── PLAN.md                      # Dokumen ini
 ├── package.json
 └── pnpm-workspace.yaml
 ```
 
 ---
 
-## 🎯 Phases de développement
+## Fase Pengembangan
 
-### Phase 1: Fondations WhatsApp (PRIORITAIRE)
+### Fase 1: Fondasi WhatsApp (PRIORITAS)
 
-#### 1.1. Création de whatsapp-connector
+#### 1.1. Pembuatan whatsapp-connector
 
-- [ ] Initialiser l'app NestJS basée sur apps/backend
-- [ ] Intégrer wwebjs.dev
-- [ ] Implémenter la gestion de session et QR code
-- [ ] Créer les endpoints HTTP (send, status, qr, etc.)
-- [ ] Implémenter le système de webhook sortant
-- [ ] Ajouter la gestion des médias
-- [ ] Tests et documentation Swagger
+- [ ] Inisialisasi app NestJS berbasis apps/backend
+- [ ] Integrasi wwebjs.dev
+- [ ] Implementasi manajemen sesi dan QR code
+- [ ] Buat endpoint HTTP (send, status, qr, dll.)
+- [ ] Implementasi sistem webhook keluar
+- [ ] Tambahkan manajemen media
+- [ ] Tes dan dokumentasi Swagger
 
-#### 1.2. Création de whatsapp-agent
+#### 1.2. Pembuatan whatsapp-agent
 
-- [ ] Initialiser l'app NestJS basée sur apps/backend
-- [ ] Intégrer LangChain (OpenAI/Anthropic)
-- [ ] Créer le webhook d'entrée (réception messages)
-- [ ] Implémenter la logique de vérification des crédits
-- [ ] Implémenter le système de génération de réponses
-- [ ] Créer le client HTTP pour communiquer avec connector
-- [ ] Implémenter le reporting d'utilisation
-- [ ] Tests et documentation Swagger
+- [ ] Inisialisasi app NestJS berbasis apps/backend
+- [ ] Integrasi LangChain (OpenAI/Anthropic)
+- [ ] Buat webhook masuk (penerimaan pesan)
+- [ ] Implementasi logika verifikasi kredit
+- [ ] Implementasi sistem pembuatan balasan
+- [ ] Buat klien HTTP untuk berkomunikasi dengan connector
+- [ ] Implementasi pelaporan penggunaan
+- [ ] Tes dan dokumentasi Swagger
 
-#### 1.3. Mise à jour du serveur central (apps/backend)
+#### 1.3. Update server pusat (apps/backend)
 
-- [ ] Créer le module de gestion des crédits
-- [ ] Implémenter les endpoints de vérification des crédits
-- [ ] Créer le système de réception des métriques
-- [ ] Implémenter le modèle de facturation
-- [ ] Ajouter la gestion des stacks clients (CRUD)
-- [ ] Créer le module de provisioning VPS (Contabo API)
-- [ ] Tests
+- [ ] Buat modul manajemen kredit
+- [ ] Implementasi endpoint verifikasi kredit
+- [ ] Buat sistem penerimaan metrik
+- [ ] Implementasi model penagihan
+- [ ] Tambahkan manajemen stack klien (CRUD)
+- [ ] Buat modul provisioning VPS (Contabo API)
+- [ ] Tes
 
-#### 1.4. Tests d'intégration WhatsApp
+#### 1.4. Tes integrasi WhatsApp
 
-- [ ] Test du flow complet (réception → traitement → réponse)
-- [ ] Test de vérification des crédits
-- [ ] Test de reporting
-- [ ] Test de déconnexion/reconnexion
+- [ ] Tes flow lengkap (penerimaan → pemrosesan → balasan)
+- [ ] Tes verifikasi kredit
+- [ ] Tes pelaporan
+- [ ] Tes diskoneksi/rekoneksi
 
-### Phase 2: Messenger et Instagram
+### Fase 2: Messenger dan Instagram
 
-#### 2.1. Création de messenger-agent
+#### 2.1. Pembuatan messenger-agent
 
-- [ ] Initialiser l'app NestJS
-- [ ] Intégrer l'API Meta Messenger
-- [ ] Implémenter les webhooks Meta
-- [ ] Intégrer LangChain
-- [ ] Implémenter la vérification des crédits
-- [ ] Tests et documentation
+- [ ] Inisialisasi app NestJS
+- [ ] Integrasi API Meta Messenger
+- [ ] Implementasi webhook Meta
+- [ ] Integrasi LangChain
+- [ ] Implementasi verifikasi kredit
+- [ ] Tes dan dokumentasi
 
-#### 2.2. Création de instagram-agent
+#### 2.2. Pembuatan instagram-agent
 
-- [ ] Initialiser l'app NestJS
-- [ ] Intégrer l'API Instagram Graph
-- [ ] Implémenter les webhooks Instagram
-- [ ] Intégrer LangChain
-- [ ] Implémenter la vérification des crédits
-- [ ] Tests et documentation
+- [ ] Inisialisasi app NestJS
+- [ ] Integrasi API Instagram Graph
+- [ ] Implementasi webhook Instagram
+- [ ] Integrasi LangChain
+- [ ] Implementasi verifikasi kredit
+- [ ] Tes dan dokumentasi
 
-#### 2.3. Tests d'intégration
+#### 2.3. Tes integrasi
 
-- [ ] Test Messenger flow complet
-- [ ] Test Instagram flow complet
+- [ ] Tes flow Messenger lengkap
+- [ ] Tes flow Instagram lengkap
 
-### Phase 3: Dashboard et interface utilisateur
+### Fase 3: Dashboard dan antarmuka pengguna
 
 #### 3.1. Frontend (apps/frontend)
 
-- [ ] Page de gestion des instances WhatsApp
-- [ ] Page de configuration des agents (prompts, modèles)
-- [ ] Dashboard de métriques et utilisation
-- [ ] Gestion des crédits et facturation
-- [ ] Page de gestion des serveurs clients
-- [ ] Tests
+- [ ] Halaman manajemen instance WhatsApp
+- [ ] Halaman konfigurasi agent (prompt, model)
+- [ ] Dashboard metrik dan penggunaan
+- [ ] Manajemen kredit dan penagihan
+- [ ] Halaman manajemen server klien
+- [ ] Tes
 
-### Phase 4: Infrastructure et déploiement
+### Fase 4: Infrastruktur dan deployment
 
-#### 4.1. Docker et orchestration
+#### 4.1. Docker dan orkestrasi
 
-- [ ] Créer les Dockerfiles pour chaque service
-- [ ] Créer les docker-compose/stacks
-- [ ] Implémenter le système de déploiement SSH
-- [ ] Scripts de provisioning VPS
+- [ ] Buat Dockerfile untuk setiap layanan
+- [ ] Buat docker-compose/stack
+- [ ] Implementasi sistem deployment SSH
+- [ ] Skrip provisioning VPS
 
-#### 4.2. Intégration Contabo
+#### 4.2. Integrasi Contabo
 
-- [ ] Intégrer l'API Contabo
-- [ ] Automatiser la création de VPS
-- [ ] Automatiser la configuration initiale (Docker Swarm)
-- [ ] Automatiser le déploiement des stacks
+- [ ] Integrasi API Contabo
+- [ ] Otomasi pembuatan VPS
+- [ ] Otomasi konfigurasi awal (Docker Swarm)
+- [ ] Otomasi deployment stack
 
-#### 4.3. Monitoring et logs
+#### 4.3. Monitoring dan log
 
-- [ ] Centralisation des logs (ELK ou Loki)
-- [ ] Métriques (Prometheus + Grafana)
-- [ ] Alertes (erreurs, déconnexions, crédits bas)
+- [ ] Pemusatan log (ELK atau Loki)
+- [ ] Metrik (Prometheus + Grafana)
+- [ ] Peringatan (error, diskoneksi, kredit rendah)
 
-### Phase 5: Production et optimisations
+### Fase 5: Produksi dan optimasi
 
-#### 5.1. Sécurité
+#### 5.1. Keamanan
 
-- [ ] Chiffrement des communications
-- [ ] Gestion des secrets (Vault ou équivalent)
+- [ ] Enkripsi komunikasi
+- [ ] Manajemen rahasia (Vault atau setara)
 - [ ] Rate limiting
-- [ ] Protection DDoS
+- [ ] Proteksi DDoS
 
-#### 5.2. Optimisations
+#### 5.2. Optimasi
 
-- [ ] Cache des réponses similaires
-- [ ] Optimisation des prompts LangChain
-- [ ] Réduction des coûts API
+- [ ] Cache balasan serupa
+- [ ] Optimasi prompt LangChain
+- [ ] Pengurangan biaya API
 
-#### 5.3. Tests de charge
+#### 5.3. Tes beban
 
-- [ ] Test de charge serveur central
-- [ ] Test de charge agents
-- [ ] Test de déploiement multi-stacks
+- [ ] Tes beban server pusat
+- [ ] Tes beban agent
+- [ ] Tes deployment multi-stack
 
 ---
 
-## 🛠️ Technologies utilisées
+## Teknologi yang Digunakan
 
 ### Backend
 
 - **Framework:** NestJS
-- **Base de données:** PostgreSQL
-- **ORM:** Prisma (⚠️ NE JAMAIS utiliser `prisma db push`, uniquement migrations)
+- **Database:** PostgreSQL
+- **ORM:** Prisma (JANGAN PERNAH gunakan `prisma db push`, hanya migrasi)
 - **Cache:** Redis
 - **Queue:** Bull
-- **Validation:** class-validator, class-transformer
-- **Documentation:** Swagger/OpenAPI
+- **Validasi:** class-validator, class-transformer
+- **Dokumentasi:** Swagger/OpenAPI
 
-### IA et automatisation
+### AI dan otomasi
 
-- **LangChain:** Framework pour orchestration LLM
-- **OpenAI/Anthropic:** Modèles de langage
-- **wwebjs.dev:** Client WhatsApp
+- **LangChain:** Framework untuk orkestrasi LLM
+- **OpenAI/Anthropic:** Model bahasa
+- **wwebjs.dev:** Klien WhatsApp
 
-### API externes
+### API eksternal
 
 - **Meta Platform:** Messenger & Instagram
-- **Contabo API:** Gestion VPS
+- **Contabo API:** Manajemen VPS
 
-### Infrastructure
+### Infrastruktur
 
-- **Conteneurisation:** Docker
-- **Orchestration:** Docker Swarm
-- **Provisioning:** SSH + scripts Bash
+- **Containerisasi:** Docker
+- **Orkestrasi:** Docker Swarm
+- **Provisioning:** SSH + skrip Bash
 - **Monitoring:** Prometheus, Grafana
-- **Logs:** ELK Stack ou Loki
+- **Log:** ELK Stack atau Loki
 
 ### Frontend
 
 - **Framework:** React Router v7
-- **State management:** À définir (Context API, Zustand, Redux)
-- **UI Library:** À définir
+- **State management:** Akan ditentukan (Context API, Zustand, Redux)
+- **UI Library:** Akan ditentukan
 
 ---
 
-## 📊 Modèle de facturation
+## Model Penagihan
 
-### Système de crédits
+### Sistem kredit
 
-- 1 crédit = X tokens (à définir)
-- Décompte basé sur l'utilisation réelle des API LLM
-- Forfaits mensuels avec crédits inclus
-- Recharge possible
+- 1 kredit = X token (akan ditentukan)
+- Pemotongan berdasarkan penggunaan API LLM aktual
+- Paket bulanan dengan kredit termasuk
+- Isi ulang dimungkinkan
 
-### Pricing tiers (exemple)
+### Tingkat harga (contoh)
 
-- **Starter:** 1000 crédits/mois
-- **Pro:** 5000 crédits/mois
-- **Enterprise:** 20000 crédits/mois + instances dédiées
+- **Starter:** 1000 kredit/bulan
+- **Pro:** 5000 kredit/bulan
+- **Enterprise:** 20000 kredit/bulan + instance khusus
 
 ---
 
-## 🔐 Sécurité et conformité
+## Keamanan dan Kepatuhan
 
-### Données utilisateurs
+### Data pengguna
 
-- Chiffrement des données sensibles
-- Conformité RGPD
-- Politique de rétention des messages
+- Enkripsi data sensitif
+- Kepatuhan GDPR
+- Kebijakan retensi pesan
 
-### Infrastructure
+### Infrastruktur
 
-- Isolation réseau entre stacks
-- Secrets management
-- Authentification inter-services (JWT ou API keys)
-- Rate limiting par client
+- Isolasi jaringan antar stack
+- Manajemen rahasia
+- Autentikasi antar-layanan (JWT atau API key)
+- Rate limiting per klien
 
 ### WhatsApp
 
-- Respect des conditions d'utilisation
-- Isolation des IP pour limiter les bannissements
-- Rotation possible des instances
+- Mematuhi syarat penggunaan
+- Isolasi IP untuk membatasi pemblokiran
+- Rotasi instance dimungkinkan
 
 ---
 
-## 📈 Métriques à suivre
+## Metrik yang Dipantau
 
-### Par utilisateur
+### Per pengguna
 
-- Nombre de messages traités
-- Tokens consommés
-- Crédits restants
-- Taux de réponse
-- Temps de réponse moyen
+- Jumlah pesan yang diproses
+- Token yang dikonsumsi
+- Kredit tersisa
+- Tingkat balasan
+- Rata-rata waktu respons
 
-### Par serveur client
+### Per server klien
 
-- Nombre de stacks actives
-- Utilisation CPU/RAM
-- État des connexions WhatsApp
-- Erreurs et déconnexions
+- Jumlah stack aktif
+- Penggunaan CPU/RAM
+- Status koneksi WhatsApp
+- Error dan diskoneksi
 
-### Globalement
+### Global
 
-- Revenue mensuel
-- Coûts API (OpenAI, Meta, etc.)
-- Coûts infrastructure (Contabo)
-- Marge
-
----
-
-## 🚀 Prochaines étapes
-
-### Immédiat (Phase 1.1)
-
-1. ✅ Créer le projet whatsapp-connector
-2. ✅ Configurer la structure NestJS
-3. ✅ Intégrer wwebjs.dev
-4. ✅ Implémenter les endpoints de base
-
-### Cette semaine
-
-- Finaliser whatsapp-connector
-- Démarrer whatsapp-agent
-- Tests d'intégration basiques
-
-### Ce mois
-
-- Compléter Phase 1 (WhatsApp complet)
-- Démarrer Phase 2 (Messenger/Instagram)
+- Pendapatan bulanan
+- Biaya API (OpenAI, Meta, dll.)
+- Biaya infrastruktur (Contabo)
+- Margin
 
 ---
 
-## 📝 Notes importantes
+## Langkah Selanjutnya
 
-### Contraintes techniques
+### Segera (Fase 1.1)
 
-- ⚠️ **JAMAIS** utiliser `prisma db push`, uniquement les migrations
-- Minimiser les mises à jour de whatsapp-connector pour éviter les déconnexions
-- Maximum 3 stacks par serveur client
-- Vérification des crédits AVANT chaque traitement
+1. Buat proyek whatsapp-connector
+2. Konfigurasi struktur NestJS
+3. Integrasi wwebjs.dev
+4. Implementasi endpoint dasar
 
-### Décisions à prendre
+### Minggu ini
 
-- [ ] Choix du provider LLM par défaut (OpenAI vs Anthropic)
-- [ ] Modèle de pricing exact
-- [ ] Stack de monitoring (ELK vs Loki)
-- [ ] Politique de rétention des messages
-- [ ] Stratégie de backup
+- Selesaikan whatsapp-connector
+- Mulai whatsapp-agent
+- Tes integrasi dasar
+
+### Bulan ini
+
+- Selesaikan Fase 1 (WhatsApp lengkap)
+- Mulai Fase 2 (Messenger/Instagram)
 
 ---
 
-## 📚 Ressources
+## Catatan Penting
 
-- [wwebjs.dev Documentation](https://wwebjs.dev/)
-- [NestJS Documentation](https://docs.nestjs.com/)
-- [LangChain Documentation](https://js.langchain.com/)
+### Batasan teknis
+
+- JANGAN PERNAH gunakan `prisma db push`, hanya migrasi
+- Minimalkan update whatsapp-connector untuk menghindari diskoneksi
+- Maksimum 3 stack per server klien
+- Verifikasi kredit SEBELUM setiap pemrosesan
+
+### Keputusan yang harus diambil
+
+- [ ] Pilihan provider LLM default (OpenAI vs Anthropic)
+- [ ] Model pricing yang tepat
+- [ ] Stack monitoring (ELK vs Loki)
+- [ ] Kebijakan retensi pesan
+- [ ] Strategi backup
+
+---
+
+## Sumber Daya
+
+- [Dokumentasi wwebjs.dev](https://wwebjs.dev/)
+- [Dokumentasi NestJS](https://docs.nestjs.com/)
+- [Dokumentasi LangChain](https://js.langchain.com/)
 - [Meta Messenger Platform](https://developers.facebook.com/docs/messenger-platform)
 - [Instagram Graph API](https://developers.facebook.com/docs/instagram-api)
-- [Contabo API Documentation](https://api.contabo.com/)
+- [Dokumentasi API Contabo](https://api.contabo.com/)
 
 ---
 
-**Version:** 1.0 **Date:** 2025-11-11 **Statut:** En cours - Phase 1.1
+**Versi:** 1.0 **Tanggal:** 2025-11-11 **Status:** Sedang berjalan - Fase 1.1

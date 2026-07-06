@@ -1,29 +1,29 @@
-# Guide de Configuration - WhatsApp Agent Platform
+# Panduan Konfigurasi - Platform WhatsApp Agent
 
-## 📋 Prérequis
+## Prasyarat
 
-- Node.js 18+ et pnpm 10+
+- Node.js 18+ dan pnpm 10+
 - PostgreSQL 14+
 - Redis 6+
-- Compte API Grok (xAI) ou Gemini (Google)
+- Akun API Grok (xAI) atau Gemini (Google)
 
-## 🚀 Installation Rapide
+## Instalasi Cepat
 
-### 1. Installer les dépendances
+### 1. Pasang dependensi
 
 ```bash
 pnpm install
 ```
 
-### 2. Configuration de la base de données
+### 2. Konfigurasi database
 
-Créer une base de données PostgreSQL:
+Buat database PostgreSQL:
 
 ```bash
 createdb whatsapp_agent
 ```
 
-### 3. Configuration des variables d'environnement
+### 3. Konfigurasi variabel lingkungan
 
 #### Backend
 
@@ -32,12 +32,12 @@ cd apps/backend
 cp .env.example .env
 ```
 
-Éditer `.env` et configurer:
+Edit `.env` dan konfigurasikan:
 
-- `DATABASE_URL`: URL de connexion PostgreSQL
-- `REDIS_URL`: URL de connexion Redis
-- `JWT_SECRET`: Clé secrète pour JWT (générer une clé aléatoire)
-- `ENCRYPTION_KEY`: Clé de cryptage (32 caractères)
+- `DATABASE_URL`: URL koneksi PostgreSQL
+- `REDIS_URL`: URL koneksi Redis
+- `JWT_SECRET`: Kunci rahasia untuk JWT (hasilkan kunci acak)
+- `ENCRYPTION_KEY`: Kunci enkripsi (32 karakter)
 
 #### WhatsApp Connector
 
@@ -46,7 +46,7 @@ cd apps/whatsapp-connector
 cp .env.example .env
 ```
 
-Vérifier que les URLs correspondent aux services locaux.
+Pastikan URL sesuai dengan layanan lokal.
 
 #### WhatsApp Agent
 
@@ -55,9 +55,9 @@ cd apps/whatsapp-agent
 cp .env.example .env
 ```
 
-Éditer `.env` et ajouter:
+Edit `.env` dan tambahkan:
 
-- `GROK_API_KEY`: Votre clé API xAI (ou Gemini)
+- `GROK_API_KEY`: Kunci API xAI Anda (atau Gemini)
 
 #### Frontend
 
@@ -66,89 +66,89 @@ cd apps/frontend
 cp .env.example .env
 ```
 
-Par défaut: `VITE_API_URL=http://localhost:3000`
+Default: `VITE_API_URL=http://localhost:3000`
 
-### 4. Initialiser la base de données
+### 4. Inisialisasi database
 
 ```bash
 cd apps/backend
-pnpm prisma:migrate   # Applique les migrations
-pnpm prisma:seed      # Importe les données de test
+pnpm prisma:migrate   # Terapkan migrasi
+pnpm prisma:seed      # Impor data uji
 ```
 
-### 5. Lancer tous les services
+### 5. Jalankan semua layanan
 
 ```bash
-# À la racine du projet
+# Di root proyek
 pnpm dev:all
 ```
 
-Ceci lance:
+Perintah ini menjalankan:
 
-- **Backend** sur http://localhost:3000
-- **Frontend** sur http://localhost:5173
-- **WhatsApp Connector** sur http://localhost:3001
-- **WhatsApp Agent** sur http://localhost:3002
+- **Backend** di http://localhost:3000
+- **Frontend** di http://localhost:5173
+- **WhatsApp Connector** di http://localhost:3001
+- **WhatsApp Agent** di http://localhost:3002
 
-## 📚 Documentation API
+## Dokumentasi API
 
-- Backend Swagger: http://localhost:3000/api
-- Connector Swagger: http://localhost:3001/api
-- Agent Swagger: http://localhost:3002/api
+- Swagger Backend: http://localhost:3000/api
+- Swagger Connector: http://localhost:3001/api
+- Swagger Agent: http://localhost:3002/api
 
-## 🧪 Données de Test
+## Data Uji
 
-Après le seeding, vous pouvez vous connecter avec:
+Setelah seeding, Anda dapat masuk dengan:
 
-- **Téléphone**: +33612345678
+- **Telepon**: +33612345678
 - **Email**: test@example.com
-- **Crédits**: 1000
+- **Kredit**: 1000
 
-## 🔧 Scripts Disponibles
+## Skrip Tersedia
 
 ```bash
-# Développement
-pnpm dev              # Backend + Frontend uniquement
-pnpm dev:all          # Tous les services
-pnpm dev:backend      # Backend seul
-pnpm dev:frontend     # Frontend seul
+# Pengembangan
+pnpm dev              # Backend + Frontend saja
+pnpm dev:all          # Semua layanan
+pnpm dev:backend      # Backend saja
+pnpm dev:frontend     # Frontend saja
 pnpm dev:whatsapp     # Connector + Agent
 
 # Build
-pnpm build            # Build tous les services
-pnpm build:backend    # Build backend seul
-pnpm build:frontend   # Build frontend seul
+pnpm build            # Build semua layanan
+pnpm build:backend    # Build backend saja
+pnpm build:frontend   # Build frontend saja
 
-# Base de données
+# Database
 cd apps/backend
-pnpm prisma:migrate   # Créer/appliquer migrations
+pnpm prisma:migrate   # Membuat/menerapkan migrasi
 pnpm prisma:seed      # Seeding
-pnpm prisma:studio    # Interface graphique Prisma
-pnpm db:reset         # Reset complet (⚠️ données effacées)
+pnpm prisma:studio    # Antarmuka grafis Prisma
+pnpm db:reset         # Reset penuh (perhatian: data dihapus)
 
-# Tests
+# Tes
 pnpm lint:all         # Linting + Type-check
 pnpm type-check       # Type-check TypeScript
 ```
 
-## 🔐 Authentification
+## Autentikasi
 
-### Premier utilisateur (Pairing WhatsApp)
+### Pengguna pertama (Pairing WhatsApp)
 
-1. Aller sur http://localhost:5173/auth/login
-2. Entrer un numéro WhatsApp
-3. Le système génère un code de pairing à 8 chiffres
-4. Ouvrir WhatsApp > Paramètres > Appareils connectés > Associer avec numéro
-5. Entrer le code
-6. Une fois connecté, vous êtes redirigé vers l'onboarding
+1. Buka http://localhost:5173/auth/login
+2. Masukkan nomor WhatsApp
+3. Sistem menghasilkan kode pairing 8 digit
+4. Buka WhatsApp > Pengaturan > Perangkat terhubung > Hubungkan dengan nomor
+5. Masukkan kode
+6. Setelah terhubung, Anda akan diarahkan ke onboarding
 
-### Utilisateurs existants (OTP)
+### Pengguna yang sudah ada (OTP)
 
-1. Aller sur http://localhost:5173/auth/verify-otp
-2. Le système envoie un code à 6 chiffres via WhatsApp
-3. Entrer le code pour se connecter
+1. Buka http://localhost:5173/auth/verify-otp
+2. Sistem mengirim kode 6 digit melalui WhatsApp
+3. Masukkan kode untuk masuk
 
-## 🏗️ Architecture
+## Arsitektur
 
 ```
 ┌─────────────┐      ┌──────────────────┐      ┌────────────────┐
@@ -166,32 +166,32 @@ pnpm type-check       # Type-check TypeScript
             └──────────────┘   └──────────────┘
 ```
 
-## ⚠️ Notes Importantes
+## Catatan Penting
 
-- **JAMAIS** utiliser `prisma db push` en production, uniquement les migrations
-- Le connector WhatsApp garde la session dans `./data/sessions`
-- Les agents utilisent Grok par défaut, avec fallback sur Gemini
-- En dev, un agent local est créé automatiquement (localhost:3002)
+- **JANGAN PERNAH** menggunakan `prisma db push` di produksi, hanya migrasi
+- Connector WhatsApp menyimpan sesi di `./data/sessions`
+- Agent menggunakan Grok secara default, dengan fallback ke Gemini
+- Di dev, agent lokal dibuat otomatis (localhost:3002)
 
-## 🐛 Troubleshooting
+## Pemecahan Masalah
 
-### La migration échoue
+### Migrasi gagal
 
 ```bash
 cd apps/backend
-pnpm db:reset  # ⚠️ Efface toutes les données
+pnpm db:reset  # Perhatian: Menghapus semua data
 ```
 
-### WhatsApp ne se connecte pas
+### WhatsApp tidak terhubung
 
-1. Supprimer `./data/sessions` dans whatsapp-connector
-2. Redémarrer le connector
-3. Scanner le nouveau QR code
+1. Hapus `./data/sessions` di whatsapp-connector
+2. Mulai ulang connector
+3. Pindai QR code baru
 
-### Le frontend ne trouve pas l'API
+### Frontend tidak menemukan API
 
-Vérifier que `VITE_API_URL` dans `apps/frontend/.env` correspond au backend.
+Pastikan `VITE_API_URL` di `apps/frontend/.env` sesuai dengan backend.
 
-## 📞 Support
+## Dukungan
 
-Pour toute question, consultez le PLAN.md ou les READMEs spécifiques de chaque service.
+Untuk pertanyaan apa pun, lihat PLAN.md atau README spesifik dari setiap layanan.

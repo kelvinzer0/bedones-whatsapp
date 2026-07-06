@@ -1,93 +1,93 @@
-# Architecture Découplée Connector ↔ Backend
+# Arsitektur Terpisah Connector ↔ Backend
 
-## 🎯 Objectif
+## Tujuan
 
-Séparer les responsabilités entre le **WhatsApp Connector** (client pur) et le **Backend**
-(orchestrateur) pour :
+Memisahkan tanggung jawab antara **WhatsApp Connector** (klien murni) dan **Backend**
+(orkestrator) untuk:
 
-- ✅ Minimiser les redéploiements du connector (sensible car connecté à WhatsApp)
-- ✅ Centraliser la logique métier dans le backend
-- ✅ Permettre l'évolution des fonctionnalités sans toucher au connector
+- Meminimalkan redeployment connector (sensitif karena terhubung ke WhatsApp)
+- Memusatkan logika bisnis di backend
+- Memungkinkan evolusi fitur tanpa menyentuh connector
 
 ---
 
-## 📐 Architecture
+## Arsitektur
 
 ### **Connector** (whatsapp-connector)
 
-**Rôle** : Client pur WhatsApp Web
+**Peran**: Klien murni WhatsApp Web
 
-#### Responsabilités :
+#### Tanggung Jawab:
 
-- Se connecter à WhatsApp Web via `whatsapp-web.js`
-- Envoyer des événements via webhooks (`ready`, `qr`, `message`, etc.)
-- Exposer un endpoint pour **exécuter du code** dans la page WhatsApp Web
-- ❌ **NE FAIT PLUS** : Logique métier, téléchargement/upload d'images, traitement de données
+- Terhubung ke WhatsApp Web melalui `whatsapp-web.js`
+- Mengirim event melalui webhook (`ready`, `qr`, `message`, dll.)
+- Menyediakan endpoint untuk **menjalankan kode** di halaman WhatsApp Web
+- TIDAK LAGI: Logika bisnis, download/upload gambar, pemrosesan data
 
 ### **WhatsApp Agent** (whatsapp-agent)
 
-**Rôle** : Agent IA décentralisé pour le business quotidien
+**Peran**: Agent AI terdesentralisasi untuk bisnis harian
 
-#### Responsabilités :
+#### Tanggung Jawab:
 
-- **IA & LangChain** : Traitement intelligent des messages avec tools
-- **Intentions** : Gestion des rappels intelligents (relances, suivis)
-- **Mémoires** : Stockage local des préférences et contexte client
-- **Catalogue local** : Cache avec embeddings pour recherche sémantique
-- **Queue** : Traitement asynchrone des intentions programmées
+- **AI & LangChain**: Pemrosesan pesan cerdas dengan tools
+- **Niat**: Pengelolaan pengingat cerdas (follow-up, tindak lanjut)
+- **Memori**: Penyimpanan lokal preferensi dan konteks klien
+- **Katalog lokal**: Cache dengan embeddings untuk pencarian semantik
+- **Queue**: Pemrosesan asinkron niat terjadwal
 
-#### Base de données locale :
+#### Database lokal:
 
-- `ConversationMemory` : Mémoires persistantes des clients
-- `Intention` : Intentions programmées avec conditions
-- `ScheduledMessage` : Messages programmés (queue)
-- `CatalogProduct` : Catalogue local avec embeddings
+- `ConversationMemory`: Memori persisten klien
+- `Intention`: Niat terjadwal dengan kondisi
+- `ScheduledMessage`: Pesan terjadwal (queue)
+- `CatalogProduct`: Katalog lokal dengan embeddings
 
-#### Communication avec Backend :
+#### Komunikasi dengan Backend:
 
-- ✅ `POST /agent/can-process` : Vérifier si traiter un message
-- ✅ `POST /agent/log-operation` : Logger les métriques (tokens, tools, durée)
-- ❌ **NE FAIT PAS** : Onboarding, facturation, configuration globale
+- `POST /agent/can-process`: Memeriksa apakah boleh memproses pesan
+- `POST /agent/log-operation`: Mencatat metrik (token, tools, durasi)
+- TIDAK MELAKUKAN: Onboarding, penagihan, konfigurasi global
 
-#### Endpoints exposés :
+#### Endpoint yang disediakan:
 
 ```
 POST /whatsapp/execute-script
 Body: { script: string }
 ```
 
-Exécute du JavaScript dans le contexte de la page WhatsApp Web (accès à `window.WPP`).
+Menjalankan JavaScript dalam konteks halaman WhatsApp Web (akses ke `window.WPP`).
 
-#### Configuration :
+#### Konfigurasi:
 
 ```env
-CONNECTOR_SECRET=your-secret      # Pour signer les webhooks
-WEBHOOK_URLS=http://backend/...   # URLs à notifier
+CONNECTOR_SECRET=your-secret      # Untuk menandatangani webhook
+WEBHOOK_URLS=http://backend/...   # URL yang akan diberi tahu
 ```
 
 ---
 
 ### **Backend** (apps/backend)
 
-**Rôle** : Orchestrateur centralisé - Onboarding, Facturation, Configuration
+**Peran**: Orkestrator terpusat - Onboarding, Penagihan, Konfigurasi
 
-#### Responsabilités :
+#### Tanggung Jawab:
 
-- **Onboarding** : Gestion du processus d'inscription des clients
-- **Facturation** : Tracking des crédits, abonnements, paiements
-- **Configuration** : WhatsAppAgent, groupes autorisés, contexte métier
-- **Logs & Analytics** : Stockage des AgentOperation (tokens, durée, tools)
-- **Orchestration Connector** : Génération et envoi de scripts au connector
-- **Stockage centralisé** : Minio pour images/avatars, BD pour config globale
+- **Onboarding**: Mengelola proses pendaftaran klien
+- **Penagihan**: Pelacakan kredit, langganan, pembayaran
+- **Konfigurasi**: WhatsAppAgent, grup yang diizinkan, konteks bisnis
+- **Log & Analitik**: Penyimpanan AgentOperation (token, durasi, tools)
+- **Orkestrasi Connector**: Pembuatan dan pengiriman skrip ke connector
+- **Penyimpanan terpusat**: Minio untuk gambar/avatar, DB untuk konfigurasi global
 
-#### Ce que le Backend NE FAIT PAS :
+#### Yang TIDAK Dilakukan Backend:
 
-- ❌ Traitement IA des messages (délégué à WhatsApp-Agent)
-- ❌ Gestion des intentions et rappels (délégué à WhatsApp-Agent)
-- ❌ Cache catalogue avec embeddings (délégué à WhatsApp-Agent)
-- ❌ Mémoires conversationnelles (délégué à WhatsApp-Agent)
+- Pemrosesan AI pesan (didelegasikan ke WhatsApp-Agent)
+- Pengelolaan niat dan pengingat (didelegasikan ke WhatsApp-Agent)
+- Cache katalog dengan embeddings (didelegasikan ke WhatsApp-Agent)
+- Memori percakapan (didelegasikan ke WhatsApp-Agent)
 
-#### Workflow - Récupération du catalogue
+#### Workflow - Pengambilan katalog
 
 ```mermaid
 sequenceDiagram
@@ -110,31 +110,31 @@ sequenceDiagram
 
 ---
 
-## 🗂️ Structure des fichiers
+## Struktur File
 
 ### Backend
 
 ```
 apps/backend/src/
-├── page-scripts/                    # Scripts exécutés dans la page WhatsApp
-│   ├── getCatalog.script.ts        # Script de récupération du catalogue
-│   ├── page-script.service.ts      # Service de templating ({{VAR}})
+├── page-scripts/                    # Skrip yang dijalankan di halaman WhatsApp
+│   ├── getCatalog.script.ts        # Skrip pengambilan katalog
+│   ├── page-script.service.ts      # Service templating ({{VAR}})
 │   └── page-script.module.ts
 │
-├── catalog/                         # Module catalogue
+├── catalog/                         # Modul katalog
 │   ├── catalog.controller.ts       # POST /catalog/upload-image
-│   ├── catalog.service.ts          # Logique de gestion des images
+│   ├── catalog.service.ts          # Logika pengelolaan gambar
 │   └── catalog.module.ts
 │
-├── minio/                           # Module Minio (S3)
-│   ├── minio.service.ts            # Upload/download vers Minio
+├── minio/                           # Modul Minio (S3)
+│   ├── minio.service.ts            # Upload/download ke Minio
 │   └── minio.module.ts
 │
-├── webhooks/                        # Webhooks du connector
-│   ├── webhooks.controller.ts      # Reçoit les événements
+├── webhooks/                        # Webhook connector
+│   ├── webhooks.controller.ts      # Menerima event
 │   └── webhooks.module.ts
 │
-└── connector-client/                # Client HTTP vers connector
+└── connector-client/                # Klien HTTP ke connector
     └── connector-client.service.ts # executeScript()
 ```
 
@@ -143,16 +143,16 @@ apps/backend/src/
 ```
 apps/whatsapp-connector/src/
 ├── whatsapp/
-│   ├── whatsapp-client.service.ts  # Client WhatsApp (allégé)
+│   ├── whatsapp-client.service.ts  # Klien WhatsApp (disederhanakan)
 │   ├── whatsapp.controller.ts      # POST /execute-script
-│   └── webhook.service.ts          # Envoie webhooks avec signature
+│   └── webhook.service.ts          # Mengirim webhook dengan tanda tangan
 │
-└── catalog/                         # ❌ MODULE SUPPRIMÉ
+└── catalog/                         # MODUL DIHAPUS
 ```
 
 ---
 
-## 🔧 Configuration
+## Konfigurasi
 
 ### Backend (.env)
 
@@ -173,22 +173,22 @@ MINIO_BUCKET=whatsapp-agent
 ### Connector (.env)
 
 ```env
-# Webhooks
+# Webhook
 WEBHOOK_URLS=http://backend:3000/webhooks/whatsapp/connected
 
-# Security
-CONNECTOR_SECRET=your-shared-secret   # Même que backend
+# Keamanan
+CONNECTOR_SECRET=your-shared-secret   # Sama dengan backend
 ```
 
 ---
 
-## 🔐 Sécurité
+## Keamanan
 
-### Signature des webhooks
+### Tanda tangan webhook
 
-Le connector signe tous les webhooks avec HMAC-SHA256 :
+Connector menandatangani semua webhook dengan HMAC-SHA256:
 
-**Connector** :
+**Connector**:
 
 ```typescript
 const signature = crypto
@@ -199,21 +199,21 @@ const signature = crypto
 headers['X-Connector-Signature'] = signature
 ```
 
-**Backend** :
+**Backend**:
 
 ```typescript
-@UseGuards(ConnectorSignatureGuard)  // Vérifie la signature
+@UseGuards(ConnectorSignatureGuard)  // Memverifikasi tanda tangan
 async whatsappConnected(@Body() data) { ... }
 ```
 
 ---
 
-## 📝 Scripts de page
+## Skrip Halaman
 
-### Exemple : getCatalog.script.ts
+### Contoh: getCatalog.script.ts
 
 ```javascript
-// Exécuté dans le contexte de la page WhatsApp Web
+// Dijalankan dalam konteks halaman WhatsApp Web
 const collections = await window.WPP.catalog.getCollections(userId, 50, 100)
 
 for (const product of products) {
@@ -223,7 +223,7 @@ for (const product of products) {
   formData.append('image', blob)
   formData.append('productId', product.id)
 
-  // Upload vers backend
+  // Upload ke backend
   await fetch('{{BACKEND_URL}}/catalog/upload-image', {
     method: 'POST',
     headers: { Authorization: 'Bearer {{TOKEN}}' },
@@ -232,105 +232,105 @@ for (const product of products) {
 }
 ```
 
-### Placeholders disponibles :
+### Placeholder yang tersedia:
 
-- `{{BACKEND_URL}}` : URL du backend
-- `{{TOKEN}}` : Token d'authentification
-- `{{CLIENT_ID}}` : ID du client WhatsApp
-
----
-
-## 🚀 Déploiement
-
-### Avantages de cette architecture :
-
-1. **Connector stable** : Pas besoin de le redéployer souvent
-2. **Backend flexible** : Modifications de logique sans toucher au connector
-3. **Scalabilité** : Un connector peut servir plusieurs backends
-4. **Maintenabilité** : Séparation claire des responsabilités
-
-### Workflow de déploiement :
-
-**Pour une nouvelle fonctionnalité** :
-
-1. ✅ Créer un nouveau script dans `apps/backend/src/page-scripts/`
-2. ✅ Ajouter l'endpoint de traitement dans le backend
-3. ✅ Déclencher le script depuis un webhook
-4. ❌ **Pas besoin** de toucher au connector
-
-**Le connector ne change que si** :
-
-- Mise à jour de `whatsapp-web.js`
-- Nouveau type d'événement à écouter
-- Problème de stabilité/reconnexion
+- `{{BACKEND_URL}}`: URL backend
+- `{{TOKEN}}`: Token autentikasi
+- `{{CLIENT_ID}}`: ID klien WhatsApp
 
 ---
 
-## 🏗️ Séparation des Responsabilités
+## Deployment
 
-### Backend (Centralisé) vs WhatsApp-Agent (Décentralisé)
+### Keunggulan arsitektur ini:
 
-| Fonctionnalité | Backend (Centralisé) | WhatsApp-Agent (Décentralisé) |
+1. **Connector stabil**: Tidak perlu sering redeploy
+2. **Backend fleksibel**: Modifikasi logika tanpa menyentuh connector
+3. **Skalabilitas**: Satu connector bisa melayani beberapa backend
+4. **Maintainability**: Pemisahan tanggung jawab yang jelas
+
+### Workflow deployment:
+
+**Untuk fitur baru**:
+
+1. Buat skrip baru di `apps/backend/src/page-scripts/`
+2. Tambahkan endpoint pemrosesan di backend
+3. Picu skrip dari webhook
+4. Tidak perlu menyentuh connector
+
+**Connector hanya berubah jika**:
+
+- Update `whatsapp-web.js`
+- Tipe event baru yang harus didengarkan
+- Masalah stabilitas/rekoneksi
+
+---
+
+## Pemisahan Tanggung Jawab
+
+### Backend (Terpusat) vs WhatsApp-Agent (Terdesentralisasi)
+
+| Fitur | Backend (Terpusat) | WhatsApp-Agent (Terdesentralisasi) |
 |---|---|---|
-| **Onboarding** | ✅ Gestion complète | ❌ |
-| **Facturation** | ✅ Crédits, abonnements | ❌ |
-| **Configuration Agent** | ✅ Contexte métier, groupes | ❌ |
-| **Logs & Analytics** | ✅ Stockage AgentOperation | ✅ Envoi des métriques |
-| **IA & Messages** | ❌ | ✅ LangChain + Tools |
-| **Intentions** | ❌ | ✅ Gestion locale |
-| **Mémoires** | ❌ | ✅ Stockage local |
-| **Catalogue** | ✅ Source de vérité | ✅ Cache + embeddings |
+| **Onboarding** | Pengelolaan penuh | - |
+| **Penagihan** | Kredit, langganan | - |
+| **Konfigurasi Agent** | Konteks bisnis, grup | - |
+| **Log & Analitik** | Penyimpanan AgentOperation | Pengiriman metrik |
+| **AI & Pesan** | - | LangChain + Tools |
+| **Niat** | - | Pengelolaan lokal |
+| **Memori** | - | Penyimpanan lokal |
+| **Katalog** | Sumber kebenaran | Cache + embeddings |
 
-### Pourquoi cette architecture ?
+### Mengapa arsitektur ini?
 
-1. **Scalabilité** :
-   - 1 VPS = 1 client → Charge distribuée
-   - Backend léger → Gère des milliers de clients
+1. **Skalabilitas**:
+   - 1 VPS = 1 klien → Beban terdistribusi
+   - Backend ringan → Menangani ribuan klien
 
-2. **Performance** :
-   - Agent local → Réponses instantanées
-   - Pas de latence réseau pour chaque message
+2. **Performa**:
+   - Agent lokal → Respons instan
+   - Tidak ada latensi jaringan untuk setiap pesan
 
-3. **Isolation** :
-   - Crash d'un agent → N'affecte pas les autres
-   - Données business isolées par VPS
+3. **Isolasi**:
+   - Crash satu agent → Tidak mempengaruhi yang lain
+   - Data bisnis terisolasi per VPS
 
-4. **Coûts** :
-   - Agent utilise ses propres ressources (API keys)
-   - Backend ne paie que pour la config/logs
+4. **Biaya**:
+   - Agent menggunakan sumber daya sendiri (API keys)
+   - Backend hanya membayar untuk konfigurasi/log
 
 ---
 
-## 📊 Monitoring
+## Monitoring
 
-### Logs à surveiller
+### Log yang perlu dipantau
 
-**Connector** :
+**Connector**:
 
 ```
 ✅ WhatsApp client is ready!
 🔍 Executing page script in browser context
 ```
 
-**Backend** :
+**Backend**:
 
 ```
 🚀 Executing catalog script for client: 237697020290@c.us
-✅ Image uploadée: 25095720553426064-0 (main)
-📦 Catalogue reçu: 2 collections, 15 produits, 45 images
+✅ Image uploaded: 25095720553426064-0 (main)
+📦 Catalog received: 2 collections, 15 products, 45 images
 ```
 
 ---
 
-## 🧠 Système d'Intentions (WhatsApp Agent)
+## Sistem Niat (WhatsApp Agent)
 
-### Principe
+### Prinsip
 
-L'agent peut créer des **intentions** programmées qui vérifient une condition avant d'agir.
+Agent dapat membuat **niat** terjadwal yang memeriksa kondisi sebelum bertindak.
 
-**Exemple** : "Relancer le client dans 2 jours **SI** il n'a pas répondu"
+**Contoh**: "Tindak lanjuti klien dalam 2 hari **JIKA** belum menjawab"
 
-### Flow complet
+### Flow lengkap
 
 ```mermaid
 sequenceDiagram
@@ -339,28 +339,28 @@ sequenceDiagram
     participant Queue as Bull Queue
     participant DB as Prisma (Local)
 
-    User->>Agent: "Intéressé par iPhone 15"
-    Agent->>Agent: Analyse: client intéressé mais pas commandé
+    User->>Agent: "Tertarik dengan iPhone 15"
+    Agent->>Agent: Analisis: klien tertarik tapi belum pesan
     Agent->>DB: Create Intention (type: FOLLOW_UP)
-    Agent->>Queue: Schedule job dans 2 jours
-    Agent->>User: "OK ! Je vous recontacte dans 2 jours"
+    Agent->>Queue: Schedule job dalam 2 hari
+    Agent->>User: "OK! Saya hubungi lagi dalam 2 hari"
 
-    Note over Queue: ⏰ 2 jours plus tard
+    Note over Queue: 2 hari kemudian
 
     Queue->>Agent: Trigger intention
     Agent->>Agent: Invoke tools (get_older_messages)
-    Agent->>Agent: Check condition: "Client a répondu?"
+    Agent->>Agent: Check condition: "Client telah menjawab?"
 
-    alt Condition VRAIE (client a répondu)
-        Agent->>User: "Merci pour votre réponse !"
+    alt Condition TRUE (klien menjawab)
+        Agent->>User: "Terima kasih atas jawaban Anda!"
         Agent->>DB: Mark COMPLETED
-    else Condition FAUSSE (pas de réponse)
-        Agent->>User: "Toujours intéressé par iPhone 15?"
+    else Condition FALSE (tidak ada jawaban)
+        Agent->>User: "Masih tertarik dengan iPhone 15?"
         Agent->>DB: Mark COMPLETED
     end
 ```
 
-### Modèle de données
+### Model data
 
 ```typescript
 model Intention {
@@ -369,22 +369,22 @@ model Intention {
   type      IntentionType   // FOLLOW_UP, ORDER_REMINDER, etc.
   status    IntentionStatus // PENDING → TRIGGERED → COMPLETED
 
-  // Logique
-  reason              String @db.Text  // Pourquoi cette intention
-  conditionToCheck    String @db.Text  // Condition à vérifier
-  actionIfTrue        String? @db.Text // Action si vraie
-  actionIfFalse       String @db.Text  // Action si fausse
+  // Logika
+  reason              String @db.Text  // Mengapa niat ini
+  conditionToCheck    String @db.Text  // Kondisi yang diperiksa
+  actionIfTrue        String? @db.Text // Aksi jika benar
+  actionIfFalse       String @db.Text  // Aksi jika salah
 
   // Timing
   scheduledFor        DateTime
 
   // Metadata
   metadata            Json?
-  createdByRole       String?  // "agent" ou "admin"
+  createdByRole       String?  // "agent" atau "admin"
 }
 ```
 
-### Tools disponibles
+### Tools yang tersedia
 
 #### 1. `schedule_intention`
 
@@ -393,10 +393,10 @@ model Intention {
   chatId: "237xxx@c.us",
   scheduledFor: "2025-11-29T10:00:00Z",
   type: "FOLLOW_UP",
-  reason: "Client intéressé par iPhone 15 Pro",
-  conditionToCheck: "Client a répondu au message",
-  actionIfTrue: "Remercier le client",
-  actionIfFalse: "Envoyer rappel avec lien produit",
+  reason: "Klien tertarik dengan iPhone 15 Pro",
+  conditionToCheck: "Klien telah menjawab pesan",
+  actionIfTrue: "Berterima kasih kepada klien",
+  actionIfFalse: "Kirim pengingat dengan link produk",
   metadata: JSON.stringify({ productId: "iphone-15-pro" })
 }
 ```
@@ -409,10 +409,10 @@ model Intention {
 }
 ```
 
-**Permissions** :
-- ✅ Agent peut annuler ses propres intentions
-- ✅ Admin (dans groupe) peut annuler toutes les intentions
-- ❌ Agent ne peut PAS annuler les intentions créées par admin
+**Izin**:
+- Agent dapat membatalkan niatnya sendiri
+- Admin (di grup) dapat membatalkan semua niat
+- Agent TIDAK DAPAT membatalkan niat yang dibuat admin
 
 #### 3. `list_intentions`
 
@@ -422,72 +422,72 @@ model Intention {
 }
 ```
 
-Retourne toutes les intentions PENDING pour ce client.
+Mengembalikan semua niat PENDING untuk klien ini.
 
-### Exemple concret
+### Contoh konkret
 
-**Conversation :**
-
-```
-Client: "Je suis intéressé par votre iPhone 15 Pro"
-Agent: "Excellent choix ! Il coûte 1200€. Voulez-vous le commander?"
-Client: "Je vais réfléchir"
-Agent: [Crée intention FOLLOW_UP dans 2 jours]
-       "Pas de problème ! Je vous recontacte dans 2 jours 😊"
-```
-
-**2 jours plus tard :**
+**Percakapan:**
 
 ```
-Processor: [Déclenche l'intention]
-           [Appelle l'agent avec contexte spécial]
-
-Agent: [Use get_older_messages pour voir l'historique]
-       [Vérifie: Client a répondu entre temps?]
-
-       → SI OUI: "Merci pour votre réponse !"
-       → SI NON: "Bonjour ! Toujours intéressé par l'iPhone 15 Pro? 📱"
+Klien: "Saya tertarik dengan iPhone 15 Pro Anda"
+Agent: "Pilihan bagus! Harganya 1200€. Mau pesan?"
+Klien: "Saya pikir-pikir dulu"
+Agent: [Buat niat FOLLOW_UP dalam 2 hari]
+       "Tidak masalah! Saya hubungi lagi dalam 2 hari 😊"
 ```
 
-### Avantages
+**2 hari kemudian:**
 
-✅ **Intelligent** - Vérifie le contexte avant d'agir
-✅ **Flexible** - Agent utilise tous ses tools pour vérifier
-✅ **Annulable** - Client ou admin peut annuler
-✅ **Tracé** - Tous les statuts sont loggés
-✅ **Décentralisé** - Chaque agent gère ses propres intentions
+```
+Processor: [Picu niat]
+           [Panggil agent dengan konteks khusus]
+
+Agent: [Gunakan get_older_messages untuk melihat riwayat]
+       [Periksa: Apakah klien menjawab?]
+
+       → JIKA YA: "Terima kasih atas jawaban Anda!"
+       → JIKA TIDAK: "Halo! Masih tertarik dengan iPhone 15 Pro? 📱"
+```
+
+### Keunggulan
+
+- **Cerdas** - Memeriksa konteks sebelum bertindak
+- **Fleksibel** - Agent menggunakan semua tools untuk verifikasi
+- **Dapat dibatalkan** - Klien atau admin dapat membatalkan
+- **Tertelusur** - Semua status dicatat
+- **Terdesentralisasi** - Setiap agent mengelola niatnya sendiri
 
 ---
 
-## 🎓 Cas d'usage
+## Kasus Penggunaan
 
-### Ajouter une nouvelle fonctionnalité
+### Menambahkan fitur baru
 
-**Exemple** : Récupérer les messages d'un chat
+**Contoh**: Mengambil pesan dari chat
 
-1. Créer `apps/backend/src/page-scripts/getMessages.script.ts`
-2. Ajouter endpoint `POST /messages/upload` dans le backend
-3. Déclencher depuis un webhook ou endpoint API
-4. Le connector **n'est pas modifié** ! ✅
-
----
-
-## ✅ Checklist de migration
-
-- [x] Endpoint `/execute-script` dans le connector
-- [x] Module `page-scripts` dans le backend
-- [x] Script `getCatalog.script.ts` avec templating
-- [x] Endpoint `/catalog/upload-image` dans le backend
-- [x] MinioService dans le backend
-- [x] Orchestration depuis webhook `ready`
-- [x] Signature HMAC-SHA256 des webhooks
-- [x] Suppression de CatalogService du connector
-- [x] Tests de compilation TypeScript
+1. Buat `apps/backend/src/page-scripts/getMessages.script.ts`
+2. Tambahkan endpoint `POST /messages/upload` di backend
+3. Picu dari webhook atau endpoint API
+4. Connector **tidak dimodifikasi**!
 
 ---
 
-## 📚 Ressources
+## Checklist Migrasi
 
-- WhatsApp Web.js : https://github.com/pedroslopez/whatsapp-web.js
-- WPPConnect wa-js : https://wppconnect.io/wa-js/
-- Minio : https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html
+- [x] Endpoint `/execute-script` di connector
+- [x] Modul `page-scripts` di backend
+- [x] Skrip `getCatalog.script.ts` dengan templating
+- [x] Endpoint `/catalog/upload-image` di backend
+- [x] MinioService di backend
+- [x] Orkestrasi dari webhook `ready`
+- [x] Tanda tangan HMAC-SHA256 webhook
+- [x] Penghapusan CatalogService dari connector
+- [x] Tes kompilasi TypeScript
+
+---
+
+## Sumber Daya
+
+- WhatsApp Web.js: https://github.com/pedroslopez/whatsapp-web.js
+- WPPConnect wa-js: https://wppconnect.io/wa-js/
+- Minio: https://min.io/docs/minio/linux/developers/javascript/minio-javascript.html

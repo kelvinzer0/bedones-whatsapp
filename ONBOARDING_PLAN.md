@@ -1,456 +1,455 @@
-# ONBOARDING PLAN - WhatsApp Agent
+# RENCANA ONBOARDING - WhatsApp Agent
 
 ---
 
-## 📋 INSTRUCTIONS POUR CLAUDE
+## INSTRUKSI UNTUK CLAUDE
 
-> **Ce fichier est le plan directeur pour l'implémentation du système d'onboarding avancé.**
+> **File ini adalah rencana induk untuk implementasi sistem onboarding lanjutan.**
 
-### Règles de mise à jour
+### Aturan pembaruan
 
-1. **À chaque session de travail**, tu DOIS:
-   - Mettre à jour le statut des tâches (⬜ À faire / 🔄 En cours / ✅ Terminé)
-   - Ajouter une entrée dans le CHANGELOG avec la date et ce qui a été fait
-   - Mettre à jour la PROGRESSION GLOBALE
-   - Noter les décisions techniques importantes
-   - Documenter les blockers ou problèmes rencontrés
+1. **Di setiap sesi kerja**, Anda WAJIB:
+   - Memperbarui status tugas (⬜ To-do / 🔄 Sedang berjalan / ✅ Selesai)
+   - Menambahkan entri di CHANGELOG dengan tanggal dan apa yang telah dilakukan
+   - Memperbarui PROGRES GLOBAL
+   - Mencatat keputusan teknis penting
+   - Mendokumentasikan blocker atau masalah yang ditemui
 
-2. **Si l'utilisateur modifie les specs**, tu DOIS:
-   - Mettre à jour les sections concernées
-   - Noter le changement dans le CHANGELOG
-   - Ajuster les checklists si nécessaire
+2. **Jika pengguna mengubah spesifikasi**, Anda WAJIB:
+   - Memperbarui bagian terkait
+   - Mencatat perubahan di CHANGELOG
+   - Menyesuaikan checklist jika perlu
 
-3. **Symboles de statut**:
-   - ⬜ À faire
-   - 🔄 En cours
-   - ✅ Terminé
-   - ⚠️ Bloqué
-   - ❌ Annulé
+3. **Simbol status**:
+   - ⬜ To-do
+   - 🔄 Sedang berjalan
+   - ✅ Selesai
+   - ⚠️ Terblokir
+   - ❌ Dibatalkan
 
-4. **Ce fichier doit toujours refléter l'état actuel du projet**
+4. **File ini harus selalu mencerminkan status proyek saat ini**
 
 ---
 
-## 🎯 VUE D'ENSEMBLE
+## GAMBARAN UMUM
 
-### Objectif
+### Tujuan
 
-Créer un système d'onboarding intelligent qui:
-- Analyse automatiquement le catalogue et le business de l'utilisateur
-- Génère un contexte initial pour l'agent IA
-- Améliore ce contexte via un chat conversationnel avec l'utilisateur
-- Atteint un score minimum de **80%** avant activation (avec warning si < 80%)
-- Permet différentes stratégies d'activation (test, tags, global)
+Membuat sistem onboarding cerdas yang:
+- Menganalisis katalog dan bisnis pengguna secara otomatis
+- Menghasilkan konteks awal untuk agent AI
+- Meningkatkan konteks ini melalui chat percakapan dengan pengguna
+- Mencapai skor minimum **80%** sebelum aktivasi (dengan peringatan jika < 80%)
+- Memungkinkan strategi aktivasi berbeda (test, tags, global)
 
-### Expérience Utilisateur (3-4 étapes)
+### Pengalaman Pengguna (3-4 langkah)
 
-> **Important**: L'utilisateur ne voit que 3-4 étapes avec des animations. Les phases techniques (SYNC, ANALYSE) sont automatiques en arrière-plan.
+> **Penting**: Pengguna hanya melihat 3-4 langkah dengan animasi. Fase teknis (SYNC, ANALYSE) otomatis di latar belakang.
 
 ```
-1. Connexion WhatsApp    → Illustrations animées (sync + analyse en background)
-2. Chat avec l'IA        → Amélioration du contexte
-3. Sélection stratégie   → Choix du mode d'activation
-4. Dashboard             → Système actif
+1. Koneksi WhatsApp    -> Ilustrasi animasi (sync + analisis di latar belakang)
+2. Chat dengan AI      -> Peningkatan konteks
+3. Pemilihan strategi  -> Pilihan mode aktivasi
+4. Dashboard           -> Sistem aktif
 ```
 
 ### Distinction UserStatus vs OnboardingStatus
 
-- **UserStatus** (enum existant): Gère le cycle de vie global de l'authentification
-  - `PENDING_PAIRING → PAIRING → PAIRED → ONBOARDING → ACTIVE`
-- **OnboardingStatus** (nouveau): Gère la progression dans l'onboarding une fois connecté
-  - `SYNC_CATALOG → ANALYSE_PRODUCTS → ANALYSE_COMPANY → CONTEXT_IMPROVEMENT → STRATEGY_SELECTION → ACTIVE`
+- **UserStatus** (enum yang ada): Mengelola siklus hidup global autentikasi
+  - `PENDING_PAIRING -> PAIRING -> PAIRED -> ONBOARDING -> ACTIVE`
+- **OnboardingStatus** (baru): Mengelola kemajuan dalam onboarding setelah terhubung
+  - `SYNC_CATALOG -> ANALYSE_PRODUCTS -> ANALYSE_COMPANY -> CONTEXT_IMPROVEMENT -> STRATEGY_SELECTION -> ACTIVE`
 
-### Flux des statuts OnboardingStatus
+### Flow status OnboardingStatus
 
 ```
-SYNC_CATALOG → ANALYSE_PRODUCTS → ANALYSE_COMPANY → CONTEXT_IMPROVEMENT → STRATEGY_SELECTION → ACTIVE
+SYNC_CATALOG -> ANALYSE_PRODUCTS -> ANALYSE_COMPANY -> CONTEXT_IMPROVEMENT -> STRATEGY_SELECTION -> ACTIVE
 ```
 
-### Diagramme de flux
+### Diagram flow
 
 ```
 ┌─────────────────┐
-│ User connecte   │
+│ User konek      │
 │ WhatsApp        │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ SYNC_CATALOG    │ ← Upload catalogue + business info
+│ SYNC_CATALOG    │ <- Upload katalog + info bisnis
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ ANALYSE_PRODUCTS│ ← IA analyse 4 images/produit (Grok/Gemini)
+│ ANALYSE_PRODUCTS│ <- AI menganalisis 4 gambar/produk (Grok/Gemini)
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ ANALYSE_COMPANY │ ← Génération contexte initial + score
+│ ANALYSE_COMPANY │ <- Pembuatan konteks awal + skor
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ CONTEXT_        │ ← Chat IA avec tools pour améliorer
-│ IMPROVEMENT     │   contexte jusqu'à score >= 90%
+│ CONTEXT_        │ <- Chat AI dengan tools untuk meningkatkan
+│ IMPROVEMENT     │   konteks hingga skor >= 90%
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ STRATEGY_       │ ← Choix: numéros test / tags / tous
+│ STRATEGY_       │ <- Pilihan: nomor test / tags / semua
 │ SELECTION       │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ ACTIVE          │ ← Système opérationnel
+│ ACTIVE          │ <- Sistem operasional
 └─────────────────┘
 ```
 
 ---
 
-## 📊 PROGRESSION GLOBALE
+## PROGRES GLOBAL
 
-| Phase | Nom | Status | Progression | Notes |
-|-------|-----|--------|-------------|-------|
-| 1 | Connexion & Sync | ⬜ | 0% | Partiellement existant |
-| 2 | Analyse Produits | ⬜ | 0% | |
-| 3 | Analyse Entreprise | ⬜ | 0% | |
-| 4 | Amélioration Contexte | ⬜ | 0% | |
-| 5 | Sélection Stratégie | ⬜ | 0% | |
-| 6 | Système Actif | ⬜ | 0% | |
+| Fase | Nama | Status | Progres | Catatan |
+|-------|-----|--------|---------|---------|
+| 1 | Koneksi & Sync | ⬜ | 0% | Sebagian ada |
+| 2 | Analisis Produk | ⬜ | 0% | |
+| 3 | Analisis Perusahaan | ⬜ | 0% | |
+| 4 | Peningkatan Konteks | ⬜ | 0% | |
+| 5 | Pemilihan Strategi | ⬜ | 0% | |
+| 6 | Sistem Aktif | ⬜ | 0% | |
 | 7 | Dashboard | ⬜ | 0% | |
 
-**Progression totale: 0%**
+**Progres total: 0%**
 
 ---
 
-## 🗃️ MODIFICATIONS BASE DE DONNÉES
+## MODIFIKASI DATABASE
 
-### Nouveau Enum: OnboardingStatus
+### Enum Baru: OnboardingStatus
 
 ```prisma
 enum OnboardingStatus {
-  SYNC_CATALOG        // Synchronisation catalogue en cours
-  ANALYSE_PRODUCTS    // Analyse IA des images produits
-  ANALYSE_COMPANY     // Analyse entreprise et génération contexte
-  CONTEXT_IMPROVEMENT // Amélioration du contexte via chat IA
-  STRATEGY_SELECTION  // Sélection stratégie d'activation
-  ACTIVE              // Système activé
+  SYNC_CATALOG        // Sinkronisasi katalog berjalan
+  ANALYSE_PRODUCTS    // Analisis AI gambar produk
+  ANALYSE_COMPANY     // Analisis perusahaan dan pembuatan konteks
+  CONTEXT_IMPROVEMENT // Peningkatan konteks via chat AI
+  STRATEGY_SELECTION  // Pemilihan strategi aktivasi
+  ACTIVE              // Sistem diaktifkan
 }
 ```
 
-### Modifications model WhatsappAgent
+### Modifikasi model WhatsappAgent
 
 ```prisma
 model WhatsAppAgent {
-  // ... champs existants ...
+  // ... field yang ada ...
 
-  // Nouveaux champs
+  // Field baru
   onboardingStatus    OnboardingStatus    @default(SYNC_CATALOG)
-  agentContext        String?             @db.Text    // Contexte en format MARKDOWN
-  contextScore        Int                 @default(0) // Score du contexte (0-100)
-  contextNeeds        String?             @db.Text    // Besoins en format MARKDOWN
+  agentContext        String?             @db.Text    // Konteks dalam format MARKDOWN
+  contextScore        Int                 @default(0) // Skor konteks (0-100)
+  contextNeeds        String?             @db.Text    // Kebutuhan dalam format MARKDOWN
   activationStrategy  Json?               // {type: 'test'|'tags'|'all', phoneNumbers?: [], tagIds?: []}
 
-  // Relations
+  // Relasi
   contextVersions     AgentContextVersion[]
 }
 ```
 
-### Format Markdown pour Context et Needs
+### Format Markdown untuk Konteks dan Kebutuhan
 
-> **Important**: Le contexte et les besoins sont stockés en **Markdown** pour permettre:
-> - Rendu formaté dans l'UI
-> - Commentaires utilisateur sur sections (hover)
-> - Sections pliables/dépliables
-> - Meilleure lisibilité
+> **Penting**: Konteks dan kebutuhan disimpan dalam **Markdown** untuk memungkinkan:
+> - Render terformat di UI
+> - Komentar pengguna pada bagian (hover)
+> - Bagian yang dapat dilipat/dibuka
+> - Keterbacaan lebih baik
 
-#### Structure du `agentContext` (Markdown)
+#### Struktur `agentContext` (Markdown)
 
 ```markdown
-# Contexte Agent - {business_name}
+# Konteks Agent - {business_name}
 
-## 🏢 Entreprise
+## Perusahaan
 
-### Informations générales
-- **Nom**: {name}
-- **Secteur**: {sector}
-- **Description**: {description}
+### Informasi umum
+- **Nama**: {name}
+- **Sektor**: {sector}
+- **Deskripsi**: {description}
 
-### Contact
-- **Téléphone support**: {phone}
+### Kontak
+- **Telepon dukungan**: {phone}
 - **Email**: {email}
-- **Adresse**: {address}
+- **Alamat**: {address}
 
-### Horaires
+### Jam operasional
 {business_hours_table}
 
 ---
 
-## 💰 Politique commerciale
+## Kebijakan komersial
 
-### Prix
-- **Type**: {Ferme | Négociable}
-- **Réduction max**: {percentage}%
+### Harga
+- **Tipe**: {Tetap | Negosiasi}
+- **Diskon maks**: {percentage}%
 
-### Paiements acceptés
+### Pembayaran yang diterima
 - {payment_methods_list}
 
-### Livraison
-| Ville | Frais |
+### Pengiriman
+| Kota | Biaya |
 |-------|-------|
 | {city} | {price} FCFA |
 
-### Retours
-- **Acceptés**: {Oui | Non}
-- **Délai max**: {days} jours
+### Pengembalian
+- **Diterima**: {Ya | Tidak}
+- **Batas waktu**: {days} hari
 
 ---
 
-## 📦 Catalogue
+## Katalog
 
-### Collections
+### Koleksi
 {collections_summary}
 
-### Produits ({count} au total)
+### Produk ({count} total)
 
 <details>
-<summary>📁 {collection_name} ({product_count} produits)</summary>
+<summary>📁 {collection_name} ({product_count} produk)</summary>
 
 #### {product_name}
-- **Prix**: {price} FCFA
-- **Description**: {description}
-- **Analyse IA**: {ia_analysis_summary}
+- **Harga**: {price} FCFA
+- **Deskripsi**: {description}
+- **Analisis AI**: {ia_analysis_summary}
 
 </details>
 
 ---
 
-## 🏷️ Organisation
+## Organisasi
 
-### Tags configurés
-- 🟢 **Nouveau client**: {description}
-- 🔵 **Client à relancer**: {description}
-- 🔴 **Personnel**: Conversations à ignorer
+### Tag yang dikonfigurasi
+- 🟢 **Klien baru**: {description}
+- 🔵 **Klien untuk ditindaklanjuti**: {description}
+- 🔴 **Pribadi**: Percakapan untuk diabaikan
 
-### Groupes
-- **Livraisons**: {members}
-- **Équipe**: {members}
+### Grup
+- **Pengiriman**: {members}
+- **Tim**: {members}
 
 ---
 
-## ⚙️ Comportement agent
+## Perilaku agent
 
-### Conversations à ignorer
-- Contacts personnels: {list}
-- Tags: Personnel
+### Percakapan untuk diabaikan
+- Kontak pribadi: {list}
+- Tag: Pribadi
 
-### Ton de communication
+### Nada komunikasi
 {communication_style}
 ```
 
-#### Structure du `contextNeeds` (Markdown)
+#### Struktur `contextNeeds` (Markdown)
 
 ```markdown
-# Besoins pour améliorer le contexte
+# Kebutuhan untuk meningkatkan konteks
 
-**Score actuel**: {score}% | **Objectif**: 80%
-
----
-
-## 🔴 Priorité haute ({count})
-
-### Politique de prix
-> Les prix sont-ils fermes ou négociables?
-
-**Pourquoi c'est important**: Permet à l'agent de savoir s'il peut proposer des réductions.
-
-- [ ] Non répondu
+**Skor saat ini**: {score}% | **Target**: 80%
 
 ---
 
-### Zones de livraison
-> Dans quelles villes livrez-vous et à quel tarif?
+## 🔴 Prioritas tinggi ({count})
 
-**Pourquoi c'est important**: L'agent pourra informer les clients sur la disponibilité et les frais.
+### Kebijakan harga
+> Apakah harga tetap atau dapat dinegosiasikan?
 
-- [ ] Non répondu
+**Mengapa ini penting**: Memungkinkan agent tahu apakah dapat menawarkan diskon.
 
----
-
-## 🟡 Priorité moyenne ({count})
-
-### Numéro support
-> Quel numéro les clients doivent-ils appeler pour le support?
-
-- [ ] Non répondu
+- [ ] Belum dijawab
 
 ---
 
-## 🟢 Priorité basse ({count})
+### Zona pengiriman
+> Ke kota mana Anda mengirim dan berapa tarifnya?
 
-### Horaires détaillés
-> Quels sont vos horaires d'ouverture par jour?
+**Mengapa ini penting**: Agent dapat memberi tahu klien tentang ketersediaan dan biaya.
 
-- [x] Répondu ✓
+- [ ] Belum dijawab
 
 ---
 
-## ✅ Complétés ({count})
+## 🟡 Prioritas sedang ({count})
+
+### Nomor dukungan
+> Nomor berapa yang harus dihubungi klien untuk dukungan?
+
+- [ ] Belum dijawab
+
+---
+
+## 🟢 Prioritas rendah ({count})
+
+### Jam operasional detail
+> Apa jam buka Anda per hari?
+
+- [x] Sudah dijawab ✓
+
+---
+
+## ✅ Selesai ({count})
 
 <details>
-<summary>Voir les éléments complétés</summary>
+<summary>Lihat item yang selesai</summary>
 
-- [x] Secteur d'activité
-- [x] Description entreprise
-- [x] Moyens de paiement
+- [x] Sektor bisnis
+- [x] Deskripsi perusahaan
+- [x] Metode pembayaran
 
 </details>
 ```
 
-### Fonctionnalités UI pour le Markdown
+### Fitur UI untuk Markdown
 
-L'UI frontend devra supporter:
+UI frontend harus mendukung:
 
-1. **Rendu Markdown** avec bibliothèque (react-markdown, marked, etc.)
-2. **Sections pliables** via `<details>/<summary>` ou composants custom
-3. **Commentaires inline**: Hover sur une section → bouton "Commenter" → input
-4. **Checkboxes interactives**: Clic sur `[ ]` → marque comme fait
-5. **Highlighting**: Sections modifiées récemment
-6. **Export**: Possibilité d'exporter le contexte en PDF/Markdown
+1. **Render Markdown** dengan library (react-markdown, marked, dll.)
+2. **Bagian dapat dilipat** via `<details>/<summary>` atau komponen custom
+3. **Komentar inline**: Hover pada bagian -> tombol "Komentar" -> input
+4. **Checkbox interaktif**: Klik `[ ]` -> tandai sebagai selesai
+5. **Highlighting**: Bagian yang baru dimodifikasi
+6. **Ekspor**: Kemampuan ekspor konteks ke PDF/Markdown
 
 ---
 
-## 🎨 DESIGN UI - Page "Contexte de l'IA"
+## DESIGN UI - Halaman "Konteks AI"
 
-> Basé sur les mockups Figma fournis
+> Berdasarkan mockup Figma yang disediakan
 
-### Structure de la page
+### Struktur halaman
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ Sidebar                    │  Main Content                      │
+│ Sidebar                    │  Konten Utama                      │
 │                            │                                     │
-│ [Avatar] Mboa Fashion Free │  ⓘ Contexte              [Score•45%]│
+│ [Avatar] Mboa Fashion Free │  ⓘ Konteks              [Skor•45%]│
 │ +237 657 88 86 90          │                                     │
-│                            │  Description du contexte...         │
+│                            │  Deskripsi konteks...               │
 │ ─────────────────          │                                     │
-│ Compte                     │  [Déplier tout les contenus ↗]      │
-│   🏠 Accueil               │                                     │
-│   📊 Statistiques          │  ┌─────────────────────────────┐   │
-│   📦 Commandes             │  │ Entreprise           [▼]    │   │
-│                            │  │ Nom: Mboa Fashion...        │   │
+│ Akun                       │  [Buka semua konten ↗]              │
+│   🏠 Beranda               │                                     │
+│   📊 Statistik             │  ┌─────────────────────────────┐   │
+│   📦 Pesanan               │  │ Perusahaan           [▼]    │   │
+│                            │  │ Nama: Mboa Fashion...        │   │
 │ ─────────────────          │  └─────────────────────────────┘   │
-│ Configuration              │                                     │
-│   ⚙️ Contexte de l'IA ←    │  ┌─────────────────────────────┐   │
-│   🛒 Catalogue             │  │ Pickup               [▼]    │   │
-│   📣 Marketing             │  │ Adresse pour les pickup...  │   │
-│   🎧 Support               │  └─────────────────────────────┘   │
+│ Konfigurasi                │                                     │
+│   ⚙️ Konteks AI <-         │  ┌─────────────────────────────┐   │
+│   🛒 Katalog               │  │ Pickup               [▼]    │   │
+│   📣 Pemasaran             │  │ Alamat untuk pickup...       │   │
+│   🎧 Dukungan              │  └─────────────────────────────┘   │
 │                            │                                     │
 │ ─────────────────          │  ┌─────────────────────────────┐   │
-│ Aides                      │  │ Livraison            [▼]    │   │
-│   ❓ FAQ                   │  │ Adresse pour les pickup...  │   │
-│   ❓ Support               │  └─────────────────────────────┘   │
+│ Bantuan                    │  │ Pengiriman           [▼]    │   │
+│   ❓ FAQ                   │  │ Alamat untuk pickup...       │   │
+│   ❓ Dukungan              │  └─────────────────────────────┘   │
 │                            │                                     │
 │                            │  ┌─────────────────────────────────┐│
-│                            │  │ 📎 Quels sont vos instructions? ⬆││
-│                            │  │ [Support] [Stratégie de vente]  ││
+│                            │  │ 📎 Apa instruksi Anda? ⬆        ││
+│                            │  │ [Dukungan] [Strategi penjualan]  ││
 │                            │  └─────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Composants clés
+### Komponen kunci
 
-#### 1. Badge Score (en haut à droite)
-- **Cliquable** → ouvre popup avec besoins manquants
-- **Couleurs dynamiques**:
-  - Rouge: < 50%
-  - Orange: 50-79%
-  - Vert: ≥ 80%
-- Contour orange tant que non activable
+#### 1. Badge Skor (pojok kanan atas)
+- **Dapat diklik** -> buka popup dengan kebutuhan yang hilang
+- **Warna dinamis**:
+  - Merah: < 50%
+  - Oranye: 50-79%
+  - Hijau: >= 80%
+- Kontur oranye selama belum dapat diaktifkan
 
-#### 2. Sections pliables du contexte
-- Titre + aperçu du contenu (tronqué)
-- Icône d'état: ✓ (complet) ou ⚠️ (incomplet)
-- Click → déplie le contenu Markdown complet
+#### 2. Bagian konteks yang dapat dilipat
+- Judul + pratinjau konten (terpotong)
+- Ikon status: ✓ (lengkap) atau ⚠️ (tidak lengkap)
+- Klik -> buka konten Markdown lengkap
 
-#### 3. Chat input (bas de page)
-- Input: "Quels sont vos instructions?"
-- Icône pièce jointe (pour screenshots, etc.)
-- Bouton envoi
-- **Quick actions**: Boutons pour actions fréquentes
-  - "Support", "Stratégie de vente", etc.
-  - = les `potentialReplies` de notre plan
+#### 3. Input chat (bagian bawah)
+- Input: "Apa instruksi Anda?"
+- Ikon lampiran (untuk screenshot, dll.)
+- Tombol kirim
+- **Quick actions**: Tombol untuk aksi sering
+  - "Dukungan", "Strategi penjualan", dll.
+  - = `potentialReplies` dari rencana kami
 
-#### 4. Vue Conversation (quand chat actif)
+#### 4. Tampilan Percakapan (saat chat aktif)
 ```
 ┌─────────────────────────────────────┐
-│ ⓘ Conversation d'initialization    │
+│ ⓘ Percakapan inisialisasi          │
 │                                     │
-│ Description...                      │
+│ Deskripsi...                        │
 │                                     │
 │ ┌─────────────────────────────┐    │
-│ │ ⓘ Est-ce que vous proposez │    │
-│ │    la livraison?            │    │
+│ │ ⓘ Apakah Anda menyediakan  │    │
+│ │    pengiriman?              │    │
 │ │                             │    │
-│ │ Si oui veuillez nous        │    │
-│ │ indiquer dans quelles       │    │
-│ │ villes...                   │    │
+│ │ Jika ya, mohon tunjukkan    │    │
+│ │ kota mana...                │    │
 │ └─────────────────────────────┘    │
 │                                     │
 │ [Input + Quick actions]             │
 └─────────────────────────────────────┘
 ```
 
-### Popup "Besoins manquants" (clic sur score)
+### Popup "Kebutuhan yang hilang" (klik skor)
 
 ```
 ┌─────────────────────────────────────┐
-│ ❌  Informations manquantes         │
+│ ❌  Informasi yang hilang           │
 │                                     │
-│ Pour atteindre 80%, il manque:      │
+│ Untuk mencapai 80%, hilang:         │
 │                                     │
-│ 🔴 Priorité haute                   │
-│   • Politique de prix               │
-│   • Zones de livraison              │
+│ 🔴 Prioritas tinggi                 │
+│   • Kebijakan harga                 │
+│   • Zona pengiriman                 │
 │                                     │
-│ 🟡 Priorité moyenne                 │
-│   • Numéro support                  │
-│   • Politique retours               │
+│ 🟡 Prioritas sedang                 │
+│   • Nomor dukungan                  │
+│   • Kebijakan pengembalian          │
 │                                     │
-│ Score actuel: 45% → Objectif: 80%   │
+│ Skor saat ini: 45% -> Target: 80%   │
 │                                     │
-│ [Continuer la conversation]         │
+│ [Lanjutkan percakapan]              │
 └─────────────────────────────────────┘
 ```
 
-### Navigation sidebar
+### Navigasi sidebar
 
-| Section | Pages | Description |
+| Bagian | Halaman | Deskripsi |
 |---------|-------|-------------|
-| **Compte** | Accueil, Statistiques, Commandes | Gestion quotidienne |
-| **Configuration** | Contexte de l'IA, Catalogue, Marketing, Support | Setup du système |
-| **Aides** | FAQ, Support | Assistance |
+| **Akun** | Beranda, Statistik, Pesanan | Manajemen harian |
+| **Konfigurasi** | Konteks AI, Katalog, Pemasaran, Dukungan | Setup sistem |
+| **Bantuan** | FAQ, Dukungan | Bantuan |
 
-### Comportement UX
+### Perilaku UX
 
-1. **Blocage activation**: L'utilisateur ne peut PAS activer l'IA si score < 80%
-2. **Score cliquable**: Affiche popup avec détails des manques
-3. **Chat persistant**: Le chat reste en bas, messages visibles au-dessus
-4. **Historique**: Scroll pour voir les messages précédents
-5. **Auto-save**: Le contexte est sauvegardé automatiquement après chaque réponse
+1. **Blokir aktivasi**: Pengguna TIDAK DAPAT mengaktifkan AI jika skor < 80%
+2. **Skor dapat diklik**: Tampilkan popup dengan detail kekurangan
+3. **Chat persisten**: Chat tetap di bawah, pesan terlihat di atas
+4. **Riwayat**: Scroll untuk melihat pesan sebelumnya
+5. **Auto-save**: Konteks disimpan otomatis setelah setiap jawaban
 
-### Avantages du format Markdown
+### Keunggulan format Markdown
 
-Le format Markdown pour `contextNeeds` permet:
-- **Transparence du score**: L'utilisateur voit exactement ce qui manque avec priorités visuelles
-- **Progression visible**: À chaque réponse, les besoins se déplacent vers "Complétés"
-- **Flexibilité**: L'IA peut ajouter des sections si elle découvre un problème
-- **Interactivité**: L'utilisateur peut commenter et interagir directement
-- **Lisibilité**: Format humain, pas technique
+Format Markdown untuk `contextNeeds` memungkinkan:
+- **Transparansi skor**: Pengguna melihat persis apa yang hilang dengan prioritas visual
+- **Progres terlihat**: Setiap jawaban, kebutuhan berpindah ke "Selesai"
+- **Fleksibilitas**: AI dapat menambah bagian jika menemukan masalah
+- **Interaktivitas**: Pengguna dapat berkomentar dan berinteraksi langsung
+- **Keterbacaan**: Format manusia, bukan teknis
 
-### Versioning du Contexte
+### Versioning Konteks
 
 ```prisma
 model AgentContextVersion {
@@ -459,26 +458,26 @@ model AgentContextVersion {
   agent     WhatsAppAgent @relation(fields: [agentId], references: [id])
   context   String        @db.Text
   score     Int
-  reason    String?       // Pourquoi cette version a été créée
+  reason    String?       // Mengapa versi ini dibuat
   createdAt DateTime      @default(now())
 
   @@index([agentId])
 }
 ```
 
-### Modification model ProductImage
+### Modifikasi model ProductImage
 
 ```prisma
 model ProductImage {
-  // ... champs existants ...
+  // ... field yang ada ...
 
-  // Nouveau champ
-  ia_analyse          String?             @db.Text    // Analyse IA de l'image
-  analysed_at         DateTime?           // Date d'analyse
+  // Field baru
+  ia_analyse          String?             @db.Text    // Analisis AI gambar
+  analysed_at         DateTime?           // Tanggal analisis
 }
 ```
 
-### Nouvelles tables: Thread & ThreadMessage
+### Tabel baru: Thread & ThreadMessage
 
 ```prisma
 model Thread {
@@ -499,10 +498,10 @@ model Thread {
 }
 
 enum ThreadType {
-  ONBOARDING          // Thread d'onboarding initial
-  CONTEXT_IMPROVEMENT // Amélioration continue
-  SUPPORT             // Support utilisateur
-  STRATEGY_CHANGE     // Changement de stratégie
+  ONBOARDING          // Thread onboarding awal
+  CONTEXT_IMPROVEMENT // Peningkatan berkelanjutan
+  SUPPORT             // Dukungan pengguna
+  STRATEGY_CHANGE     // Perubahan strategi
 }
 
 model ThreadMessage {
@@ -525,433 +524,433 @@ enum MessageSource {
 }
 ```
 
-### Checklist Base de Données
+### Checklist Database
 
-- ⬜ Ajouter enum OnboardingStatus au schema Prisma
-- ⬜ Ajouter enum ThreadType au schema Prisma
-- ⬜ Ajouter enum MessageSource au schema Prisma
-- ⬜ Modifier model WhatsAppAgent (nouveaux champs + relation)
-- ⬜ Modifier model ProductImage (ia_analyse)
-- ⬜ Créer model Thread
-- ⬜ Créer model ThreadMessage
-- ⬜ Créer model AgentContextVersion
-- ⬜ Créer migration Prisma
-- ⬜ Mettre à jour les types générés
-
----
-
-## 📝 PHASES DÉTAILLÉES
-
-### Phase 1: Connexion & Synchronisation (SYNC_CATALOG)
-
-**Objectif**: L'utilisateur connecte son WhatsApp et on synchronise son catalogue.
-
-**Comportement existant à modifier**:
-- Quand l'user passe en `ready` → mettre `onboardingStatus = SYNC_CATALOG`
-- Fin de l'upload catalogue + infos → passer à `ANALYSE_PRODUCTS`
-
-#### Checklist Phase 1
-
-- ⬜ Modifier `auth.service.ts` pour initialiser `onboardingStatus`
-- ⬜ Modifier `catalog.service.ts` pour changer le status après sync
-- ⬜ Ajouter endpoint `GET /onboarding/status` pour vérifier l'état
-- ⬜ Frontend: redirection selon `onboardingStatus`
+- ⬜ Tambah enum OnboardingStatus ke schema Prisma
+- ⬜ Tambah enum ThreadType ke schema Prisma
+- ⬜ Tambah enum MessageSource ke schema Prisma
+- ⬜ Modifikasi model WhatsAppAgent (field baru + relasi)
+- ⬜ Modifikasi model ProductImage (ia_analyse)
+- ⬜ Buat model Thread
+- ⬜ Buat model ThreadMessage
+- ⬜ Buat model AgentContextVersion
+- ⬜ Buat migrasi Prisma
+- ⬜ Perbarui tipe yang dihasilkan
 
 ---
 
-### Phase 2: Analyse des Produits (ANALYSE_PRODUCTS)
+## FASE DETAIL
 
-**Objectif**: Analyser les images de chaque produit avec une IA pour enrichir le contexte.
+### Fase 1: Koneksi & Sinkronisasi (SYNC_CATALOG)
 
-**Specs**:
-- Utiliser LangChain sur le backend
-- IA principale: Grok (thinking model)
-- Backup: Gemini (fallback automatique via LangChain)
-- **Analyser les 2 premières images de chaque produit** (optimisation coût/performance)
-- Traitement en **batch** et en **arrière-plan**
-- Stocker l'analyse dans `ProductImage.ia_analyse`
-- Si les 2 images sont déjà analysées → skip le produit
-- Calculer la progression en temps réel
-- Erreurs signalées via **Sentry**
+**Tujuan**: Pengguna menghubungkan WhatsApp-nya dan kami menyinkronkan katalognya.
 
-**Format de l'analyse**:
+**Perilaku yang ada yang perlu dimodifikasi**:
+- Saat user menjadi `ready` -> set `onboardingStatus = SYNC_CATALOG`
+- Akhir upload katalog + info -> lanjut ke `ANALYSE_PRODUCTS`
+
+#### Checklist Fase 1
+
+- ⬜ Modifikasi `auth.service.ts` untuk inisialisasi `onboardingStatus`
+- ⬜ Modifikasi `catalog.service.ts` untuk mengubah status setelah sync
+- ⬜ Tambah endpoint `GET /onboarding/status` untuk memeriksa status
+- ⬜ Frontend: pengalihan sesuai `onboardingStatus`
+
+---
+
+### Fase 2: Analisis Produk (ANALYSE_PRODUCTS)
+
+**Tujuan**: Menganalisis gambar setiap produk dengan AI untuk memperkaya konteks.
+
+**Spesifikasi**:
+- Gunakan LangChain di backend
+- AI utama: Grok (thinking model)
+- Backup: Gemini (fallback otomatis via LangChain)
+- **Analisis 2 gambar pertama setiap produk** (optimasi biaya/performa)
+- Pemrosesan **batch** dan **latar belakang**
+- Simpan analisis di `ProductImage.ia_analyse`
+- Jika 2 gambar sudah dianalisis -> skip produk
+- Hitung progres real-time
+- Error dilaporkan via **Sentry**
+
+**Format analisis**:
 ```json
 {
-  "description": "Description détaillée de ce qui est visible",
-  "product_type": "Type de produit détecté",
-  "colors": ["couleurs détectées"],
-  "materials": ["matériaux visibles"],
+  "description": "Deskripsi detail apa yang terlihat",
+  "product_type": "Tipe produk terdeteksi",
+  "colors": ["warna terdeteksi"],
+  "materials": ["bahan terlihat"],
   "quality_score": 85,
-  "suggestions": ["suggestions d'amélioration de l'image"]
+  "suggestions": ["saran peningkatan gambar"]
 }
 ```
 
-#### Checklist Phase 2
+#### Checklist Fase 2
 
 **Backend**:
-- ⬜ Créer module `onboarding`
-- ⬜ Créer `ProductAnalysisService`
-- ⬜ Intégrer Grok API (xAI)
-- ⬜ Intégrer Gemini API (backup)
-- ⬜ Créer job d'analyse en arrière-plan
+- ⬜ Buat modul `onboarding`
+- ⬜ Buat `ProductAnalysisService`
+- ⬜ Integrasikan Grok API (xAI)
+- ⬜ Integrasikan Gemini API (backup)
+- ⬜ Buat job analisis latar belakang
 - ⬜ Endpoint `POST /onboarding/start-product-analysis`
 - ⬜ Endpoint `GET /onboarding/analysis-progress`
-- ⬜ Logique de calcul de progression
-- ⬜ Gestion des erreurs et retry
+- ⬜ Logika perhitungan progres
+- ⬜ Penanganan error dan retry
 
 **Frontend**:
-- ⬜ Créer page `/onboarding/analysis`
-- ⬜ Composant `AnalysisProgress` avec barre de progression
-- ⬜ Affichage des produits analysés en temps réel
-- ⬜ Polling ou WebSocket pour la progression
+- ⬜ Buat halaman `/onboarding/analysis`
+- ⬜ Komponen `AnalysisProgress` dengan progress bar
+- ⬜ Tampilan produk yang dianalisis real-time
+- ⬜ Polling atau WebSocket untuk progres
 
 ---
 
-### Phase 3: Analyse Entreprise (ANALYSE_COMPANY)
+### Fase 3: Analisis Perusahaan (ANALYSE_COMPANY)
 
-**Objectif**: Générer le contexte initial de l'agent basé sur toutes les données disponibles.
+**Tujuan**: Menghasilkan konteks awal agent berdasarkan semua data yang tersedia.
 
-**Données à collecter**:
+**Data untuk dikumpulkan**:
 - BusinessInfo (profile_name, description, categories, business_hours)
 - User (phoneNumber, whatsappProfile)
 - Products (name, description, price)
-- ProductImages (ia_analyse des 2 premières)
+- ProductImages (ia_analyse dari 2 gambar pertama)
 - Collections (name, description)
 
 **Output**:
-1. `agentContext`: Contexte textuel complet pour l'agent
-2. `contextScore`: Score initial (probablement bas, 20-40%)
-3. `contextNeeds`: Liste structurée des besoins/questions pour améliorer le score
+1. `agentContext`: Konteks tekstual lengkap untuk agent
+2. `contextScore`: Skor awal (kemungkinan rendah, 20-40%)
+3. `contextNeeds`: Daftar terstruktur kebutuhan/pertanyaan untuk meningkatkan skor
 
-**Structure du contexte généré**:
+**Struktur konteks yang dihasilkan**:
 ```markdown
-## Entreprise
-- Nom: {business_name}
-- Description: {description}
-- Catégories: {categories}
-- Horaires: {business_hours}
+## Perusahaan
+- Nama: {business_name}
+- Deskripsi: {description}
+- Kategori: {categories}
+- Jam operasional: {business_hours}
 
-## Produits
-{Pour chaque produit:}
+## Produk
+{Untuk setiap produk:}
 - {name}: {description} - {price} FCFA
-  Analyse visuelle: {ia_analyse summary}
+  Analisis visual: {ia_analyse summary}
 
-## Informations manquantes
-- Secteur d'activité précis
-- Politique de prix
-- Zones de livraison
-- etc.
+## Informasi yang hilang
+- Sektor bisnis spesifik
+- Kebijakan harga
+- Zona pengiriman
+- dll.
 ```
 
-#### Checklist Phase 3
+#### Checklist Fase 3
 
 **Backend**:
-- ⬜ Créer `CompanyAnalysisService`
-- ⬜ Fonction de collecte des données
-- ⬜ Prompt IA pour génération de contexte
-- ⬜ Prompt IA pour calcul du score
-- ⬜ Prompt IA pour suggestions d'amélioration
+- ⬜ Buat `CompanyAnalysisService`
+- ⬜ Fungsi pengumpulan data
+- ⬜ Prompt AI untuk pembuatan konteks
+- ⬜ Prompt AI untuk perhitungan skor
+- ⬜ Prompt AI untuk saran peningkatan
 - ⬜ Endpoint `POST /onboarding/start-company-analysis`
 - ⬜ Endpoint `GET /onboarding/context`
-- ⬜ Sauvegarder contexte dans WhatsappAgent
+- ⬜ Simpan konteks di WhatsappAgent
 
 **Frontend**:
-- ⬜ Page de transition/loading pendant l'analyse
-- ⬜ Affichage du score initial
-- ⬜ Bouton pour continuer vers amélioration
+- ⬜ Halaman transisi/loading selama analisis
+- ⬜ Tampilan skor awal
+- ⬜ Tombol untuk lanjut ke peningkatan
 
 ---
 
-### Phase 4: Amélioration du Contexte (CONTEXT_IMPROVEMENT)
+### Fase 4: Peningkatan Konteks (CONTEXT_IMPROVEMENT)
 
-**Objectif**: Chat conversationnel où l'IA pose des questions et améliore le contexte jusqu'à score >= 80%.
+**Tujuan**: Chat percakapan di mana AI mengajukan pertanyaan dan meningkatkan konteks hingga skor >= 80%.
 
-**Comportement**:
-- L'utilisateur est redirigé vers un chat
-- Communication en temps réel via **WebSocket**
-- L'IA a accès à des tools pour:
-  - Lire les données en BD
-  - Exécuter des scripts via wa-js
-  - Mettre à jour le contexte et le score
-  - Créer/modifier des tags et groupes
-  - Écrire et exécuter ses propres scripts
-- L'IA pose des questions adaptées au business
-- Chaque réponse améliore le contexte et diminue les besoins
-- Score minimum requis: **80%** (avec warning si l'utilisateur veut activer avant)
+**Perilaku**:
+- Pengguna diarahkan ke chat
+- Komunikasi real-time via **WebSocket**
+- AI memiliki akses ke tools untuk:
+  - Membaca data di DB
+  - Menjalankan skrip via wa-js
+  - Memperbarui konteks dan skor
+  - Membuat/memodifikasi tag dan grup
+  - Menulis dan menjalankan skripnya sendiri
+- AI mengajukan pertanyaan yang disesuaikan dengan bisnis
+- Setiap jawaban meningkatkan konteks dan mengurangi kebutuhan
+- Skor minimum: **80%** (dengan peringatan jika pengguna ingin mengaktifkan sebelumnya)
 
-**Tables utilisées**: Thread, ThreadMessage
+**Tabel yang digunakan**: Thread, ThreadMessage
 
-**potentialReplies**: Boutons affichés sous le dernier message pour faciliter les réponses
+**potentialReplies**: Tombol yang ditampilkan di bawah pesan terakhir untuk memudahkan jawaban
 
-**Test des réponses IA**: L'utilisateur peut ajouter un ami comme contact de test dans la stratégie pour tester les réponses directement via WhatsApp (pas besoin d'environnement de test séparé)
+**Tes respons AI**: Pengguna dapat menambahkan teman sebagai kontak tes dalam strategi untuk menguji respons langsung via WhatsApp (tidak perlu lingkungan tes terpisah)
 
-#### Questions par type de business
+#### Pertanyaan per tipe bisnis
 
-**E-commerce / Boutique**:
-- Prix ferme ou négociable? (si négociable: % max de réduction)
-- Avez-vous une boutique physique? (basé sur adresse business)
-- Faites-vous des livraisons? (si oui: villes + frais)
-- Politique de retour? (délai max)
-- Numéro support client?
-- Moyens de paiement acceptés?
+**E-commerce / Toko**:
+- Harga tetap atau dapat dinegosiasikan? (jika dinegosiasikan: % diskon maks)
+- Apakah Anda memiliki toko fisik? (berdasarkan alamat bisnis)
+- Apakah Anda melakukan pengiriman? (jika ya: kota + biaya)
+- Kebijakan pengembalian? (batas waktu maks)
+- Nomor dukungan klien?
+- Metode pembayaran yang diterima?
 
-**Services**:
-- Type de service?
-- Zone de couverture?
-- Délai moyen de prestation?
-- Tarification (horaire, forfait, devis)?
+**Layanan**:
+- Tipe layanan?
+- Zona cakupan?
+- Rata-rata waktu layanan?
+- Tarif (per jam, paket, penawaran)?
 
-**Général (tous)**:
-- Secteur d'activité précis
-- **Conversations personnelles**: Proposer de créer un tag "Personnel" (compte business) ou d'ajouter les contacts perso dans le dashboard
-- Tags à créer (Client à relancer, Nouveau client, Support, Personnel...)
-- Groupes à créer (Livraisons, Équipe, etc.)
+**Umum (semua)**:
+- Sektor bisnis spesifik
+- **Percakapan pribadi**: Sarankan membuat tag "Pribadi" (akun bisnis) atau menambahkan kontak pribadi di dashboard
+- Tag untuk dibuat (Klien untuk ditindaklanjuti, Klien baru, Dukungan, Pribadi...)
+- Grup untuk dibuat (Pengiriman, Tim, dll.)
 
-#### Système de Tools IA
+#### Sistem Tools AI
 
-L'IA dispose d'un ensemble complet de tools pour être **autonome** et pouvoir orchestrer ses propres actions.
+AI memiliki set lengkap tools untuk menjadi **otonom** dan dapat mengorkestrasi aksinya sendiri.
 
-##### Tools Base de Données
+##### Tools Database
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `readUserInfo` | Lire infos utilisateur | userId |
-| `readBusinessProfile` | Lire profil business | userId |
-| `readProducts` | Lire produits | userId, limit?, offset? |
-| `readProductAnalysis` | Lire analyses images | productId |
-| `readTags` | Lire tags utilisateur (BD) | userId |
-| `readGroups` | Lire groupes utilisateur (BD) | userId |
-| `updateContext` | Mettre à jour contexte agent | newContext |
-| `updateNeeds` | Mettre à jour besoins | needs[] |
-| `getContextScore` | Obtenir score actuel | - |
+| `readUserInfo` | Baca info pengguna | userId |
+| `readBusinessProfile` | Baca profil bisnis | userId |
+| `readProducts` | Baca produk | userId, limit?, offset? |
+| `readProductAnalysis` | Baca analisis gambar | productId |
+| `readTags` | Baca tag pengguna (DB) | userId |
+| `readGroups` | Baca grup pengguna (DB) | userId |
+| `updateContext` | Perbarui konteks agent | newContext |
+| `updateNeeds` | Perbarui kebutuhan | needs[] |
+| `getContextScore` | Dapatkan skor saat ini | - |
 
 ##### Tools Labels/Tags (via wa-js WPP.labels)
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `getAllLabels` | Liste tous les labels WhatsApp | - |
-| `getLabelById` | Obtenir un label spécifique | labelId |
-| `addNewLabel` | Créer un nouveau label | name, color? |
-| `editLabel` | Modifier un label | labelId, name?, color? |
-| `deleteLabel` | Supprimer un label | labelId |
-| `addOrRemoveLabels` | Ajouter/retirer labels d'un chat | chatId, labelIds[], action |
-| `getLabelColorPalette` | Obtenir couleurs disponibles | - |
+| `getAllLabels` | Daftar semua label WhatsApp | - |
+| `getLabelById` | Dapatkan label spesifik | labelId |
+| `addNewLabel` | Buat label baru | name, color? |
+| `editLabel` | Modifikasi label | labelId, name?, color? |
+| `deleteLabel` | Hapus label | labelId |
+| `addOrRemoveLabels` | Tambah/hapus label dari chat | chatId, labelIds[], action |
+| `getLabelColorPalette` | Dapatkan warna yang tersedia | - |
 
-##### Tools Chat/Messages (via wa-js WPP.chat)
+##### Tools Chat/Pesan (via wa-js WPP.chat)
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `getChatList` | Liste des conversations | limit?, filters? |
-| `getChat` | Obtenir détails d'un chat | chatId |
-| `getMessages` | Lire messages d'une conversation | chatId, limit? |
-| `getUnreadChats` | Liste chats non lus | - |
-| `markIsRead` | Marquer comme lu | chatId |
-| `archiveChat` | Archiver une conversation | chatId |
-| `pinChat` | Épingler une conversation | chatId |
-| `getNotes` | Lire notes d'un chat | chatId |
-| `setNotes` | Définir notes d'un chat | chatId, notes |
+| `getChatList` | Daftar percakapan | limit?, filters? |
+| `getChat` | Dapatkan detail chat | chatId |
+| `getMessages` | Baca pesan percakapan | chatId, limit? |
+| `getUnreadChats` | Daftar chat belum dibaca | - |
+| `markIsRead` | Tandai sebagai dibaca | chatId |
+| `archiveChat` | Arsipkan percakapan | chatId |
+| `pinChat` | Sematkan percakapan | chatId |
+| `getNotes` | Baca catatan chat | chatId |
+| `setNotes` | Atur catatan chat | chatId, notes |
 
-##### Tools Contacts (via wa-js WPP.contact)
+##### Tools Kontak (via wa-js WPP.contact)
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `getContact` | Obtenir infos contact | contactId |
-| `getContactList` | Liste tous les contacts | filters? |
-| `getContactStatus` | Lire status d'un contact | contactId |
-| `getCommonGroups` | Groupes en commun | contactId |
-| `queryContactExists` | Vérifier si contact existe | phoneNumber |
+| `getContact` | Dapatkan info kontak | contactId |
+| `getContactList` | Daftar semua kontak | filters? |
+| `getContactStatus` | Baca status kontak | contactId |
+| `getCommonGroups` | Grup bersama | contactId |
+| `queryContactExists` | Verifikasi kontak ada | phoneNumber |
 
-##### Tools Groupes WhatsApp (via wa-js WPP.group)
+##### Tools Grup WhatsApp (via wa-js WPP.group)
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `getAllGroups` | Liste tous les groupes WA | - |
-| `createGroup` | Créer un groupe WA | name, participants[] |
-| `getGroupParticipants` | Liste membres d'un groupe | groupId |
-| `addGroupParticipants` | Ajouter membres | groupId, participants[] |
-| `removeGroupParticipants` | Retirer membres | groupId, participants[] |
-| `setGroupSubject` | Changer nom du groupe | groupId, subject |
-| `setGroupDescription` | Changer description | groupId, description |
-| `getGroupInviteCode` | Obtenir lien d'invitation | groupId |
+| `getAllGroups` | Daftar semua grup WA | - |
+| `createGroup` | Buat grup WA | name, participants[] |
+| `getGroupParticipants` | Daftar anggota grup | groupId |
+| `addGroupParticipants` | Tambah anggota | groupId, participants[] |
+| `removeGroupParticipants` | Hapus anggota | groupId, participants[] |
+| `setGroupSubject` | Ubah nama grup | groupId, subject |
+| `setGroupDescription` | Ubah deskripsi | groupId, description |
+| `getGroupInviteCode` | Dapatkan link undangan | groupId |
 
 ##### Tools Profil (via wa-js WPP.profile)
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `getMyProfileName` | Lire nom du profil | - |
-| `getMyStatus` | Lire status WhatsApp | - |
-| `setMyProfileName` | Modifier nom du profil | name |
-| `setMyStatus` | Modifier status WhatsApp | status |
-| `editBusinessProfile` | Modifier profil business | data |
+| `getMyProfileName` | Baca nama profil | - |
+| `getMyStatus` | Baca status WhatsApp | - |
+| `setMyProfileName` | Modifikasi nama profil | name |
+| `setMyStatus` | Modifikasi status WhatsApp | status |
+| `editBusinessProfile` | Modifikasi profil bisnis | data |
 
-##### Tools Catalogue (via wa-js WPP.catalog)
+##### Tools Katalog (via wa-js WPP.catalog)
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `getProducts` | Liste produits catalogue | limit? |
-| `getProductById` | Obtenir un produit | productId |
-| `editProduct` | Modifier un produit | productId, data |
-| `getCollections` | Liste collections | - |
-| `editCollection` | Modifier collection | collectionId, data |
-| `setProductVisibility` | Afficher/masquer produit | productId, visible |
+| `getProducts` | Daftar produk katalog | limit? |
+| `getProductById` | Dapatkan produk | productId |
+| `editProduct` | Modifikasi produk | productId, data |
+| `getCollections` | Daftar koleksi | - |
+| `editCollection` | Modifikasi koleksi | collectionId, data |
+| `setProductVisibility` | Tampilkan/sembunyikan produk | productId, visible |
 
-##### Tools Avancés
+##### Tools Lanjutan
 
-| Tool | Description | Paramètres |
+| Tool | Deskripsi | Parameter |
 |------|-------------|------------|
-| `executeScript` | Exécuter script wa-js personnalisé | script |
-| `sendMessage` | Envoyer message (pour tests) | chatId, message |
+| `executeScript` | Jalankan skrip wa-js custom | script |
+| `sendMessage` | Kirim pesan (untuk tes) | chatId, message |
 
-#### Mécanisme d'Orchestration (ReAct Agent)
+#### Mekanisme Orkestrasi (ReAct Agent)
 
-L'IA utilise le pattern **ReAct** (Reasoning + Acting) de LangChain pour orchestrer ses actions de manière autonome:
+AI menggunakan pola **ReAct** (Reasoning + Acting) dari LangChain untuk mengorkestrasi aksinya secara otonom:
 
 ```typescript
-// L'IA peut chaîner plusieurs tools automatiquement
+// AI dapat merangkai beberapa tools secara otomatis
 const agent = createReactAgent({
   llm: grokClient,
   tools: allTools,
   prompt: orchestrationPrompt,
 });
 
-// Exemple de raisonnement de l'IA:
-// 1. "Je dois vérifier si l'utilisateur a des labels"
-// 2. Appel: getAllLabels()
-// 3. "Il n'a pas de label 'Nouveau client', je vais le créer"
-// 4. Appel: addNewLabel("Nouveau client", "#4CAF50")
-// 5. "Je mets à jour le contexte avec cette info"
-// 6. Appel: updateContext(newContext)
-// 7. "Je recalcule le score"
-// 8. Appel: updateNeeds(updatedNeeds)
+// Contoh penalaran AI:
+// 1. "Saya harus memeriksa apakah pengguna memiliki label"
+// 2. Panggilan: getAllLabels()
+// 3. "Tidak ada label 'Klien baru', saya akan membuatnya"
+// 4. Panggilan: addNewLabel("Klien baru", "#4CAF50")
+// 5. "Saya perbarui konteks dengan info ini"
+// 6. Panggilan: updateContext(newContext)
+// 7. "Saya hitung ulang skor"
+// 8. Panggilan: updateNeeds(updatedNeeds)
 ```
 
-**Capacités d'orchestration**:
-- Chaîner plusieurs tools sans intervention utilisateur
-- Utiliser le résultat d'un tool pour décider du prochain
-- Sauvegarder automatiquement le contexte après modifications
-- Détecter et corriger les erreurs (fautes d'orthographe dans produits, etc.)
-- Proposer des améliorations proactives
+**Kemampuan orkestrasi**:
+- Merangkai beberapa tools tanpa intervensi pengguna
+- Menggunakan hasil satu tool untuk menentukan yang berikutnya
+- Menyimpan konteks otomatis setelah modifikasi
+- Mendeteksi dan memperbaiki error (salah eja dalam produk, dll.)
+- Mengusulkan peningkatan proaktif
 
-**Sécurité**:
-- Scripts personnalisés sandboxés avec timeout
-- Whitelist des fonctions wa-js autorisées
-- Logging de toutes les opérations
-- Possibilité de review admin
+**Keamanan**:
+- Skrip custom di-sandbox dengan timeout
+- Whitelist fungsi wa-js yang diizinkan
+- Logging semua operasi
+- Kemampuan review admin
 
-#### Prompt système pour l'IA du chat
+#### Prompt sistem untuk AI chat
 
 ```markdown
-Tu es un assistant d'onboarding pour WhatsApp Agent. Ton rôle est d'aider l'utilisateur à configurer son agent IA pour qu'il puisse répondre automatiquement à ses clients.
+Anda adalah asisten onboarding untuk WhatsApp Agent. Peran Anda adalah membantu pengguna mengonfigurasi agent AI-nya agar dapat merespons klien secara otomatis.
 
-## Ton objectif
-Améliorer le contexte de l'agent jusqu'à atteindre un score de 80% minimum. Le score actuel est de {score}%.
+## Tujuan Anda
+Tingkatkan konteks agent hingga mencapai skor minimum 80%. Skor saat ini adalah {score}%.
 
-## Ce que tu sais déjà
+## Apa yang sudah Anda tahu
 {agentContext}
 
-## Besoins restants
+## Kebutuhan yang tersisa
 {contextNeeds}
 
-## Règles
-1. Pose UNE question à la fois
-2. Adapte tes questions au type de business détecté
-3. Utilise les tools disponibles pour obtenir plus d'infos si nécessaire
-4. Tu peux chaîner plusieurs tools pour accomplir une tâche (ex: vérifier labels → créer si manquant → mettre à jour contexte)
-5. Après chaque réponse utilisateur, mets à jour le contexte ET les besoins
-6. Propose des boutons de réponse rapide (potentialReplies) quand c'est pertinent
-7. Tu peux créer des tags et groupes si l'utilisateur le souhaite
-8. Si tu détectes des erreurs (fautes d'orthographe, infos incohérentes), propose de les corriger
-9. Si le score atteint 80%, félicite l'utilisateur et propose de passer à l'étape suivante
-10. Tu peux ajouter des besoins si tu découvres qu'une info importante manque
+## Aturan
+1. Ajukan SATU pertanyaan pada satu waktu
+2. Sesuaikan pertanyaan dengan tipe bisnis yang terdeteksi
+3. Gunakan tools yang tersedia untuk mendapatkan info lebih bila perlu
+4. Anda dapat merangkai beberapa tools untuk menyelesaikan tugas (mis: periksa label -> buat jika hilang -> perbarui konteks)
+5. Setelah setiap jawaban pengguna, perbarui konteks DAN kebutuhan
+6. Sarankan tombol jawaban cepat (potentialReplies) saat relevan
+7. Anda dapat membuat tag dan grup jika pengguna mau
+8. Jika Anda mendeteksi error (salah eja, info tidak koheren), sarankan untuk memperbaiki
+9. Jika skor mencapai 80%, selamatkan pengguna dan sarankan untuk lanjut ke langkah berikutnya
+10. Anda dapat menambah kebutuhan jika menemukan info penting yang hilang
 
-## Format des réponses
-- Sois concis et professionnel
-- Utilise potentialReplies pour les choix simples
-- Explique pourquoi chaque information est importante
-- Montre la progression (ex: "Score: 65% → 72% (+7)")
+## Format respons
+- Bersikap ringkas dan profesional
+- Gunakan potentialReplies untuk pilihan sederhana
+- Jelaskan mengapa setiap informasi penting
+- Tampilkan progres (mis: "Skor: 65% -> 72% (+7)")
 ```
 
-#### Checklist Phase 4
+#### Checklist Fase 4
 
 **Backend**:
-- ⬜ Créer module `threads`
-- ⬜ Créer `ThreadService`
-- ⬜ Créer `ContextImprovementService`
-- ⬜ Implémenter tous les tools IA
-- ⬜ Créer le prompt système détaillé
-- ⬜ Endpoint `POST /threads` - Créer thread
-- ⬜ Endpoint `GET /threads/:id` - Obtenir thread
-- ⬜ Endpoint `GET /threads/:id/messages` - Liste messages
-- ⬜ Endpoint `POST /threads/:id/messages` - Envoyer message
-- ⬜ Logique de calcul de score dynamique
-- ⬜ Intégration LangChain avec tools
+- ⬜ Buat modul `threads`
+- ⬜ Buat `ThreadService`
+- ⬜ Buat `ContextImprovementService`
+- ⬜ Implementasikan semua tools AI
+- ⬜ Buat prompt sistem detail
+- ⬜ Endpoint `POST /threads` - Buat thread
+- ⬜ Endpoint `GET /threads/:id` - Dapatkan thread
+- ⬜ Endpoint `GET /threads/:id/messages` - Daftar pesan
+- ⬜ Endpoint `POST /threads/:id/messages` - Kirim pesan
+- ⬜ Logika perhitungan skor dinamis
+- ⬜ Integrasi LangChain dengan tools
 
 **Frontend**:
-- ⬜ Créer page `/onboarding/context-chat`
-- ⬜ Composant `ChatInterface`
-- ⬜ Affichage messages avec bulles
-- ⬜ Boutons `potentialReplies` sous le dernier message
-- ⬜ Indicateur de score en temps réel
-- ⬜ Bouton "Passer à l'étape suivante" quand score >= 80%
-- ⬜ Warning si activation avec score < 80%
-- ⬜ Possibilité de continuer le chat même après 80%
+- ⬜ Buat halaman `/onboarding/context-chat`
+- ⬜ Komponen `ChatInterface`
+- ⬜ Tampilkan pesan dengan bubble
+- ⬜ Tombol `potentialReplies` di bawah pesan terakhir
+- ⬜ Indikator skor real-time
+- ⬜ Tombol "Lanjut ke langkah berikutnya" saat skor >= 80%
+- ⬜ Peringatan jika aktivasi dengan skor < 80%
+- ⬜ Kemampuan melanjutkan chat bahkan setelah 80%
 
 ---
 
-### Phase 5: Sélection de Stratégie (STRATEGY_SELECTION)
+### Fase 5: Pemilihan Strategi (STRATEGY_SELECTION)
 
-**Objectif**: L'utilisateur choisit comment activer le système.
+**Tujuan**: Pengguna memilih cara mengaktifkan sistem.
 
-**Options (Cards)**:
+**Opsi (Kartu)**:
 
-#### Option 1: Mode Test
-- Choisir un ou plusieurs numéros de téléphone
-- Le système répond UNIQUEMENT aux messages de ces numéros
-- Pour tester avant activation globale
+#### Opsi 1: Mode Tes
+- Pilih satu atau beberapa nomor telepon
+- Sistem hanya merespons pesan dari nomor-nomor ini
+- Untuk tes sebelum aktivasi global
 
-#### Option 2: Tags Spécifiques
-- Activer pour les conversations taguées
-- Sélectionner les tags concernés (autocomplete)
-- Utile pour cibler certains clients
+#### Opsi 2: Tag Spesifik
+- Aktifkan untuk percakapan yang ditag
+- Pilih tag yang terkait (autocomplete)
+- Berguna untuk menargetkan klien tertentu
 
-#### Option 3: Tous les Contacts
-- Activation globale
-- Désactive les options 1 et 2
-- Le système répond à tous les messages
+#### Opsi 3: Semua Kontak
+- Aktivasi global
+- Nonaktifkan opsi 1 dan 2
+- Sistem merespons semua pesan
 
-**Stockage**:
+**Penyimpanan**:
 ```typescript
 // WhatsappAgent.activationStrategy
 {
   type: 'test' | 'tags' | 'all',
-  phoneNumbers?: string[],  // Pour type 'test'
-  tagIds?: string[]         // Pour type 'tags'
+  phoneNumbers?: string[],  // Untuk tipe 'test'
+  tagIds?: string[]         // Untuk tipe 'tags'
 }
 ```
 
-#### Checklist Phase 5
+#### Checklist Fase 5
 
 **Backend**:
-- ⬜ Endpoint `GET /onboarding/tags` - Liste tags pour autocomplete
-- ⬜ Endpoint `POST /onboarding/strategy` - Sauvegarder stratégie
-- ⬜ Endpoint `GET /onboarding/strategy` - Obtenir stratégie actuelle
-- ⬜ Validation des données (numéros valides, tags existants)
+- ⬜ Endpoint `GET /onboarding/tags` - Daftar tag untuk autocomplete
+- ⬜ Endpoint `POST /onboarding/strategy` - Simpan strategi
+- ⬜ Endpoint `GET /onboarding/strategy` - Dapatkan strategi saat ini
+- ⬜ Validasi data (nomor valid, tag ada)
 
 **Frontend**:
-- ⬜ Créer page `/onboarding/activation`
-- ⬜ Card "Mode Test" avec input numéros
-- ⬜ Card "Tags Spécifiques" avec autocomplete
-- ⬜ Card "Tous les Contacts" avec confirmation
-- ⬜ Indication visuelle de l'option sélectionnée
-- ⬜ Bouton "Activer le système"
+- ⬜ Buat halaman `/onboarding/activation`
+- ⬜ Kartu "Mode Tes" dengan input nomor
+- ⬜ Kartu "Tag Spesifik" dengan autocomplete
+- ⬜ Kartu "Semua Kontak" dengan konfirmasi
+- ⬜ Indikasi visual opsi yang dipilih
+- ⬜ Tombol "Aktifkan sistem"
 
 ---
 
-### Phase 6: Système Actif (ACTIVE)
+### Fase 6: Sistem Aktif (ACTIVE)
 
-**Objectif**: Le système est opérationnel et traite les messages selon la stratégie.
+**Tujuan**: Sistem operasional dan memproses pesan sesuai strategi.
 
-**Flux de traitement des messages**:
+**Flow pemrosesan pesan**:
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
@@ -961,113 +960,113 @@ Améliorer le contexte de l'agent jusqu'à atteindre un score de 80% minimum. Le
                            │
                            ▼
                     ┌──────────────┐
-                    │  Vérifier    │
-                    │  stratégie   │
+                    │  Periksa     │
+                    │  strategi    │
                     └──────┬───────┘
                            │
               ┌────────────┼────────────┐
               ▼            ▼            ▼
          ┌────────┐  ┌──────────┐  ┌────────┐
-         │  Test  │  │   Tags   │  │  All   │
+         │  Tes   │  │   Tags   │  │  All   │
          │ phones │  │ matching │  │        │
          └────┬───┘  └────┬─────┘  └───┬────┘
               │           │            │
               └───────────┼────────────┘
                           ▼
                    ┌──────────────┐
-                   │  Autoriser?  │
+                   │  Izinkan?    │
                    └──────┬───────┘
                           │
                     ┌─────┴─────┐
                     ▼           ▼
                ┌────────┐  ┌────────┐
-               │  Oui   │  │  Non   │
-               │Process │  │ Ignore │
+               │  Ya    │  │ Tidak  │
+               │Proses  │  │ Ignore │
                └────────┘  └────────┘
 ```
 
-**Logging des opérations**:
-Chaque opération IA doit logger:
-- Message initial
-- Message final (réponse générée)
-- Tokens utilisés
-- Coût en crédits
+**Logging operasi**:
+Setiap operasi AI harus mencatat:
+- Pesan awal
+- Pesan akhir (respons yang dihasilkan)
+- Token yang digunakan
+- Biaya dalam kredit
 
-**Table Credit existante** sera utilisée pour tracker l'usage.
+**Tabel Credit yang ada** akan digunakan untuk melacak penggunaan.
 
-#### Checklist Phase 6
+#### Checklist Fase 6
 
 **Backend**:
-- ⬜ Modifier webhook message pour vérifier stratégie
-- ⬜ Endpoint `POST /agent/can-process` - Vérifier autorisation
-- ⬜ Service de vérification stratégie
-- ⬜ Logging des opérations IA
-- ⬜ Calcul et déduction des crédits
-- ⬜ Endpoint `GET /usage/stats` - Statistiques d'utilisation
+- ⬜ Modifikasi webhook message untuk memeriksa strategi
+- ⬜ Endpoint `POST /agent/can-process` - Verifikasi izin
+- ⬜ Service verifikasi strategi
+- ⬜ Logging operasi AI
+- ⬜ Perhitungan dan pemotongan kredit
+- ⬜ Endpoint `GET /usage/stats` - Statistik penggunaan
 
 **Agent (whatsapp-agent)**:
-- ⬜ Appel backend avant traitement
-- ⬜ Utiliser le contexte de l'agent
-- ⬜ Logger l'opération après réponse
+- ⬜ Panggil backend sebelum pemrosesan
+- ⬜ Gunakan konteks agent
+- ⬜ Catat operasi setelah respons
 
 ---
 
-### Phase 7: Dashboard Utilisateur
+### Fase 7: Dashboard Pengguna
 
-**Objectif**: Interface post-onboarding pour gérer le système.
+**Tujuan**: Antarmuka post-onboarding untuk mengelola sistem.
 
-#### Page d'accueil
+#### Halaman beranda
 
-**Cards d'activation de scénarios**:
-- Activer/désactiver le système
-- Changer de stratégie
+**Kartu aktivasi skenario**:
+- Aktifkan/nonaktifkan sistem
+- Ubah strategi
 - Mode maintenance
 
-**Cards utilitaires**:
-- "Signaler un problème" → ouvre thread support
-- "Changer la stratégie de vente" → thread amélioration
-- "Améliorer le contexte" → thread contexte
+**Kartu utilitas**:
+- "Laporkan masalah" -> buka thread dukungan
+- "Ubah strategi penjualan" -> thread peningkatan
+- "Tingkatkan konteks" -> thread konteks
 
 **Status**:
-- Conversations traitées (total)
-- Messages traités (total)
-- Crédits utilisés
-- Crédits restants
-- Bouton "Upgrade"
+- Percakapan diproses (total)
+- Pesan diproses (total)
+- Kredit digunakan
+- Kredit tersisa
+- Tombol "Upgrade"
 
-#### Liste des conversations
+#### Daftar percakapan
 
-- Liste de tous les threads (onboarding inclus)
-- Possibilité d'en démarrer un nouveau
-- Filtres par type (ONBOARDING, SUPPORT, etc.)
+- Daftar semua thread (onboarding termasuk)
+- Kemampuan memulai yang baru
+- Filter per tipe (ONBOARDING, SUPPORT, dll.)
 
-#### Paramètres
+#### Pengaturan
 
-- Profil utilisateur
-- Informations business
-- Configuration avancée
+- Profil pengguna
+- Informasi bisnis
+- Konfigurasi lanjutan
 
-#### Checklist Phase 7
+#### Checklist Fase 7
 
 **Backend**:
-- ⬜ Endpoint `GET /dashboard/stats` - Statistiques
-- ⬜ Endpoint `GET /threads` - Liste threads utilisateur
-- ⬜ Endpoint `POST /threads/start/:type` - Démarrer thread
+- ⬜ Endpoint `GET /dashboard/stats` - Statistik
+- ⬜ Endpoint `GET /threads` - Daftar thread pengguna
+- ⬜ Endpoint `POST /threads/start/:type` - Mulai thread
 
 **Frontend**:
-- ⬜ Créer page `/dashboard`
-- ⬜ Composant `StatsCards`
-- ⬜ Composant `ActionCards`
-- ⬜ Créer page `/conversations`
-- ⬜ Liste des threads avec preview
-- ⬜ Créer page `/settings`
-- ⬜ Navigation bottom bar
+- ⬜ Buat halaman `/dashboard`
+- ⬜ Komponen `StatsCards`
+- ⬜ Komponen `ActionCards`
+- ⬜ Buat halaman `/conversations`
+- ⬜ Daftar thread dengan pratinjau
+- ⬜ Buat halaman `/settings`
+- ⬜ Navigasi bottom bar
 
 ---
 
-## 🔧 STRUCTURE BACKEND
+## STRUKTUR BACKEND
 
-### Nouveaux modules à créer
+### Modul baru untuk dibuat
 
 ```
 src/
@@ -1103,16 +1102,16 @@ src/
 
 ---
 
-## 🎨 STRUCTURE FRONTEND
+## STRUKTUR FRONTEND
 
-### Nouvelles routes
+### Route baru
 
 ```typescript
 // routes.ts
 export default [
-  // ... routes existantes ...
+  // ... route yang ada ...
 
-  // Onboarding étendu
+  // Onboarding diperluas
   { path: '/onboarding/analysis', component: OnboardingAnalysis },
   { path: '/onboarding/context-chat', component: ContextChat },
   { path: '/onboarding/activation', component: ActivationStrategy },
@@ -1125,7 +1124,7 @@ export default [
 ]
 ```
 
-### Nouveaux composants
+### Komponen baru
 
 ```
 app/
@@ -1150,16 +1149,16 @@ app/
 
 ---
 
-## 🔌 INTÉGRATION IA
+## INTEGRASI AI
 
-### Providers à configurer
+### Provider untuk dikonfigurasi
 
-**Grok (xAI)** - Principal pour analyse:
+**Grok (xAI)** - Utama untuk analisis:
 ```typescript
-// Thinking model pour analyse approfondie
+// Thinking model untuk analisis mendalam
 const grokClient = new XAI({
   apiKey: process.env.XAI_API_KEY,
-  model: 'grok-2-vision-1212', // ou thinking model
+  model: 'grok-2-vision-1212', // atau thinking model
 });
 ```
 
@@ -1171,18 +1170,18 @@ const geminiClient = new GoogleGenerativeAI({
 });
 ```
 
-### Configuration LangChain
+### Konfigurasi LangChain
 
 ```typescript
-// Pour le chat d'amélioration
+// Untuk chat peningkatan
 const agent = createReactAgent({
-  llm: grokClient, // ou gemini en fallback
+  llm: grokClient, // atau gemini sebagai fallback
   tools: [
     readUserInfoTool,
     readProductsTool,
     createTagTool,
     updateContextTool,
-    // ... autres tools
+    // ... tool lainnya
   ],
   prompt: contextImprovementPrompt,
 });
@@ -1190,113 +1189,113 @@ const agent = createReactAgent({
 
 ---
 
-## 📡 NOUVEAUX ENDPOINTS API
+## ENDPOINT API BARU
 
 ### Onboarding
 
-| Method | Endpoint | Description |
+| Method | Endpoint | Deskripsi |
 |--------|----------|-------------|
-| GET | `/onboarding/status` | Obtenir status onboarding actuel |
-| POST | `/onboarding/start-product-analysis` | Lancer analyse produits |
-| GET | `/onboarding/analysis-progress` | Progression de l'analyse |
-| POST | `/onboarding/start-company-analysis` | Lancer analyse entreprise |
-| GET | `/onboarding/context` | Obtenir contexte généré |
-| POST | `/onboarding/strategy` | Définir stratégie d'activation |
-| GET | `/onboarding/strategy` | Obtenir stratégie actuelle |
+| GET | `/onboarding/status` | Dapatkan status onboarding saat ini |
+| POST | `/onboarding/start-product-analysis` | Jalankan analisis produk |
+| GET | `/onboarding/analysis-progress` | Progres analisis |
+| POST | `/onboarding/start-company-analysis` | Jalankan analisis perusahaan |
+| GET | `/onboarding/context` | Dapatkan konteks yang dihasilkan |
+| POST | `/onboarding/strategy` | Tetapkan strategi aktivasi |
+| GET | `/onboarding/strategy` | Dapatkan strategi saat ini |
 
 ### Threads
 
-| Method | Endpoint | Description |
+| Method | Endpoint | Deskripsi |
 |--------|----------|-------------|
-| GET | `/threads` | Liste des threads utilisateur |
-| POST | `/threads` | Créer nouveau thread |
-| GET | `/threads/:id` | Détails d'un thread |
-| GET | `/threads/:id/messages` | Messages d'un thread |
-| POST | `/threads/:id/messages` | Envoyer message |
+| GET | `/threads` | Daftar thread pengguna |
+| POST | `/threads` | Buat thread baru |
+| GET | `/threads/:id` | Detail thread |
+| GET | `/threads/:id/messages` | Pesan thread |
+| POST | `/threads/:id/messages` | Kirim pesan |
 
 ### Dashboard
 
-| Method | Endpoint | Description |
+| Method | Endpoint | Deskripsi |
 |--------|----------|-------------|
-| GET | `/dashboard/stats` | Statistiques utilisateur |
-| GET | `/usage/history` | Historique d'utilisation |
+| GET | `/dashboard/stats` | Statistik pengguna |
+| GET | `/usage/history` | Riwayat penggunaan |
 
 ### Agent
 
-| Method | Endpoint | Description |
+| Method | Endpoint | Deskripsi |
 |--------|----------|-------------|
-| POST | `/agent/can-process` | Vérifier si peut traiter message |
-| POST | `/agent/log-operation` | Logger opération IA |
+| POST | `/agent/can-process` | Periksa apakah boleh memproses pesan |
+| POST | `/agent/log-operation` | Catat operasi AI |
 
 ---
 
-## 📝 CHANGELOG
+## CHANGELOG
 
-### [2025-11-20] - Révision majeure du plan
-- Clarification UX: 3-4 étapes utilisateur (pas 6+)
-- Score minimum changé de 90% à **80%** avec warning
-- Analyse images: 2 par produit (au lieu de 4) en batch
-- **Format Markdown** pour agentContext et contextNeeds
-  - Permet rendu riche dans l'UI
-  - Commentaires inline sur sections (hover)
-  - Sections pliables/dépliables
-  - Checkboxes interactives
-- Ajout **versioning du contexte** (AgentContextVersion)
-- Expansion massive des tools IA (50+ tools basés sur wa-js)
-- Documentation du mécanisme d'**orchestration ReAct**
-- Ajout détection conversations personnelles via tags
-- Communication chat via **WebSocket**
-- Clarification UserStatus vs OnboardingStatus
-- Test des réponses via WhatsApp (pas d'env de test séparé)
-- Ajout Sentry pour monitoring des erreurs
-- Fallback Grok → Gemini via LangChain
-- **Design UI documenté** basé sur mockups Figma:
-  - Structure page "Contexte de l'IA"
-  - Badge score cliquable → popup besoins manquants
-  - Sections pliables avec aperçu
-  - Chat input persistant avec quick actions
-  - Navigation sidebar (Compte/Configuration/Aides)
+### [2025-11-20] - Revisi besar rencana
+- Klarifikasi UX: 3-4 langkah pengguna (bukan 6+)
+- Skor minimum diubah dari 90% ke **80%** dengan peringatan
+- Analisis gambar: 2 per produk (bukan 4) secara batch
+- **Format Markdown** untuk agentContext dan contextNeeds
+  - Memungkinkan render kaya di UI
+  - Komentar inline pada bagian (hover)
+  - Bagian dapat dilipat/dibuka
+  - Checkbox interaktif
+- Tambah **versioning konteks** (AgentContextVersion)
+- Ekspansi besar tools AI (50+ tools berbasis wa-js)
+- Dokumentasi mekanisme **orkestrasi ReAct**
+- Tambah deteksi percakapan pribadi via tag
+- Komunikasi chat via **WebSocket**
+- Klarifikasi UserStatus vs OnboardingStatus
+- Tes respons via WhatsApp (tidak perlu env tes terpisah)
+- Tambah Sentry untuk monitoring error
+- Fallback Grok -> Gemini via LangChain
+- **Dokumentasi design UI** berdasarkan mockup Figma:
+  - Struktur halaman "Konteks AI"
+  - Badge skor dapat diklik -> popup kebutuhan hilang
+  - Bagian dapat dilipat dengan pratinjau
+  - Input chat persisten dengan quick actions
+  - Navigasi sidebar (Akun/Konfigurasi/Bantuan)
 
-### [2025-11-20] - Création du plan
-- Création initiale du fichier ONBOARDING_PLAN.md
-- Documentation complète de toutes les phases
-- Définition des structures de données
-- Listing des endpoints API
-- Checklists pour chaque phase
+### [2025-11-20] - Pembuatan rencana
+- Pembuatan awal file ONBOARDING_PLAN.md
+- Dokumentasi lengkap semua fase
+- Definisi struktur data
+- Listing endpoint API
+- Checklist untuk setiap fase
 
 ---
 
-## 🗒️ NOTES DE SESSION
+## CATATAN SESI
 
-### Décisions techniques
+### Keputusan teknis
 
 **[2025-11-20]**:
-- Score 80% choisi pour équilibrer qualité et friction utilisateur
-- 2 images par produit pour optimiser coût/performance
-- contextNeeds comme JSON pour flexibilité et transparence
-- ReAct agent pattern pour permettre orchestration autonome
-- WebSocket pour chat temps réel
-- Test via WhatsApp direct (pas de simulateur)
-- Tags pour conversations personnelles (plus fiable que détection auto)
+- Skor 80% dipilih untuk menyeimbangkan kualitas dan friksi pengguna
+- 2 gambar per produk untuk optimasi biaya/performa
+- contextNeeds sebagai JSON untuk fleksibilitas dan transparansi
+- Pola ReAct agent untuk memungkinkan orkestrasi otonom
+- WebSocket untuk chat real-time
+- Tes via WhatsApp langsung (bukan simulator)
+- Tag untuk percakapan pribadi (lebih andal daripada deteksi otomatis)
 
-### Blockers rencontrés
+### Blocker yang ditemui
 
-*(À compléter au fur et à mesure)*
+*(Akan dilengkapi seiring waktu)*
 
-### Prochaines étapes immédiates
+### Langkah berikutnya segera
 
-1. Modifier le schema Prisma avec les nouveaux enums et tables
-2. Créer la migration
-3. Commencer par le module `onboarding` backend
-4. Implémenter l'analyse des produits avec Grok/Gemini
-5. Configurer WebSocket pour le chat
-6. Créer les scripts wa-js pour les nouveaux tools
+1. Modifikasi schema Prisma dengan enum dan tabel baru
+2. Buat migrasi
+3. Mulai dengan modul `onboarding` backend
+4. Implementasikan analisis produk dengan Grok/Gemini
+5. Konfigurasi WebSocket untuk chat
+6. Buat skrip wa-js untuk tools baru
 
 ---
 
-## 📚 RESSOURCES
+## SUMBER DAYA
 
-- [wa-js Documentation](https://wppconnect.io/wa-js/) - Pour les scripts WhatsApp
-- [LangChain Tools](https://js.langchain.com/docs/modules/agents/tools/) - Pour les tools IA
-- [Grok API](https://docs.x.ai/) - Documentation xAI
-- [Gemini API](https://ai.google.dev/docs) - Documentation Google AI
+- [Dokumentasi wa-js](https://wppconnect.io/wa-js/) - Untuk skrip WhatsApp
+- [LangChain Tools](https://js.langchain.com/docs/modules/agents/tools/) - Untuk tools AI
+- [Grok API](https://docs.x.ai/) - Dokumentasi xAI
+- [Gemini API](https://ai.google.dev/docs) - Dokumentasi Google AI
