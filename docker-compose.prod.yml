@@ -219,8 +219,14 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-pro}
       GEMINI_EMBEDDING_MODEL: text-embedding-004
+      OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-large}
       CLIP_IMAGE_MODEL: Xenova/clip-vit-base-patch16
+      # Vector sizes MUST match the active embedding model:
+      # - OpenAI text-embedding-3-large: 3072
+      # - Gemini text-embedding-004: 768
+      # - Local CLIP (image): 512
       QDRANT_IMAGE_VECTOR_SIZE: "512"
+      QDRANT_TEXT_VECTOR_SIZE: ${QDRANT_TEXT_VECTOR_SIZE:-3072}
     command:
       - /bin/sh
       - -c

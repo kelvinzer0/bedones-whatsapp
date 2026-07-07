@@ -1,11 +1,21 @@
+import { Embeddings } from '@langchain/core/embeddings';
 import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
+import { OpenAIEmbeddings } from '@langchain/openai';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 /**
- * Service for generating text embeddings using Gemini
+ * Service for generating text embeddings.
  *
- * IMPORTANT: This service is ONLY used for:
+ * Supports two providers (priority order):
+ *   1. OpenAI-compatible (when OPENAI_API_BASE_URL + OPENAI_API_KEY are set)
+ *      — works with OpenAI, Azure, custom proxies like router9.
+ *   2. Gemini (when GEMINI_API_KEY is set) — uses Google's text-embedding-004.
+ *
+ * IMPORTANT: Switching providers changes vector dimensions, so the Qdrant
+ * collection must be recreated (POST /image-processing/reset-qdrant).
+ *
+ * This service is ONLY used for:
  * - Generating query embeddings for vector search in Qdrant
  * - Product embeddings are generated and stored ONLY in Qdrant (not in database)
  *
@@ -15,50 +25,105 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class EmbeddingsService {
   private readonly logger = new Logger(EmbeddingsService.name);
-  private embeddings: GoogleGenerativeAIEmbeddings | null = null;
-  private readonly apiKey: string | null;
-  private readonly modelCandidates: string[];
+  private embeddings: Embeddings | null = null;
+  private activeProvider: 'openai' | 'gemini' | null = null;
   private activeModelName: string | null = null;
 
   constructor(private configService: ConfigService) {
-    this.apiKey = this.configService.get<string>('GEMINI_API_KEY') || null;
-    const configuredModel =
-      this.configService.get<string>('GEMINI_EMBEDDING_MODEL')?.trim() ||
-      'text-embedding-004';
-    this.modelCandidates = [
-      ...new Set([
-        configuredModel,
-        'text-embedding-004',
-        'gemini-embedding-001',
-      ]),
-    ];
+    this.initialize();
+  }
 
-    if (!this.apiKey) {
-      this.logger.warn(
-        'GEMINI_API_KEY not configured - semantic search will be disabled',
-      );
-      return;
+  private initialize() {
+    // Try OpenAI-compatible first (router9, OpenAI, Azure, etc.)
+    const openaiApiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const openaiBaseUrl =
+      this.configService.get<string>('OPENAI_API_BASE_URL') || '';
+    const openaiEmbeddingModel =
+      this.configService.get<string>('OPENAI_EMBEDDING_MODEL')?.trim() ||
+      'text-embedding-3-large';
+
+    if (openaiApiKey && openaiBaseUrl) {
+      try {
+        this.embeddings = new OpenAIEmbeddings({
+          apiKey: openaiApiKey,
+          model: openaiEmbeddingModel,
+          configuration: { baseURL: openaiBaseUrl },
+        });
+        this.activeProvider = 'openai';
+        this.activeModelName = openaiEmbeddingModel;
+        this.logger.log(
+          `Using OpenAI-compatible embeddings — model: ${openaiEmbeddingModel}, baseURL: ${openaiBaseUrl}`,
+        );
+        return;
+      } catch (error) {
+        this.logger.warn(
+          `Failed to init OpenAI-compatible embeddings: ${error.message}. Trying Gemini fallback...`,
+        );
+      }
     }
 
-    this.activeModelName = this.modelCandidates[0];
-    this.embeddings = this.createEmbeddings(this.activeModelName);
-    this.logger.log(`Using Gemini embedding model: ${this.activeModelName}`);
+    // Fallback to Gemini
+    const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY');
+    const geminiModel =
+      this.configService.get<string>('GEMINI_EMBEDDING_MODEL')?.trim() ||
+      'text-embedding-004';
+
+    if (geminiApiKey) {
+      try {
+        this.embeddings = new GoogleGenerativeAIEmbeddings({
+          apiKey: geminiApiKey,
+          modelName: geminiModel,
+        });
+        this.activeProvider = 'gemini';
+        this.activeModelName = geminiModel;
+        this.logger.log(
+          `Using Gemini embeddings — model: ${geminiModel}`,
+        );
+        return;
+      } catch (error) {
+        this.logger.error(
+          `Failed to init Gemini embeddings: ${error.message}`,
+        );
+      }
+    }
+
+    this.logger.warn(
+      'No embeddings provider configured — semantic search will be disabled. ' +
+        'Set OPENAI_API_KEY + OPENAI_API_BASE_URL, or GEMINI_API_KEY to enable.',
+    );
   }
 
   /**
    * Check if embeddings are available
    */
   isAvailable(): boolean {
-    return !!this.apiKey;
+    return !!this.embeddings;
+  }
+
+  /**
+   * Get the active provider name (for logging/debugging)
+   */
+  getProvider(): 'openai' | 'gemini' | null {
+    return this.activeProvider;
+  }
+
+  /**
+   * Get the active model name
+   */
+  getModelName(): string | null {
+    return this.activeModelName;
   }
 
   /**
    * Generate embedding for a single text
    */
   async embedText(text: string): Promise<number[]> {
-    return this.withModelFallback(async (embeddings) =>
-      embeddings.embedQuery(text),
-    );
+    if (!this.embeddings) {
+      throw new Error(
+        'Embeddings service not configured — set OPENAI_API_KEY + OPENAI_API_BASE_URL or GEMINI_API_KEY',
+      );
+    }
+    return this.embeddings.embedQuery(text);
   }
 
   /**
@@ -70,6 +135,12 @@ export class EmbeddingsService {
       return [];
     }
 
+    if (!this.embeddings) {
+      throw new Error(
+        'Embeddings service not configured — set OPENAI_API_KEY + OPENAI_API_BASE_URL or GEMINI_API_KEY',
+      );
+    }
+
     try {
       // Process in batches of 10 to avoid rate limits
       const batchSize = 10;
@@ -77,9 +148,7 @@ export class EmbeddingsService {
 
       for (let i = 0; i < texts.length; i += batchSize) {
         const batch = texts.slice(i, i + batchSize);
-        const embeddings = await this.withModelFallback(async (service) =>
-          service.embedDocuments(batch),
-        );
+        const embeddings = await this.embeddings.embedDocuments(batch);
         results.push(...embeddings);
 
         this.logger.debug(
@@ -94,91 +163,6 @@ export class EmbeddingsService {
       );
       throw error;
     }
-  }
-
-  private createEmbeddings(modelName: string): GoogleGenerativeAIEmbeddings {
-    if (!this.apiKey) {
-      throw new Error('Gemini embeddings are unavailable (missing API key)');
-    }
-
-    return new GoogleGenerativeAIEmbeddings({
-      apiKey: this.apiKey,
-      modelName,
-    });
-  }
-
-  private getModelProbeOrder(): string[] {
-    if (!this.activeModelName) {
-      return this.modelCandidates;
-    }
-
-    return [
-      this.activeModelName,
-      ...this.modelCandidates.filter((model) => model !== this.activeModelName),
-    ];
-  }
-
-  private isModelUnavailableError(error: unknown): boolean {
-    const message = String((error as { message?: unknown })?.message || error)
-      .toLowerCase()
-      .trim();
-
-    return (
-      message.includes('not found') ||
-      message.includes('not supported') ||
-      message.includes('listmodels')
-    );
-  }
-
-  private async withModelFallback<T>(
-    operation: (embeddings: GoogleGenerativeAIEmbeddings) => Promise<T>,
-  ): Promise<T> {
-    if (!this.apiKey) {
-      throw new Error('Gemini embeddings are unavailable (missing API key)');
-    }
-
-    const modelProbeOrder = this.getModelProbeOrder();
-    let lastError: unknown;
-
-    for (const modelName of modelProbeOrder) {
-      const embeddings =
-        this.activeModelName === modelName && this.embeddings
-          ? this.embeddings
-          : this.createEmbeddings(modelName);
-
-      try {
-        const result = await operation(embeddings);
-
-        if (this.activeModelName !== modelName) {
-          this.logger.warn(
-            `Embedding model "${this.activeModelName}" unavailable, switched to "${modelName}"`,
-          );
-        }
-
-        this.activeModelName = modelName;
-        this.embeddings = embeddings;
-        return result;
-      } catch (error) {
-        lastError = error;
-
-        if (!this.isModelUnavailableError(error)) {
-          this.logger.error(`Failed to generate embedding: ${error.message}`);
-          throw error;
-        }
-
-        this.logger.warn(
-          `Embedding model "${modelName}" unavailable, trying fallback...`,
-        );
-      }
-    }
-
-    const fallbackError =
-      lastError instanceof Error
-        ? lastError
-        : new Error(String(lastError || 'Unknown embedding error'));
-
-    this.logger.error(`Failed to generate embedding: ${fallbackError.message}`);
-    throw fallbackError;
   }
 
   /**
