@@ -108,7 +108,12 @@ jobs:
         shell: bash
         run: |
           echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_OUTPUT}"
-          echo "push=$([[ '${{ github.event_name }}' == 'push' && '${{ github.ref }}' == 'refs/heads/main' ]] && echo true || echo false)" >> "${GITHUB_OUTPUT}"
+          # Push to GHCR on push to main OR on manual workflow_dispatch
+          if [[ '${{ github.event_name }}' == 'push' && '${{ github.ref }}' == 'refs/heads/main' ]] || [[ '${{ github.event_name }}' == 'workflow_dispatch' && '${{ github.ref }}' == 'refs/heads/main' ]]; then
+            echo "push=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "push=false" >> "${GITHUB_OUTPUT}"
+          fi
 
       - name: Decide whether to build image
         id: plan
