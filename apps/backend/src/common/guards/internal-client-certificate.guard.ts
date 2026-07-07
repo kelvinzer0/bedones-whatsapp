@@ -34,20 +34,20 @@ function assertAuthorizedTlsSocket(
 
   if (!socket.encrypted) {
     logger.error(`Rejected ${label} request on a non-TLS socket`);
-    throw new UnauthorizedException('Mutual TLS is required');
+    throw new UnauthorizedException('Mutual TLS diperlukan');
   }
 
   if (!socket.authorized) {
     logger.error(
       `Rejected ${label} request with unauthorized certificate: ${socket.authorizationError || 'unknown'}`,
     );
-    throw new UnauthorizedException('Invalid client certificate');
+    throw new UnauthorizedException('Sertifikat klien tidak valid');
   }
 
   const commonName = getPeerCommonName(request);
   if (!commonName) {
     logger.error(`Rejected ${label} request without certificate subject`);
-    throw new UnauthorizedException('Missing client certificate subject');
+    throw new UnauthorizedException('Subjek sertifikat klien tidak ada');
   }
 
   return commonName;
@@ -75,7 +75,7 @@ export class AgentMtlsGuard implements CanActivate {
       this.logger.error(
         `Rejected agent-internal request from unexpected client CN "${commonName}"`,
       );
-      throw new UnauthorizedException('Unexpected client certificate');
+      throw new UnauthorizedException('Sertifikat klien tidak diharapkan');
     }
 
     return true;
@@ -104,7 +104,7 @@ export class ConnectorMtlsGuard implements CanActivate {
       this.logger.error(
         `Rejected webhook request from unexpected client CN "${commonName}"`,
       );
-      throw new UnauthorizedException('Unexpected client certificate');
+      throw new UnauthorizedException('Sertifikat klien tidak diharapkan');
     }
 
     return true;

@@ -63,17 +63,17 @@ const legacyRoutePrefetchers: Record<string, () => Promise<unknown>> = {
 
 const menuSections = [
   {
-    title: 'Général',
+    title: 'Umum',
     items: [
       {
         key: 'home',
-        label: 'Accueil',
+        label: 'Beranda',
         icon: <HomeIcon width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} />,
         path: '/dashboard',
       },
       {
         key: 'stats',
-        label: 'Statistiques',
+        label: 'Statistik',
         icon: (
           <StatsIcon width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} />
         ),
@@ -89,7 +89,7 @@ const menuSections = [
       },
       {
         key: 'subscriptions',
-        label: 'Souscriptions',
+        label: 'Langganan',
         icon: (
           <SubscribeIcon width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} />
         ),
@@ -98,11 +98,11 @@ const menuSections = [
     ],
   },
   {
-    title: 'Configuration',
+    title: 'Konfigurasi',
     items: [
       {
         key: 'context',
-        label: "Contexte de l'IA",
+        label: 'Konteks AI',
         icon: (
           <RocketIcon width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} />
         ),
@@ -110,7 +110,7 @@ const menuSections = [
       },
       {
         key: 'catalog',
-        label: 'Catalogue',
+        label: 'Katalog',
         icon: (
           <CatalogIcon width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} />
         ),
@@ -118,7 +118,7 @@ const menuSections = [
       },
       {
         key: 'marketing',
-        label: 'Status scheduler',
+        label: 'Penjadwal status',
         icon: (
           <StoriesIcon width={SIDEBAR_ICON_SIZE} height={SIDEBAR_ICON_SIZE} />
         ),
@@ -127,11 +127,11 @@ const menuSections = [
     ],
   },
   {
-    title: 'Aides',
+    title: 'Bantuan',
     items: [
       {
         key: 'support',
-        label: 'Support',
+        label: 'Dukungan',
         icon: (
           <CustomerServiceOutlined style={{ fontSize: SIDEBAR_ICON_SIZE }} />
         ),
@@ -218,7 +218,7 @@ function DashboardSidebarContent({
           items={menuSections.map(section => ({
             type: 'group' as const,
             label:
-              section.title === 'Aides' && isDashboardHome ? (
+              section.title === 'Bantuan' && isDashboardHome ? (
                 <button
                   type='button'
                   onClick={onOpenHomeSupportModal}
@@ -263,7 +263,7 @@ function DashboardSidebarContent({
             <LogoutOutlined />
           </span>
           <span className='logout-text text-sm font-medium text-error'>
-            Déconnexion
+            Keluar
           </span>
         </button>
       </div>
@@ -352,10 +352,10 @@ function DashboardLayoutContent({ children }: { children?: ReactNode }) {
 
   const handleLogout = () => {
     modal.confirm({
-      title: 'Déconnexion',
-      content: 'Êtes-vous sûr de vouloir vous déconnecter ?',
-      okText: 'Oui, me déconnecter',
-      cancelText: 'Annuler',
+      title: 'Keluar',
+      content: 'Apakah Anda yakin ingin keluar?',
+      okText: 'Ya, keluar',
+      cancelText: 'Batal',
       okButtonProps: { danger: true },
       onOk: logout,
     })
@@ -438,9 +438,9 @@ function DashboardLayoutContent({ children }: { children?: ReactNode }) {
             onClose={() => setIsHomeSupportModalOpen(false)}
             appArea='dashboard-home-aides'
             initialCategory='amelioration'
-            subject="Besoin partagé depuis l'accueil"
-            title='Dites-nous ce dont vous avez besoin'
-            description='Votre retour nous aide à prioriser les évolutions les plus utiles.'
+            subject="Kebutuhan yang dibagikan dari beranda"
+            title='Beri tahu kami apa yang Anda butuhkan'
+            description='Masukan Anda membantu kami memprioritaskan pengembangan yang paling berguna.'
           />
         </Suspense>
       ) : null}
@@ -448,7 +448,7 @@ function DashboardLayoutContent({ children }: { children?: ReactNode }) {
       <div className='relative flex min-h-screen w-full lg:p-4'>
         <button
           type='button'
-          aria-label='Fermer le menu'
+          aria-label='Tutup menu'
           onClick={() => setMobileMenuOpen(false)}
           className={`fixed inset-0 z-40 bg-black/20 transition-opacity duration-300 lg:hidden ${
             mobileMenuOpen

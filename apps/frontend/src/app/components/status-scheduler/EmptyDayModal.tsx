@@ -31,7 +31,7 @@ export function EmptyDayModal({
           onClick={() => onOpenComposer(selectedDay)}
           disabled={!canCreateOnSelectedDay}
         >
-          Programmer une story
+          Jadwalkan story
         </Button>,
       ]}
       width={520}
@@ -48,7 +48,7 @@ export function EmptyDayModal({
               {formatDayHeading(selectedDay)}
             </p>
             <p className='mb-0 mt-2 text-sm leading-[1.7] text-[var(--color-text-secondary)]'>
-              Aucune story programmée pour cette date
+              Belum ada story terjadwal untuk tanggal ini
             </p>
           </div>
         </div>

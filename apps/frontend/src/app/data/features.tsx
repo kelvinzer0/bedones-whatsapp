@@ -24,89 +24,89 @@ export interface FeatureCategory {
 
 export const featuresConfig: Record<string, FeatureCategory> = {
   marketing: {
-    title: 'Status scheduler',
+    title: 'Penjadwal status',
     features: [
       {
-        title: 'Relance des clients si nécessaire',
+        title: 'Tindak lanjut klien jika perlu',
         icon: ClockCircleOutlined,
         description:
-          "Si dans une conversation le client dis qu'il nous revient lundi par exemple, notre IA envoie un message de relance le lundi automatiquement.",
+          'Jika dalam percakapan klien mengatakan akan kembali kepada Anda pada hari Senin misalnya, IA kami mengirim pesan tindak lanjut secara otomatis pada hari Senin.',
       },
       {
-        title: 'Sauvegarde automatique des contacts',
+        title: 'Penyimpanan kontak otomatis',
         icon: SaveOutlined,
         description:
-          'Vous pouvez connecter votre compte Google et nous y stockons automatiquement les contacts pour quii veront ensuite vos statuts et votre présence sur WhatsApp.',
+          'Anda dapat menghubungkan akun Google Anda dan kami akan menyimpan kontak di sana secara otomatis agar mereka dapat melihat status dan kehadiran Anda di WhatsApp.',
       },
       {
-        title: 'Classifications des contacts',
+        title: 'Klasifikasi kontak',
         icon: TeamOutlined,
         description:
-          "L'IA organise vos contacts en catégories intelligentes : prospects chauds, clients fidèles, clients inactifs, spam etc. Cette segmentation automatique vous aide à cibler vos campagnes marketing avec précision.",
+          'IA mengorganisir kontak Anda ke dalam kategori cerdas: prospek panas, klien setia, klien tidak aktif, spam, dll. Segmentasi otomatis ini membantu Anda menargetkan kampanye pemasaran dengan presisi.',
       },
       {
-        title: "Status par segment(s) d'utilisateur",
+        title: 'Status per segmen pengguna',
         icon: TagOutlined,
         description:
-          "Afin d'eviter de publier un grand nombre de statuts, notre IA vous permet de choisir les segments de contacts sur lesquels vous souhaitez publier.",
+          'Untuk menghindari publikasi sejumlah besar status, IA kami memungkinkan Anda memilih segmen kontak yang ingin Anda tuju dengan publikasi.',
       },
     ],
   },
   ventes: {
-    title: 'Ventes',
+    title: 'Penjualan',
     features: [
       {
-        title: 'Réponses aux questions',
+        title: 'Jawaban atas pertanyaan',
         icon: MessageOutlined,
         description:
-          "L'IA répond instantanément aux questions de vos clients 24/7 en se basant sur vos instructions, la description de vos produits et votre politique de vente. Elle comprend le contexte et fournit des réponses précises et personnalisées qui correspondent à votre ton et votre image de marque.",
+          'IA menjawab pertanyaan klien Anda secara instan 24/7 berdasarkan instruksi Anda, deskripsi produk Anda, dan kebijakan penjualan Anda. IA memahami konteks dan memberikan jawaban yang tepat dan dipersonalisasi sesuai nada dan citra merek Anda.',
       },
       {
-        title: 'Négociations des prix suivant vos règles',
+        title: 'Negosiasi harga sesuai aturan Anda',
         icon: DollarOutlined,
         description:
-          "Définissez vos règles de négociation (remises maximales, conditions, volumes) et l'IA gère les discussions tarifaires de manière autonome. Elle sait quand proposer une promotion, un bundle ou escalader vers un humain.",
+          'Tentukan aturan negosiasi Anda (diskon maksimal, syarat, volume) dan IA mengelola diskusi tarif secara mandiri. IA tahu kapan harus menawarkan promosi, bundel, atau meneruskan ke manusia.',
       },
       {
-        title: 'Demande des informations de livraison',
+        title: 'Permintaan informasi pengiriman',
         icon: CarOutlined,
         description:
-          "L'agent collecte automatiquement toutes les informations nécessaires pour la livraison : adresse complète, préférences d'horaire, instructions spéciales. Il valide les données et peut même proposer des options de livraison express ou standard.",
+          'Agent secara otomatis mengumpulkan semua informasi yang diperlukan untuk pengiriman: alamat lengkap, preferensi waktu, instruksi khusus. IA memvalidasi data dan bahkan dapat menawarkan opsi pengiriman ekspres atau standar.',
       },
       {
-        title: 'Notification dans des groupes',
+        title: 'Notifikasi dalam grup',
         icon: CarOutlined,
         description:
-          'Notre IA est capable de comprendre les groupes où se trouves vos collaborateurs et de les notifier en cas de besoin (Nouvelle commande, Demande de devis, Demande de retour, etc)',
+          'IA kami mampu memahami grup tempat rekan kerja Anda berada dan memberi tahu mereka saat diperlukan (Pesanan baru, Permintaan penawaran, Permintaan retur, dll)',
       },
       {
-        title: 'Disponible 24h/24 et 7 jours sur 7',
+        title: 'Tersedia 24 jam sehari, 7 hari seminggu',
         icon: FieldTimeOutlined,
         description:
-          "Votre assistant IA ne dort jamais. Il répond instantanément à vos clients, peu importe l'heure ou le jour. Capturez les ventes même pendant la nuit, les weekends et les jours fériés sans aucun coût supplémentaire.",
+          'Asisten IA Anda tidak pernah tidur. IA menjawab klien Anda secara instan, tanpa memandang waktu atau hari. Tangkap penjualan bahkan di malam hari, akhir pekan, dan hari libur tanpa biaya tambahan.',
       },
     ],
   },
   community: {
-    title: 'Community management',
+    title: 'Manajemen komunitas',
     features: [
       {
-        title: 'Réponses aux commentaires',
+        title: 'Balasan atas komentar',
         icon: CommentOutlined,
         description:
-          'Notre IA peut se connecter à votre page Facebook ou Instagram et répondre aux commentaires de vos clients en temps réel.',
+          'IA kami dapat terhubung ke halaman Facebook atau Instagram Anda dan membalas komentar klien Anda secara real-time.',
       },
       {
-        title: 'Détection de vol de leads',
+        title: 'Deteksi pencurian leads',
         icon: TagOutlined,
         description:
-          'Notre IA peut se connecter à votre page Facebook ou Instagram et masquer/supprimer les commentaires qui tentes de détourner vos clients potentiels.',
+          'IA kami dapat terhubung ke halaman Facebook atau Instagram Anda dan menyembunyikan/menghapus komentar yang mencoba membajak calon klien Anda.',
       },
       {
-        title: 'Détection commentaires malveillants',
+        title: 'Deteksi komentar berbahaya',
         icon: TagOutlined,
         description:
-          'Notre IA peut se connecter à votre page Facebook ou Instagram et masquer/supprimer les commentaires inappropriés (insultes, menaces, etc).',
+          'IA kami dapat terhubung ke halaman Facebook atau Instagram Anda dan menyembunyikan/menghapus komentar yang tidak pantas (hinaan, ancaman, dll).',
       },
     ],
   },

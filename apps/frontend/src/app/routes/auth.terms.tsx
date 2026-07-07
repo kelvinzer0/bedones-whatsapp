@@ -2,11 +2,11 @@ import LegalDocumentPage from '@app/components/legal/LegalDocumentPage'
 
 export function meta() {
   return [
-    { title: "Conditions générales d'utilisation - WhatsApp Agent" },
+    { title: 'Syarat dan Ketentuan - WhatsApp Agent' },
     {
       name: 'description',
       content:
-        "Consultez les conditions générales d'utilisation de WhatsApp Agent.",
+        'Lihat syarat dan ketentuan WhatsApp Agent.',
     },
   ]
 }
@@ -14,43 +14,43 @@ export function meta() {
 export default function TermsPage() {
   return (
     <LegalDocumentPage
-      eyebrow='CGU'
-      title="Conditions générales d'utilisation"
-      introduction="Les présentes conditions encadrent l'accès et l'usage de WhatsApp Agent. En utilisant l'application, vous confirmez agir pour votre activité et accepter un usage conforme à la loi, aux règles de WhatsApp et aux présentes conditions."
-      updatedAt='21 mars 2026'
+      eyebrow='Syarat & Ketentuan'
+      title='Syarat dan Ketentuan'
+      introduction="Ketentuan ini mengatur akses dan penggunaan WhatsApp Agent. Dengan menggunakan aplikasi, Anda mengonfirmasi bahwa Anda bertindak untuk aktivitas Anda dan menerima penggunaan yang sesuai dengan hukum, aturan WhatsApp, dan ketentuan ini."
+      updatedAt='21 Maret 2026'
       sections={[
         {
-          title: '1. Objet du service',
+          title: '1. Tujuan layanan',
           paragraphs: [
-            "WhatsApp Agent permet d'automatiser et d'assister certaines interactions commerciales autour de WhatsApp Business, notamment la gestion du contexte métier, l'assistance conversationnelle et, lorsque vous l'activez, la synchronisation de contacts avec des services tiers.",
+            "WhatsApp Agent memungkinkan otomatisasi dan bantuan untuk interaksi bisnis tertentu di sekitar WhatsApp Business, termasuk pengelolaan konteks bisnis, bantuan percakapan, dan saat Anda mengaktifkannya, sinkronisasi kontak dengan layanan pihak ketiga.",
           ],
         },
         {
-          title: '2. Accès et compte',
+          title: '2. Akses dan akun',
           paragraphs: [
-            "Vous êtes responsable des informations fournies lors de la connexion, de la sécurité de votre compte et de l'usage qui est fait de votre numéro WhatsApp Business, de votre configuration agent et de vos intégrations tierces.",
-            "Vous devez disposer des droits nécessaires sur les données, contacts et canaux que vous utilisez dans l'application.",
+            "Anda bertanggung jawab atas informasi yang diberikan saat masuk, keamanan akun Anda, dan penggunaan nomor WhatsApp Business Anda, konfigurasi agen, dan integrasi pihak ketiga Anda.",
+            "Anda harus memiliki hak yang diperlukan atas data, kontak, dan saluran yang Anda gunakan di aplikasi.",
           ],
         },
         {
-          title: '3. Usage autorisé',
+          title: '3. Penggunaan yang diizinkan',
           paragraphs: [
-            "Vous vous engagez à ne pas utiliser le service à des fins illégales, frauduleuses, trompeuses, abusives ou contraires aux politiques des plateformes connectées. Vous demeurez responsable des messages, contenus, règles métier et automatisations configurés depuis votre compte.",
-            "Toute utilisation susceptible de nuire au service, à nos autres utilisateurs ou à des tiers peut entraîner la suspension ou la limitation de l'accès.",
+            "Anda setuju untuk tidak menggunakan layanan untuk tujuan ilegal, curang, menipu, abusif, atau bertentangan dengan kebijakan platform yang terhubung. Anda tetap bertanggung jawab atas pesan, konten, aturan bisnis, dan otomatisasi yang dikonfigurasi dari akun Anda.",
+            "Setiap penggunaan yang dapat merugikan layanan, pengguna lain kami, atau pihak ketiga dapat mengakibatkan penangguhan atau pembatasan akses.",
           ],
         },
         {
-          title: '4. Intégrations tierces',
+          title: '4. Integrasi pihak ketiga',
           paragraphs: [
-            "Certaines fonctionnalités dépendent de services tiers, notamment WhatsApp et Google. Leur disponibilité, leurs règles et leurs conditions peuvent évoluer sans préavis. Vous êtes responsable du maintien des autorisations nécessaires sur ces services.",
-            "Lorsque vous connectez Google Contacts, vous nous autorisez à créer ou lier des contacts dans votre propre compte Google selon les règles de synchronisation prévues par l'application.",
+            "Beberapa fitur bergantung pada layanan pihak ketiga, termasuk WhatsApp dan Google. Ketersediaan, aturan, dan ketentuan mereka dapat berubah tanpa pemberitahuan. Anda bertanggung jawab untuk mempertahankan izin yang diperlukan pada layanan ini.",
+            "Saat Anda menghubungkan Google Contacts, Anda mengizinkan kami untuk membuat atau menautkan kontak di akun Google Anda sendiri sesuai aturan sinkronisasi yang ditentukan oleh aplikasi.",
           ],
         },
         {
-          title: '5. Limitation et évolution du service',
+          title: '5. Pembatasan dan evolusi layanan',
           paragraphs: [
-            "Le service est fourni avec une obligation de moyens. Nous pouvons corriger, modifier, suspendre ou faire évoluer certaines fonctionnalités pour des raisons techniques, de sécurité, de conformité ou d'amélioration produit.",
-            "Sauf disposition contraire impérative, Bedones ne pourra être tenu responsable des pertes indirectes, des interruptions imputables à des tiers ou des conséquences d'une configuration fournie par l'utilisateur.",
+            "Layanan disediakan dengan kewajiban sarana. Kami dapat mengoreksi, mengubah, menangguhkan, atau mengembangkan fitur tertentu karena alasan teknis, keamanan, kepatuhan, atau peningkatan produk.",
+            "Kecuali ditentukan lain secara imperatif, Bedones tidak bertanggung jawab atas kerugian tidak langsung, gangguan yang disebabkan oleh pihak ketiga, atau konsekuensi konfigurasi yang disediakan oleh pengguna.",
           ],
         },
       ]}

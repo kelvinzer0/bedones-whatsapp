@@ -188,11 +188,11 @@ export class BillingService {
     });
 
     if (!isBillingPlanKey(dto.planKey)) {
-      throw new BadRequestException('Plan de souscription invalide.');
+      throw new BadRequestException('Paket langganan tidak valid.');
     }
 
     if (!isBillingDuration(dto.durationMonths)) {
-      throw new BadRequestException('Durée de souscription invalide.');
+      throw new BadRequestException('Durasi langganan tidak valid.');
     }
 
     const user = await this.prisma.user.findUnique({
@@ -205,7 +205,7 @@ export class BillingService {
     });
 
     if (!user) {
-      throw new NotFoundException('Utilisateur introuvable.');
+      throw new NotFoundException('Pengguna tidak ditemukan.');
     }
 
     const phoneNumber = this.resolvePhoneNumber(
@@ -340,7 +340,7 @@ export class BillingService {
       });
 
       throw new InternalServerErrorException(
-        "Impossible d'initialiser le paiement pour le moment.",
+        "Tidak dapat memulai pembayaran saat ini.",
       );
     }
   }
@@ -750,7 +750,7 @@ export class BillingService {
       this.logPaymentOperation('billing.stripe.webhook.rejected', {
         reason: 'missing_signature',
       });
-      throw new BadRequestException('Stripe-Signature manquant.');
+      throw new BadRequestException('Stripe-Signature tidak ada.');
     }
 
     const payload = rawPayload.toString('utf8');
@@ -759,7 +759,7 @@ export class BillingService {
       this.logPaymentOperation('billing.stripe.webhook.rejected', {
         reason: 'invalid_signature',
       });
-      throw new BadRequestException('Signature Stripe invalide.');
+      throw new BadRequestException('Signature Stripe tidak valid.');
     }
 
     const event = safeJsonParse<Record<string, unknown>>(payload);
@@ -868,7 +868,7 @@ export class BillingService {
       this.logPaymentOperation('billing.notch.webhook.rejected', {
         reason: 'missing_signature',
       });
-      throw new BadRequestException('x-notch-signature manquant.');
+      throw new BadRequestException('x-notch-signature tidak ada.');
     }
 
     const payload = rawPayload.toString('utf8');
@@ -877,7 +877,7 @@ export class BillingService {
       this.logPaymentOperation('billing.notch.webhook.rejected', {
         reason: 'invalid_signature',
       });
-      throw new BadRequestException('Signature Notch Pay invalide.');
+      throw new BadRequestException('Signature Notch Pay tidak valid.');
     }
 
     const event = safeJsonParse<Record<string, unknown>>(payload);
@@ -1000,7 +1000,7 @@ export class BillingService {
     const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
 
     if (!secretKey) {
-      throw new Error('STRIPE_SECRET_KEY is not configured');
+      throw new Error('STRIPE_SECRET_KEY tidak dikonfigurasi');
     }
 
     this.logPaymentOperation('billing.stripe.checkout_session.create_started', {
@@ -1077,7 +1077,7 @@ export class BillingService {
     const data = safeJsonParse<StripeCheckoutSession>(responseText);
 
     if (!data.url) {
-      throw new Error('Stripe checkout URL missing.');
+      throw new Error('URL checkout Stripe tidak ditemukan.');
     }
 
     this.logPaymentOperation('billing.stripe.checkout_session.created', {
@@ -1100,7 +1100,7 @@ export class BillingService {
     const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
 
     if (!secretKey) {
-      throw new Error('STRIPE_SECRET_KEY is not configured');
+      throw new Error('STRIPE_SECRET_KEY tidak dikonfigurasi');
     }
 
     this.logPaymentOperation('billing.stripe.checkout_session.fetch_started', {
@@ -1156,7 +1156,7 @@ export class BillingService {
 
     if (!apiKey) {
       throw new Error(
-        'NOTCH_PUBLIC_KEY or NOTCH_PRIVATE_KEY is not configured',
+        'NOTCH_PUBLIC_KEY atau NOTCH_PRIVATE_KEY tidak dikonfigurasi',
       );
     }
 
@@ -1201,7 +1201,7 @@ export class BillingService {
     const checkoutUrl = data.authorization_url || data.payment_url;
 
     if (!checkoutUrl) {
-      throw new Error('Notch Pay checkout URL missing.');
+      throw new Error('URL checkout Notch Pay tidak ditemukan.');
     }
 
     this.logPaymentOperation('billing.notch.payment.created', {
@@ -1231,7 +1231,7 @@ export class BillingService {
 
     if (!apiKey) {
       throw new Error(
-        'NOTCH_PUBLIC_KEY or NOTCH_PRIVATE_KEY is not configured',
+        'NOTCH_PUBLIC_KEY atau NOTCH_PRIVATE_KEY tidak dikonfigurasi',
       );
     }
 
@@ -1336,7 +1336,7 @@ export class BillingService {
           this.logPaymentOperation('billing.payment.process_success_missing', {
             reference,
           });
-          throw new NotFoundException('Paiement introuvable.');
+          throw new NotFoundException('Pembayaran tidak ditemukan.');
         }
 
         if (payment.creditGrant) {
@@ -1364,7 +1364,7 @@ export class BillingService {
 
         if (!monthlyCredits) {
           throw new InternalServerErrorException(
-            'Configuration de souscription introuvable.',
+            'Konfigurasi langganan tidak ditemukan.',
           );
         }
 
@@ -1538,7 +1538,7 @@ export class BillingService {
     const secret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
 
     if (!secret) {
-      throw new Error('STRIPE_WEBHOOK_SECRET is not configured');
+      throw new Error('STRIPE_WEBHOOK_SECRET tidak dikonfigurasi');
     }
 
     const items = signatureHeader.split(',').map((item) => item.trim());
@@ -1580,7 +1580,7 @@ export class BillingService {
     const hashKey = this.configService.get<string>('NOTCH_HASH_KEY');
 
     if (!hashKey) {
-      throw new Error('NOTCH_HASH_KEY is not configured');
+      throw new Error('NOTCH_HASH_KEY tidak dikonfigurasi');
     }
 
     const expected = createHmac('sha256', hashKey)
@@ -1613,13 +1613,13 @@ export class BillingService {
 
     if (!phoneNumber) {
       throw new BadRequestException(
-        'Un numéro Mobile Money au format international est requis.',
+        'Nomor Mobile Money dengan format internasional wajib diisi.',
       );
     }
 
     if (!phoneNumber.startsWith('+237')) {
       throw new BadRequestException(
-        'Le paiement Mobile Money est disponible uniquement au Cameroun.',
+        'Pembayaran Mobile Money hanya tersedia di Kamerun.',
       );
     }
 

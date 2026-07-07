@@ -41,17 +41,17 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000
 const YEAR_OPTIONS_DEPTH = 3
 const SHORT_MONTH_LABELS = [
   'Jan',
-  'Fev',
-  'Mars',
-  'Avr',
-  'Mai',
-  'Juin',
-  'Juil',
-  'Aout',
-  'Sept',
-  'Oct',
+  'Feb',
+  'Mar',
+  'Apr',
+  'Mei',
+  'Jun',
+  'Jul',
+  'Agu',
+  'Sep',
+  'Okt',
   'Nov',
-  'Dec',
+  'Des',
 ]
 
 type StatsGranularity = 'week' | 'month' | 'year'
@@ -84,32 +84,32 @@ const USAGE_SERIES: Array<{
 }> = [
   {
     color: '#111B21',
-    description: '1 crédit par message textuel',
+    description: '1 kredit per pesan teks',
     key: 'textMessages',
-    label: 'Textes',
+    label: 'Teks',
   },
   {
     color: '#24D366',
-    description: '2 crédits par image',
+    description: '2 kredit per gambar',
     key: 'imageMessages',
-    label: 'Images',
+    label: 'Gambar',
   },
   {
     color: '#F59E0B',
-    description: '1.5 crédit par audio',
+    description: '1,5 kredit per audio',
     key: 'audioMessages',
     label: 'Audio',
   },
   {
     color: '#2F80ED',
-    description: 'Calcul estimé côté front',
+    description: 'Estimasi dihitung di sisi front',
     key: 'credits',
-    label: 'Crédit',
+    label: 'Kredit',
   },
 ]
 
 function formatNumber(value: number, maximumFractionDigits = 0) {
-  return new Intl.NumberFormat('fr-FR', {
+  return new Intl.NumberFormat('id-ID', {
     maximumFractionDigits,
     minimumFractionDigits: maximumFractionDigits > 0 ? 0 : undefined,
   }).format(value)
@@ -139,14 +139,14 @@ function diffUtcDays(startDate: string, endDate: string) {
 }
 
 function formatAxisNumber(value: number) {
-  return new Intl.NumberFormat('fr-FR', {
+  return new Intl.NumberFormat('id-ID', {
     maximumFractionDigits: value % 1 === 0 ? 0 : 1,
     notation: value >= 10000 ? 'compact' : 'standard',
   }).format(value)
 }
 
 function formatHumanDate(day: string, options: Intl.DateTimeFormatOptions) {
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat('id-ID', {
     timeZone: 'UTC',
     ...options,
   }).format(parseUtcDay(day))
@@ -397,7 +397,7 @@ function formatPickerValue(
   maxDay: string
 ) {
   if (granularity === 'year') {
-    return `Année ${value.year()}`
+    return `Tahun ${value.year()}`
   }
 
   if (granularity === 'month') {
@@ -450,7 +450,7 @@ function CreditsOverviewCard({
             onClick={onAddCredits}
             className='flex items-center gap-2 rounded-full border border-[var(--color-field-border-muted)] bg-white px-4 py-[10px] text-sm font-semibold text-[var(--color-text-primary)] shadow-card transition hover:border-[#111b21]'
           >
-            <span>Ajouter</span>
+            <span>Tambah</span>
             <span className='flex h-6 w-6 items-center justify-center rounded-full border border-current text-[11px]'>
               <PlusOutlined />
             </span>
@@ -462,7 +462,7 @@ function CreditsOverviewCard({
             WhatsApp
           </p>
           <p className='m-0 text-sm leading-6 text-[var(--color-text-secondary)]'>
-            {formatNumber(summary.creditsRemaining)} Token restant
+            {formatNumber(summary.creditsRemaining)} Token tersisa
           </p>
         </div>
       </div>
@@ -566,9 +566,9 @@ function SingleMetricChartSection({
           value={granularity}
           shape='round'
           options={[
-            { label: 'Semaine', value: 'week' },
-            { label: 'Mois', value: 'month' },
-            { label: 'Année', value: 'year' },
+            { label: 'Minggu', value: 'week' },
+            { label: 'Bulan', value: 'month' },
+            { label: 'Tahun', value: 'year' },
           ]}
           className='stats-granularity-toggle'
           onChange={value => setGranularity(value)}
@@ -592,7 +592,7 @@ function SingleMetricChartSection({
 
       {isEmpty ? (
         <Empty
-          description='Aucune activite exploitable sur la periode selectionnee.'
+          description='Tidak ada aktivitas yang dapat dianalisis pada periode yang dipilih.'
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
       ) : (
@@ -770,10 +770,10 @@ function UsageChartSection({
       <div className='flex flex-col gap-3 md:flex-row md:items-end md:justify-between'>
         <div>
           <Title level={5} className='!mb-0'>
-            Messages
+            Pesan
           </Title>
           <p className='mt-2 mb-0 text-sm text-[var(--color-text-secondary)]'>
-            Comparez les volumes texte, image, audio et l’estimation des crédits consommés.
+            Bandingkan volume teks, gambar, audio, dan estimasi kredit yang dikonsumsi.
           </p>
         </div>
 
@@ -792,7 +792,7 @@ function UsageChartSection({
               </div>
             ) : null}
             <div className='rounded-full bg-[#F4F2ED] px-4 py-2 text-sm font-semibold text-[var(--color-text-primary)]'>
-              {formatNumber(periodCredits, 1)} crédits estimés
+              {formatNumber(periodCredits, 1)} kredit estimasi
             </div>
           </div>
         ) : null}
@@ -803,9 +803,9 @@ function UsageChartSection({
           value={granularity}
           shape='round'
           options={[
-            { label: 'Semaine', value: 'week' },
-            { label: 'Mois', value: 'month' },
-            { label: 'Année', value: 'year' },
+            { label: 'Minggu', value: 'week' },
+            { label: 'Bulan', value: 'month' },
+            { label: 'Tahun', value: 'year' },
           ]}
           className='stats-granularity-toggle'
           onChange={value => setGranularity(value)}
@@ -829,7 +829,7 @@ function UsageChartSection({
 
       {isEmpty ? (
         <Empty
-          description='Aucune activite exploitable sur la periode selectionnee.'
+          description='Tidak ada aktivitas yang dapat dianalisis pada periode yang dipilih.'
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
       ) : (
@@ -1002,10 +1002,10 @@ function UsageChartSection({
 
 export function meta() {
   return [
-    { title: 'Statistiques - WhatsApp Agent' },
+    { title: 'Statistik - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Volumes de conversations et de messages sur WhatsApp Agent',
+      content: 'Volume percakapan dan pesan di WhatsApp Agent',
     },
   ]
 }
@@ -1041,7 +1041,7 @@ export default function StatsPage() {
   return (
     <>
       <DashboardHeader
-        title='Statistiques'
+        title='Statistik'
         isBackgroundLoading={isBackgroundLoading}
       />
 
@@ -1067,7 +1067,7 @@ export default function StatsPage() {
           <Alert
             type='error'
             showIcon
-            message='Impossible de charger les statistiques'
+            message='Tidak dapat memuat statistik'
             action={
               <Button
                 type='text'
@@ -1075,7 +1075,7 @@ export default function StatsPage() {
                 className='!shadow-none'
                 onClick={() => statsQuery.refetch()}
               >
-                Réessayer
+                Coba lagi
               </Button>
             }
           />
@@ -1087,7 +1087,7 @@ export default function StatsPage() {
               maxDay={maxDay}
             />
             <SingleMetricChartSection
-              title='Conversations'
+              title='Percakapan'
               metric='conversations'
               series={statsQuery.data.series}
               minDay={minDay}
@@ -1096,7 +1096,7 @@ export default function StatsPage() {
           </>
         ) : (
           <Empty
-            description='Aucune statistique disponible pour le moment.'
+            description='Belum ada statistik yang tersedia saat ini.'
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
         )}

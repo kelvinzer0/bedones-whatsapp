@@ -21,10 +21,10 @@ interface Product {
 
 export function meta() {
   return [
-    { title: 'Vérification des produits - WhatsApp Agent' },
+    { title: 'Verifikasi produk - WhatsApp Agent' },
     {
       name: 'description',
-      content: "Vérifiez et analysez vos produits avec l'IA",
+      content: "Verifikasi dan analisis produk Anda dengan AI",
     },
   ]
 }
@@ -50,13 +50,13 @@ export default function OnboardingReviewProducts() {
       setProducts(response.data)
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
-      message.error('Impossible de charger les produits')
+      message.error('Tidak dapat memuat produk')
       // Mock data for development
       setProducts([
         {
           id: '1',
           name: 'T-shirt Premium',
-          description: 'T-shirt en coton de qualité supérieure',
+          description: 'T-shirt katun berkualitas tinggi',
           price: 1500000,
           currency: 'XAF',
           image: undefined,
@@ -64,8 +64,8 @@ export default function OnboardingReviewProducts() {
         },
         {
           id: '2',
-          name: 'Jean Slim',
-          description: 'Jean slim fit confortable',
+          name: 'Jeans Slim',
+          description: 'Jeans slim fit yang nyaman',
           price: 2500000,
           currency: 'XAF',
           image: undefined,
@@ -73,8 +73,8 @@ export default function OnboardingReviewProducts() {
         },
         {
           id: '3',
-          name: 'Sneakers Sport',
-          description: 'Chaussures de sport respirantes',
+          name: 'Sneakers Olahraga',
+          description: 'Sepatu olahraga yang bernapas',
           price: 3500000,
           currency: 'XAF',
           image: undefined,
@@ -103,25 +103,25 @@ export default function OnboardingReviewProducts() {
       return [
         {
           type: 'spelling',
-          field: 'Nom du produit',
+          field: 'Nama produk',
           current: 'T-shirt Premium',
           suggested: 'T-shirt Premium',
-          reason: 'Orthographe correcte',
+          reason: 'Ejaan sudah benar',
         },
         {
           type: 'improvement',
-          field: 'Description',
-          current: 'T-shirt en coton de qualité supérieure',
+          field: 'Deskripsi',
+          current: 'T-shirt katun berkualitas tinggi',
           suggested:
-            'T-shirt en coton 100% bio de qualité supérieure, coupe moderne et confortable',
-          reason: 'Description plus détaillée et attrayante pour les clients',
+            'T-shirt katun 100% organik berkualitas tinggi, potongan modern dan nyaman',
+          reason: 'Deskripsi yang lebih rinci dan menarik untuk klien',
         },
         {
           type: 'metadata',
-          field: 'Catégorie',
-          current: 'Non définie',
-          suggested: 'Vêtements > Hauts > T-shirts',
-          reason: 'Catégorisation pour une meilleure organisation',
+          field: 'Kategori',
+          current: 'Belum ditentukan',
+          suggested: 'Pakaian > Atasan > T-shirt',
+          reason: 'Kategorisasi untuk pengaturan yang lebih baik',
         },
       ]
     }
@@ -134,9 +134,9 @@ export default function OnboardingReviewProducts() {
       for (const product of products) {
         await handleAnalyze(product.id)
       }
-      message.success('Tous les produits ont été analysés')
+      message.success('Semua produk telah dianalisis')
     } catch (error) {
-      message.error("Erreur lors de l'analyse des produits")
+      message.error("Kesalahan saat menganalisis produk")
     } finally {
       setAnalyzingAll(false)
     }
@@ -172,9 +172,9 @@ export default function OnboardingReviewProducts() {
     >
       <div className='space-y-6'>
         {products.length === 0 ? (
-          <Empty description='Aucun produit trouvé' className='py-12'>
+          <Empty description='Tidak ada produk ditemukan' className='py-12'>
             <Button type='primary' onClick={handleContinue}>
-              Continuer sans produits
+              Lanjut tanpa produk
             </Button>
           </Empty>
         ) : (
@@ -194,7 +194,7 @@ export default function OnboardingReviewProducts() {
             {/* Action Buttons */}
             <div className='flex items-center justify-between pt-6 border-t'>
               <Button size='large' onClick={handlePrevious}>
-                Précédent
+                Sebelumnya
               </Button>
 
               <Space>
@@ -203,7 +203,7 @@ export default function OnboardingReviewProducts() {
                   loading={analyzingAll}
                   onClick={handleAnalyzeAll}
                 >
-                  Tout analyser
+                  Analisis semua
                 </Button>
 
                 <Button
@@ -212,11 +212,11 @@ export default function OnboardingReviewProducts() {
                   onClick={handleContinue}
                   disabled={!allApproved && products.length > 0}
                 >
-                  Continuer
+                  Lanjut
                   {!allApproved && products.length > 0 && (
                     <span className='ml-2 text-xs'>
                       ({products.filter(p => p.approved).length}/
-                      {products.length} approuvés)
+                      {products.length} disetujui)
                     </span>
                   )}
                 </Button>
@@ -225,7 +225,7 @@ export default function OnboardingReviewProducts() {
 
             {!allApproved && products.length > 0 && (
               <p className='text-sm text-gray-500 text-center'>
-                Veuillez approuver tous les produits pour continuer
+                Silakan setujui semua produk untuk melanjutkan
               </p>
             )}
           </>

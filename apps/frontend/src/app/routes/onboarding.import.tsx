@@ -6,18 +6,18 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const importSteps = [
-  'Connexion à WhatsApp...',
-  'Récupération du profil business...',
-  'Import du catalogue produits...',
-  'Import des contacts...',
+  'Menghubungkan ke WhatsApp...',
+  'Mengambil profil bisnis...',
+  'Mengimpor katalog produk...',
+  'Mengimpor kontak...',
 ]
 
 export function meta() {
   return [
-    { title: 'Import des données - WhatsApp Agent' },
+    { title: 'Impor data - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Importation de vos données WhatsApp Business',
+      content: 'Mengimpor data WhatsApp Business Anda',
     },
   ]
 }
@@ -49,7 +49,7 @@ export default function OnboardingImport() {
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
-          "Une erreur est survenue lors de l'importation. Veuillez réessayer."
+          "Terjadi kesalahan saat mengimpor. Silakan coba lagi."
       )
       setIsImporting(false)
     }
@@ -72,14 +72,14 @@ export default function OnboardingImport() {
         {error ? (
           <div className='space-y-6'>
             <Alert
-              message="Erreur d'importation"
+              message="Kesalahan impor"
               description={error}
               type='error'
               showIcon
             />
             <div className='flex justify-center'>
               <Button type='primary' size='large' onClick={startImport}>
-                Réessayer
+                Coba lagi
               </Button>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function OnboardingImport() {
             {/* Steps List */}
             <div className='bg-gray-50 rounded-lg p-6'>
               <h3 className='text-sm font-semibold text-gray-900 mb-4'>
-                Étapes d&#39;importation:
+                Langkah impor:
               </h3>
               <ul className='space-y-2'>
                 {importSteps.map((step, index) => (
@@ -136,8 +136,8 @@ export default function OnboardingImport() {
             </div>
 
             <Alert
-              message='Ne fermez pas cette page'
-              description="L'importation de vos données est en cours. Cela peut prendre quelques instants."
+              message='Jangan tutup halaman ini'
+              description="Impor data Anda sedang berlangsung. Ini mungkin membutuhkan beberapa saat."
               type='info'
               showIcon
             />

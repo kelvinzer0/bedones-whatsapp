@@ -47,12 +47,12 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException('Produk tidak ditemukan');
     }
 
     if (product.user_id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to access this product',
+        'Anda tidak memiliki izin untuk mengakses produk ini',
       );
     }
 
@@ -64,7 +64,7 @@ export class ProductsService {
    */
   async create(userId: string, data: CreateProductDto): Promise<Product> {
     if (!data.name || data.name.trim() === '') {
-      throw new BadRequestException('Product name is required');
+      throw new BadRequestException('Nama produk wajib diisi');
     }
 
     return this.prisma.product.create({
@@ -99,12 +99,12 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException('Produk tidak ditemukan');
     }
 
     if (product.user_id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this product',
+        'Anda tidak memiliki izin untuk memperbarui produk ini',
       );
     }
 
@@ -137,12 +137,12 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException('Produk tidak ditemukan');
     }
 
     if (product.user_id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to delete this product',
+        'Anda tidak memiliki izin untuk menghapus produk ini',
       );
     }
 
@@ -167,17 +167,17 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException('Produk tidak ditemukan');
     }
 
     if (product.user_id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to add metadata to this product',
+        'Anda tidak memiliki izin untuk menambahkan metadata ke produk ini',
       );
     }
 
     if (!key || key.trim() === '' || !value || value.trim() === '') {
-      throw new BadRequestException('Key and value are required');
+      throw new BadRequestException('Key dan value wajib diisi');
     }
 
     return this.prisma.productMetadata.create({
@@ -206,12 +206,12 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new NotFoundException('Product not found');
+      throw new NotFoundException('Produk tidak ditemukan');
     }
 
     if (product.user_id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update suggestions for this product',
+        'Anda tidak memiliki izin untuk memperbarui saran untuk produk ini',
       );
     }
 
@@ -241,12 +241,12 @@ export class ProductsService {
     });
 
     if (!metadata) {
-      throw new NotFoundException('Metadata not found');
+      throw new NotFoundException('Metadata tidak ditemukan');
     }
 
     if (metadata.product.user_id !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to delete this metadata',
+        'Anda tidak memiliki izin untuk menghapus metadata ini',
       );
     }
 

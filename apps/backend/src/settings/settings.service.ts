@@ -46,7 +46,7 @@ export class SettingsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     // Upsert business info (create if doesn't exist, update if it does)
@@ -72,7 +72,7 @@ export class SettingsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     return this.prisma.deliveryLocation.findMany({
@@ -94,7 +94,7 @@ export class SettingsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     return this.prisma.deliveryLocation.create({
@@ -119,12 +119,12 @@ export class SettingsService {
     });
 
     if (!location) {
-      throw new NotFoundException('Delivery location not found');
+      throw new NotFoundException('Lokasi pengiriman tidak ditemukan');
     }
 
     if (location.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this delivery location',
+        'Anda tidak memiliki izin untuk memperbarui lokasi pengiriman ini',
       );
     }
 
@@ -147,12 +147,12 @@ export class SettingsService {
     });
 
     if (!location) {
-      throw new NotFoundException('Delivery location not found');
+      throw new NotFoundException('Lokasi pengiriman tidak ditemukan');
     }
 
     if (location.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to delete this delivery location',
+        'Anda tidak memiliki izin untuk menghapus lokasi pengiriman ini',
       );
     }
 
@@ -171,7 +171,7 @@ export class SettingsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     return this.prisma.paymentMethod.findMany({
@@ -193,7 +193,7 @@ export class SettingsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     return this.prisma.paymentMethod.create({
@@ -218,12 +218,12 @@ export class SettingsService {
     });
 
     if (!paymentMethod) {
-      throw new NotFoundException('Payment method not found');
+      throw new NotFoundException('Metode pembayaran tidak ditemukan');
     }
 
     if (paymentMethod.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this payment method',
+        'Anda tidak memiliki izin untuk memperbarui metode pembayaran ini',
       );
     }
 
@@ -246,12 +246,12 @@ export class SettingsService {
     });
 
     if (!paymentMethod) {
-      throw new NotFoundException('Payment method not found');
+      throw new NotFoundException('Metode pembayaran tidak ditemukan');
     }
 
     if (paymentMethod.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to delete this payment method',
+        'Anda tidak memiliki izin untuk menghapus metode pembayaran ini',
       );
     }
 

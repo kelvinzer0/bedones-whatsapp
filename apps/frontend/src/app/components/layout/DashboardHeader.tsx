@@ -19,11 +19,11 @@ export function DashboardHeader({
 
   const toggleLabel = isDesktop
     ? collapsed
-      ? 'Déplier la navigation'
-      : 'Réduire la navigation'
+      ? 'Buka navigasi'
+      : 'Lipat navigasi'
     : mobileMenuOpen
-      ? 'Fermer le menu'
-      : 'Ouvrir le menu'
+      ? 'Tutup menu'
+      : 'Buka menu'
 
   return (
     <div className='dashboard-header sticky top-0 z-30 flex flex-wrap items-center justify-between gap-3 rounded-t-2xl border-b border-gray-200 bg-white px-4'>

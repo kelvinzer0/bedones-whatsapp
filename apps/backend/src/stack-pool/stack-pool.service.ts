@@ -640,7 +640,7 @@ export class StackPoolService implements OnModuleInit {
     });
 
     return {
-      message: 'Workflow de release déclenché.',
+      message: 'Workflow release telah dipicu.',
       workflowId: workflow.id,
     };
   }
@@ -1290,7 +1290,7 @@ export class StackPoolService implements OnModuleInit {
     });
 
     if (!server) {
-      throw new Error(`Server ${serverId} not found`);
+      throw new Error(`Server ${serverId} tidak ditemukan`);
     }
 
     const results: Array<{
@@ -1494,7 +1494,7 @@ export class StackPoolService implements OnModuleInit {
 
     if (!agent) {
       return {
-        message: 'Aucune stack réservée à libérer.',
+        message: 'Tidak ada stack yang dipesan untuk dilepaskan.',
       };
     }
 
@@ -1522,7 +1522,7 @@ export class StackPoolService implements OnModuleInit {
 
     return {
       agent: releasedAgent,
-      message: 'Stack libérée.',
+      message: 'Stack dilepaskan.',
     };
   }
 
@@ -1796,7 +1796,7 @@ export class StackPoolService implements OnModuleInit {
           const response = await axios.get(target, { timeout: 10000 });
 
           if (response.status < 200 || response.status >= 300) {
-            throw new Error(`Health check failed with ${response.status}`);
+            throw new Error(`Health check gagal dengan ${response.status}`);
           }
 
           this.logger.log(
@@ -1967,7 +1967,7 @@ export class StackPoolService implements OnModuleInit {
 
     if (!repository || !token) {
       throw new Error(
-        'GITHUB_ACTIONS_REPOSITORY et GITHUB_ACTIONS_TOKEN sont requis.',
+        'GITHUB_ACTIONS_REPOSITORY dan GITHUB_ACTIONS_TOKEN wajib diisi.',
       );
     }
 
@@ -1998,7 +1998,7 @@ export class StackPoolService implements OnModuleInit {
         `[dispatch_github_workflow] workflow_file=${workflowFile} status=${response.status} url=${apiUrl} response=${body}`,
       );
       throw new Error(
-        `GitHub workflow dispatch failed (${response.status}): ${body}`,
+        `Dispatch workflow GitHub gagal (${response.status}): ${body}`,
       );
     }
 
@@ -2055,7 +2055,7 @@ export class StackPoolService implements OnModuleInit {
     }
 
     if (!secret || secret !== configuredSecret) {
-      throw new UnauthorizedException('Invalid workflow callback secret');
+      throw new UnauthorizedException('Secret callback workflow tidak valid');
     }
   }
 
@@ -2147,7 +2147,7 @@ export class StackPoolService implements OnModuleInit {
   private getWorkflowCallbackUrl() {
     const backendUrl = this.configService.get<string>('BACKEND_URL');
     if (!backendUrl) {
-      throw new Error('BACKEND_URL is required to build workflow callbacks.');
+      throw new Error('BACKEND_URL wajib diisi untuk membuat callback workflow.');
     }
 
     return `${backendUrl.replace(/\/$/, '')}/stack-pool/workflows/callback`;
@@ -2226,7 +2226,7 @@ export class StackPoolService implements OnModuleInit {
 
     if (keys.length === 0) {
       throw new Error(
-        'HERZNET_SSH_KEY_NAMES is required to provision Hetzner servers.',
+        'HERZNET_SSH_KEY_NAMES wajib diisi untuk menyediakan server Hetzner.',
       );
     }
 

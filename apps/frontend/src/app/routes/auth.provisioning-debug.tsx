@@ -29,8 +29,8 @@ export default function AuthProvisioningDebugPage() {
         progress,
         stage: 'STACK_INSTALLING',
         subtitle:
-          "L'instance existe. Nous installons maintenant l'agent, le connector, Redis et Qdrant.",
-        title: "Installation de l'IA",
+          'Instance sudah ada. Kami sekarang menginstal agen, connector, Redis, dan Qdrant.',
+        title: 'Instalasi AI',
       }
     }
 
@@ -40,8 +40,8 @@ export default function AuthProvisioningDebugPage() {
         progress,
         stage: 'STACK_STARTING',
         subtitle:
-          'Les conteneurs sont là. Nous attendons que les healthchecks passent.',
-        title: "Lancement de l'IA",
+          'Container sudah ada. Kami menunggu healthcheck lulus.',
+        title: 'Peluncuran AI',
       }
     }
 
@@ -50,14 +50,14 @@ export default function AuthProvisioningDebugPage() {
       progress,
       stage: 'SERVER_INITIALIZING',
       subtitle:
-        'Cas le plus lent: achat du VPS, rattachement réseau puis bootstrap initial.',
-      title: 'Initialisation du serveur',
+        'Kasus paling lambat: pembelian VPS, penyambungan jaringan, lalu bootstrap awal.',
+      title: 'Inisialisasi server',
     }
   }, [mode, progress])
 
   const content = (() => {
     if (mode === 'qr-loading') {
-      return <QrRetrievalScreen subtitle='État dédié de récupération du QR sans stepper.' />
+      return <QrRetrievalScreen subtitle='Status khusus pengambilan QR tanpa stepper.' />
     }
 
     if (mode === 'qr-ready') {
@@ -83,21 +83,21 @@ export default function AuthProvisioningDebugPage() {
       <div className='fixed right-4 top-4 z-50 flex w-[min(380px,calc(100vw-2rem))] flex-col gap-4 rounded-[28px] border border-[rgba(17,27,33,0.12)] bg-[rgba(255,255,255,0.94)] p-4 shadow-[0_24px_60px_rgba(17,27,33,0.12)] backdrop-blur-md'>
         <div>
           <p className='m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-text-secondary)]'>
-            Debug local
+            Debug lokal
           </p>
           <p className='m-0 mt-2 text-lg font-semibold text-[var(--color-text-primary)]'>
-            États du flow de connexion
+            Status alur masuk
           </p>
         </div>
 
         <Segmented
           block
           options={[
-            { label: 'Serveur', value: 'timeline-server' },
+            { label: 'Server', value: 'timeline-server' },
             { label: 'Install', value: 'timeline-install' },
             { label: 'Start', value: 'timeline-start' },
             { label: 'QR loading', value: 'qr-loading' },
-            { label: 'QR prêt', value: 'qr-ready' },
+            { label: 'QR siap', value: 'qr-ready' },
             { label: 'Pairing', value: 'pairing-ready' },
           ]}
           value={mode}
@@ -107,14 +107,14 @@ export default function AuthProvisioningDebugPage() {
         {mode.startsWith('timeline') ? (
           <div>
             <p className='mb-2 text-sm font-medium text-[var(--color-text-primary)]'>
-              Progression
+              Progres
             </p>
             <Slider min={4} max={100} value={progress} onChange={setProgress} />
           </div>
         ) : null}
 
         <Button href='/auth/login' type='primary'>
-          Retour au login
+          Kembali ke login
         </Button>
       </div>
     </div>

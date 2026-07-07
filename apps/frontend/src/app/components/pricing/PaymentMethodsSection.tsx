@@ -5,7 +5,7 @@ export function PaymentMethodsSection() {
     <section className='border-t border-[var(--color-field-border-muted)] pt-6'>
       <div className='flex flex-col items-center justify-center gap-5 text-center'>
         <p className='m-0 text-[var(--font-size-eyebrow)] font-semibold uppercase tracking-[0.24em] text-[var(--color-text-soft)]'>
-          Paiements acceptés
+          Pembayaran yang diterima
         </p>
 
         <div className='flex flex-wrap items-center justify-center gap-4'>

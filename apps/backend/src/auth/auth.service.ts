@@ -154,7 +154,7 @@ export class AuthService {
 
           return {
             message:
-              'Votre session WhatsApp nest plus active. Rechargez vos crédits avant de reconnecter votre agent.',
+              'Sesi WhatsApp Anda tidak lagi aktif. Silakan isi ulang kredit Anda sebelum menghubungkan kembali agent Anda.',
             pricingUrl: '/pricing',
             scenario: 'payment_required',
           };
@@ -211,8 +211,8 @@ export class AuthService {
           return {
             message:
               deviceType === 'desktop'
-                ? 'Nous préparons votre serveur et récupérerons le code QR dès que la stack sera prête.'
-                : 'Nous préparons votre serveur avant de générer le code de pairing.',
+                ? 'Kami sedang menyiapkan server Anda dan akan mengambil kode QR begitu stack siap.'
+                : 'Kami sedang menyiapkan server Anda sebelum membuat kode pairing.',
             pairingToken,
             qrSessionToken,
             scenario: 'provisioning',
@@ -245,7 +245,7 @@ export class AuthService {
         return {
           pairingToken,
           qrSessionToken,
-          message: 'Veuillez scanner le code QR avec WhatsApp',
+          message: 'Silakan pindai kode QR dengan WhatsApp',
           scenario: 'qr',
         };
       }
@@ -305,7 +305,7 @@ export class AuthService {
       return {
         code: result.code,
         pairingToken,
-        message: result.message || 'Pairing code sent successfully',
+        message: result.message || 'Kode pairing berhasil dikirim',
         scenario: 'pairing',
       };
     } catch (error) {
@@ -350,7 +350,7 @@ export class AuthService {
     // Get agent and connector URL
     const agent = await this.whatsappAgentService.getAgentForUser(user.id);
     if (!agent) {
-      throw new Error('Agent not found for user');
+      throw new Error('Agent tidak ditemukan untuk pengguna ini');
     }
 
     const connectorUrl = await this.whatsappAgentService.getConnectorUrl(agent);
@@ -359,7 +359,7 @@ export class AuthService {
     const formattedPhoneNumber = user.phoneNumber.replace('+', '') + '@c.us';
 
     // Send OTP via WhatsApp (queryExists is now integrated in sendTextMessage)
-    const message = `Votre code de connexion est: ${otpCode}\n\nCe code expire dans 5 minutes.`;
+    const message = `Kode login Anda adalah: ${otpCode}\n\nKode ini kedaluwarsa dalam 5 menit.`;
     const sendResult = await this.connectorClientService.sendTextMessage(
       connectorUrl,
       formattedPhoneNumber,
@@ -370,7 +370,7 @@ export class AuthService {
     // sendResult = { success: true, result: { success: true, messageId: "...", wid: "..." } }
     if (!sendResult.success || !sendResult.result?.success) {
       throw new Error(
-        `Failed to send OTP: ${sendResult.result?.error || sendResult.error || 'Unknown error'}`,
+        `Gagal mengirim OTP: ${sendResult.result?.error || sendResult.error || 'Kesalahan tidak diketahui'}`,
       );
     }
 
@@ -380,7 +380,7 @@ export class AuthService {
 
     return {
       pairingToken,
-      message: 'Un code de vérification a été envoyé à votre numéro WhatsApp',
+      message: 'Kode verifikasi telah dikirim ke nomor WhatsApp Anda',
       scenario: 'otp',
     };
   }
@@ -449,7 +449,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('Pengguna tidak ditemukan');
       }
 
       // Update user status to PAIRED and save WhatsApp profile
@@ -523,7 +523,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new UnauthorizedException('Invalid pairing token');
+        throw new UnauthorizedException('Token pairing tidak valid');
       }
 
       const isFirstLogin = !user.lastLoginAt;
@@ -541,7 +541,7 @@ export class AuthService {
             pairingTokenExpiresAt: null,
           },
         });
-        throw new UnauthorizedException('Token expired');
+        throw new UnauthorizedException('Token kedaluwarsa');
       }
 
       // Check if this is an OTP scenario (OTP exists in cache)
@@ -553,12 +553,12 @@ export class AuthService {
         this.logger.log(`OTP scenario detected for user: ${user.id}`);
 
         if (!otpCode) {
-          throw new BadRequestException('OTP code is required');
+          throw new BadRequestException('Kode OTP wajib diisi');
         }
 
         // Verify OTP
         if (storedOtp !== otpCode) {
-          throw new UnauthorizedException('Invalid OTP code');
+          throw new UnauthorizedException('Kode OTP tidak valid');
         }
 
         // Delete OTP from cache
@@ -617,7 +617,7 @@ export class AuthService {
       // Check if user is actually paired (connector should have called webhook)
       if (user.status !== UserStatus.PAIRED) {
         throw new BadRequestException(
-          'WhatsApp connection not yet confirmed. Please complete the pairing process on your phone.',
+          'Koneksi WhatsApp belum dikonfirmasi. Silakan selesaikan proses pairing di ponsel Anda.',
         );
       }
 
@@ -676,12 +676,12 @@ export class AuthService {
       const storedOtp = await this.cacheManager.get<string>(cacheKey);
 
       if (!storedOtp) {
-        throw new UnauthorizedException('OTP expired or not found');
+        throw new UnauthorizedException('OTP kedaluwarsa atau tidak ditemukan');
       }
 
       // Compare codes
       if (storedOtp !== code) {
-        throw new UnauthorizedException('Invalid OTP code');
+        throw new UnauthorizedException('Kode OTP tidak valid');
       }
 
       // Delete OTP from cache
@@ -693,7 +693,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('Pengguna tidak ditemukan');
       }
 
       // Update user status to ACTIVE and lastLoginAt
@@ -916,7 +916,7 @@ export class AuthService {
 
           return {
             message:
-              'Nous préparons votre stack. Le code QR sera poussé dès que le connector sera prêt.',
+              'Kami sedang menyiapkan stack Anda. Kode QR akan dikirim begitu connector siap.',
             pairingToken,
             qrSessionToken,
           };
@@ -995,7 +995,7 @@ export class AuthService {
 
       if (!qrCode) {
         throw new Error(
-          'QR code not available. The connector may already be authenticated.',
+          'Kode QR tidak tersedia. Connector mungkin sudah terautentikasi.',
         );
       }
 
@@ -1049,7 +1049,7 @@ export class AuthService {
         qrCode,
         pairingToken,
         qrSessionToken,
-        message: 'Scannez le code QR avec WhatsApp',
+        message: 'Silakan pindai kode QR dengan WhatsApp',
       };
     } catch (error) {
       this.logger.error(`Error requesting QR code for ${phoneNumber}`, error);
@@ -1091,7 +1091,7 @@ export class AuthService {
 
       if (!user) {
         throw new UnauthorizedException(
-          'Invalid or expired pairing token. Please request a new QR code.',
+          'Token pairing tidak valid atau kedaluwarsa. Silakan minta kode QR baru.',
         );
       }
 
@@ -1109,7 +1109,7 @@ export class AuthService {
       // Get the WhatsApp agent for this user
       const agent = await this.whatsappAgentService.getAgentForUser(user.id);
       if (!agent) {
-        throw new Error('No WhatsApp agent found for this user');
+        throw new Error('Tidak ada agent WhatsApp untuk pengguna ini');
       }
 
       // Get connector URL
@@ -1198,7 +1198,7 @@ export class AuthService {
             accessToken,
             isFirstLogin,
             redirectTo,
-            message: 'Connexion réussie',
+            message: 'Login berhasil',
             user: {
               id: updatedUser.id,
               phoneNumber: updatedUser.phoneNumber,
@@ -1215,7 +1215,7 @@ export class AuthService {
           );
           // Return waiting message - frontend keeps displaying the QR code
           return {
-            message: 'En attente de la confirmation de connexion...',
+            message: 'Menunggu konfirmasi login...',
           };
         }
       }
@@ -1242,7 +1242,7 @@ export class AuthService {
 
           return {
             qrCode: qrResult.qrCode,
-            message: 'En attente du scan du code QR...',
+            message: 'Menunggu pemindaian kode QR...',
           };
         }
       } catch (error) {
@@ -1259,7 +1259,7 @@ export class AuthService {
 
       // If QR code is not available (e.g., during connection process)
       return {
-        message: 'En attente du scan du code QR...',
+        message: 'Menunggu pemindaian kode QR...',
       };
     } catch (error) {
       this.logger.error(`Error refreshing QR code`, error);
@@ -1327,13 +1327,13 @@ export class AuthService {
         payload.phoneNumber !== phoneNumber ||
         payload.pairingToken !== pairingToken
       ) {
-        throw new UnauthorizedException('QR session token mismatch');
+        throw new UnauthorizedException('Token sesi QR tidak cocok');
       }
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
-      throw new UnauthorizedException('Invalid QR session token');
+      throw new UnauthorizedException('Token sesi QR tidak valid');
     }
   }
 }

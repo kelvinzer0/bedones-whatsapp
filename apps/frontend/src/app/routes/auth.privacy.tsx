@@ -2,11 +2,11 @@ import LegalDocumentPage from '@app/components/legal/LegalDocumentPage'
 
 export function meta() {
   return [
-    { title: 'Politique de confidentialité - WhatsApp Agent' },
+    { title: 'Kebijakan Privasi - WhatsApp Agent' },
     {
       name: 'description',
       content:
-        'Consultez la politique de confidentialité de WhatsApp Agent et de Bedones.',
+        'Lihat kebijakan privasi WhatsApp Agent dan Bedones.',
     },
   ]
 }
@@ -14,44 +14,44 @@ export function meta() {
 export default function PrivacyPage() {
   return (
     <LegalDocumentPage
-      eyebrow='Confidentialité'
-      title='Politique de confidentialité'
-      introduction="Cette politique décrit la manière dont Bedones collecte, utilise, sécurise et conserve les données traitées dans WhatsApp Agent, y compris les informations synchronisées avec Google Contacts lorsque vous activez cette fonctionnalité."
-      updatedAt='21 mars 2026'
+      eyebrow='Privasi'
+      title='Kebijakan Privasi'
+      introduction="Kebijakan ini menjelaskan bagaimana Bedones mengumpulkan, menggunakan, mengamankan, dan menyimpan data yang diproses di WhatsApp Agent, termasuk informasi yang disinkronkan dengan Google Contacts saat Anda mengaktifkan fitur ini."
+      updatedAt='21 Maret 2026'
       sections={[
         {
-          title: '1. Données concernées',
+          title: '1. Data yang relevan',
           paragraphs: [
-            "Nous pouvons traiter vos informations de compte, votre numéro WhatsApp Business, les informations de profil associées, les paramètres de votre agent, les messages nécessaires au fonctionnement du service, ainsi que les données de contact que vous choisissez de synchroniser avec Google Contacts.",
-            "Lorsque la synchronisation Google Contacts est activée, nous pouvons traiter le numéro de téléphone, le pseudo WhatsApp, le nom affiché, l'identifiant du chat et, si disponible, le nom de votre entreprise afin de créer ou relier le contact dans votre carnet Google.",
+            "Kami dapat memproses informasi akun Anda, nomor WhatsApp Business Anda, informasi profil terkait, pengaturan agen Anda, pesan yang diperlukan untuk pengoperasian layanan, serta data kontak yang Anda pilih untuk disinkronkan dengan Google Contacts.",
+            "Saat sinkronisasi Google Contacts diaktifkan, kami dapat memproses nomor telepon, nama pengguna WhatsApp, nama tampilan, ID chat, dan jika tersedia, nama perusahaan Anda untuk membuat atau menautkan kontak di buku Google Anda.",
           ],
         },
         {
-          title: '2. Finalités du traitement',
+          title: '2. Tujuan pemrosesan',
           paragraphs: [
-            "Ces données sont utilisées pour authentifier votre accès, faire fonctionner l'agent WhatsApp, améliorer l'expérience de gestion commerciale, permettre la synchronisation optionnelle avec Google Contacts et assurer le support technique du service.",
-            "Nous n'utilisons les données synchronisées que pour fournir les fonctionnalités demandées par l'utilisateur et pour maintenir la cohérence entre votre compte WhatsApp Agent, notre base interne et votre carnet Google.",
+            "Data ini digunakan untuk mengautentikasi akses Anda, menjalankan agen WhatsApp, meningkatkan pengalaman manajemen bisnis, memungkinkan sinkronisasi opsional dengan Google Contacts, dan memberikan dukungan teknis untuk layanan.",
+            "Kami hanya menggunakan data yang disinkronkan untuk menyediakan fitur yang diminta pengguna dan untuk menjaga konsistensi antara akun WhatsApp Agent Anda, basis data internal kami, dan buku Google Anda.",
           ],
         },
         {
-          title: '3. Partage et sous-traitance',
+          title: '3. Berbagi dan sub-pemrosesan',
           paragraphs: [
-            "Les données peuvent être transmises aux prestataires strictement nécessaires à l'exécution du service, notamment l'infrastructure d'hébergement, les services de base de données, WhatsApp et Google lorsque vous autorisez explicitement cette intégration.",
-            "Les jetons OAuth Google sont chiffrés avant stockage dans notre infrastructure. Nous ne partageons pas ces jetons avec d'autres utilisateurs ni avec des tiers non nécessaires au fonctionnement du service.",
+            "Data dapat diteruskan kepada penyedia yang diperlukan secara ketat untuk pelaksanaan layanan, termasuk infrastruktur hosting, layanan basis data, WhatsApp, dan Google saat Anda secara eksplisit mengizinkan integrasi ini.",
+            "Token OAuth Google dienkripsi sebelum disimpan di infrastruktur kami. Kami tidak membagikan token ini dengan pengguna lain atau pihak ketiga yang tidak diperlukan untuk pengoperasian layanan.",
           ],
         },
         {
-          title: '4. Conservation et sécurité',
+          title: '4. Penyimpanan dan keamanan',
           paragraphs: [
-            "Nous appliquons des mesures techniques et organisationnelles raisonnables pour protéger les données contre l'accès non autorisé, la perte ou l'altération. Les accès sont limités aux besoins opérationnels du service.",
-            "Les données sont conservées pendant la durée nécessaire à l'exploitation de votre compte, au respect de nos obligations légales et à la gestion des incidents. Vous pouvez demander la désactivation de la synchronisation Google Contacts à tout moment.",
+            "Kami menerapkan langkah teknis dan organisasi yang wajar untuk melindungi data dari akses tidak sah, kehilangan, atau perubahan. Akses dibatasi pada kebutuhan operasional layanan.",
+            "Data disimpan selama diperlukan untuk pengoperasian akun Anda, kepatuhan terhadap kewajiban hukum kami, dan penanganan insiden. Anda dapat meminta penonaktifan sinkronisasi Google Contacts kapan saja.",
           ],
         },
         {
-          title: '5. Vos droits',
+          title: '5. Hak Anda',
           paragraphs: [
-            "Sous réserve du droit applicable, vous pouvez demander l'accès, la rectification, la suppression ou la limitation du traitement de vos données. Vous pouvez également retirer votre consentement à une intégration optionnelle comme Google Contacts en la déconnectant depuis l'application ou en contactant Bedones.",
-            "Si vous estimez que vos données ne sont pas traitées conformément à vos attentes, vous pouvez également nous contacter afin que nous examinions votre demande.",
+            "Tunduk pada hukum yang berlaku, Anda dapat meminta akses, koreksi, penghapusan, atau pembatasan pemrosesan data Anda. Anda juga dapat menarik persetujuan Anda untuk integrasi opsional seperti Google Contacts dengan memutusnya dari aplikasi atau menghubungi Bedones.",
+            "Jika Anda merasa data Anda tidak diproses sesuai harapan, Anda juga dapat menghubungi kami agar kami meninjau permintaan Anda.",
           ],
         },
       ]}

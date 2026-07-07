@@ -36,24 +36,24 @@ type StepDefinition = {
 const STEP_DEFINITIONS: StepDefinition[] = [
   {
     description:
-      "Nous démarrons un nouveau serveur pour accueillir l'agent qui répondra à vos messages.",
+      'Kami memulai server baru untuk menampung agent yang akan membalas pesan Anda.',
     icon: <DeploymentUnitOutlined />,
     key: 'SERVER_INITIALIZING',
-    title: 'Initialisation du serveur',
+    title: 'Inisialisasi server',
   },
   {
     description:
-      "Nous installons Bedones WhatsApp, l'agent IA et toutes les briques techniques sur votre stack.",
+      'Kami memasang Bedones WhatsApp, agent IA, dan semua blok teknis pada stack Anda.',
     icon: <RocketOutlined />,
     key: 'STACK_INSTALLING',
-    title: "Installation de l'IA",
+    title: 'Instalasi IA',
   },
   {
     description:
-      'Nous attendons que les services démarrent, deviennent sains et puissent recevoir votre session.',
+      'Kami menunggu layanan dimulai, menjadi sehat, dan siap menerima sesi Anda.',
     icon: <LoadingOutlined />,
     key: 'STACK_STARTING',
-    title: "Lancement de l'IA",
+    title: 'Peluncuran IA',
   },
 ]
 
@@ -114,15 +114,15 @@ function Shell({
             <div className='flex h-full flex-col justify-between gap-8'>
               <div>
                 <p className='text-xs font-semibold uppercase tracking-[0.18em] text-white/55'>
-                  Ce que voit votre client
+                  Apa yang dilihat klien Anda
                 </p>
                 <p className='mt-4 text-2xl font-semibold leading-tight'>
-                  Une attente guidée, précise et jamais vide.
+                  Penantian terpandu, jelas, dan tidak pernah kosong.
                 </p>
                 <p className='mt-4 text-sm leading-7 text-white/72'>
-                  Chaque étape est visible en temps réel. Dès que la stack
-                  arrive, on bascule vers le QR code ou le code de pairing sans
-                  redemander d’action inutile.
+                  Setiap langkah terlihat secara real-time. Begitu stack
+                  siap, kami beralih ke kode QR atau kode pairing tanpa
+                  meminta tindakan yang tidak perlu.
                 </p>
               </div>
               <div className='grid gap-3 rounded-[28px] bg-white/6 p-4 backdrop-blur-sm'>
@@ -133,10 +133,10 @@ function Shell({
                     </span>
                     <div>
                       <p className='m-0 text-sm font-semibold text-white'>
-                        QR dédié
+                        QR khusus
                       </p>
                       <p className='m-0 text-sm text-white/65'>
-                        Pas de stepper quand on récupère les identifiants.
+                        Tidak ada stepper saat mengambil kredensial.
                       </p>
                     </div>
                   </div>
@@ -148,10 +148,10 @@ function Shell({
                     </span>
                     <div>
                       <p className='m-0 text-sm font-semibold text-white'>
-                        Session mobile
+                        Sesi seluler
                       </p>
                       <p className='m-0 text-sm text-white/65'>
-                        Le code de pairing arrive dès que le connector est prêt.
+                        Kode pairing muncul begitu connector siap.
                       </p>
                     </div>
                   </div>
@@ -182,13 +182,13 @@ export function ProvisioningTimelineScreen({
       eyebrow='Provisioning'
       subtitle={
         payload?.subtitle ||
-        "Nous préparons votre stack Bedones WhatsApp. Vous recevrez la connexion dès que le serveur et les services seront prêts."
+        'Kami menyiapkan stack Bedones WhatsApp Anda. Anda akan menerima koneksi begitu server dan layanan siap.'
       }
-      title={payload?.title || 'Préparation en cours'}
+      title={payload?.title || 'Persiapan sedang berlangsung'}
       actions={
         onBack ? (
           <Button type='default' size='large' onClick={onBack}>
-            Retour
+            Kembali
           </Button>
         ) : null
       }
@@ -197,7 +197,7 @@ export function ProvisioningTimelineScreen({
         <div className='flex flex-wrap items-center justify-between gap-4'>
           <div>
             <p className='m-0 text-sm font-medium text-[var(--color-text-secondary)]'>
-              Progression de la mise en route
+              Progres pengaktifan
             </p>
             <p className='m-0 mt-1 text-3xl font-semibold text-[var(--color-text-primary)]'>
               {progress}%
@@ -212,7 +212,7 @@ export function ProvisioningTimelineScreen({
               strokeLinecap='butt'
             />
             <p className='mt-2 text-sm text-[var(--color-text-secondary)]'>
-              {payload?.completedJobs ?? 0} job(s) GitHub terminé(s)
+              {payload?.completedJobs ?? 0} job GitHub selesai
             </p>
           </div>
         </div>
@@ -286,16 +286,16 @@ export function QrRetrievalScreen({
 
   return (
     <Shell
-      eyebrow='Connexion WhatsApp'
+      eyebrow='Koneksi WhatsApp'
       subtitle={
         subtitle ||
-        "Votre stack est prête. Nous récupérons maintenant les informations de connexion WhatsApp sur l'instance qui vous a été réservée."
+        'Stack Anda siap. Kami sekarang mengambil informasi koneksi WhatsApp dari instance yang telah disiapkan untuk Anda.'
       }
-      title={isLoading ? 'Récupération du code QR' : 'Scannez le code QR'}
+      title={isLoading ? 'Pengambilan kode QR' : 'Pindai kode QR'}
       actions={
         onBack ? (
           <Button type='default' size='large' onClick={onBack}>
-            Retour
+            Kembali
           </Button>
         ) : null
       }
@@ -308,13 +308,13 @@ export function QrRetrievalScreen({
         {isLoading ? (
           <>
             <div className='mb-6 rounded-full border border-[rgba(17,27,33,0.08)] bg-[rgba(17,27,33,0.04)] px-4 py-2 text-sm font-medium text-[var(--color-text-secondary)]'>
-              Connexion en cours
+              Menghubungkan
             </div>
             <Spin size='large' />
             <p className='mt-6 max-w-lg text-sm leading-7 text-[var(--color-text-secondary)]'>
-              Nous interrogeons votre connector pour récupérer les informations
-              de connexion. Cet écran est normalement celui que verront la
-              plupart des utilisateurs.
+              Kami menghubungkan connector Anda untuk mengambil informasi
+              koneksi. Layar ini biasanya adalah yang akan dilihat
+              sebagian besar pengguna.
             </p>
           </>
         ) : (
@@ -323,8 +323,8 @@ export function QrRetrievalScreen({
               <QRCodeSVG value={qrCode} size={264} level='M' />
             </div>
             <p className='mt-6 max-w-lg text-sm leading-7 text-[var(--color-text-secondary)]'>
-              Ouvrez WhatsApp Business, allez dans les appareils connectés puis
-              scannez ce QR code pour finaliser la connexion.
+              Buka WhatsApp Business, masuk ke perangkat yang terhubung lalu
+              pindai kode QR ini untuk menyelesaikan koneksi.
             </p>
           </>
         )}
@@ -346,13 +346,13 @@ export function PairingCodeReadyScreen({
 
   return (
     <Shell
-      eyebrow='Connexion mobile'
-      subtitle="Votre stack est prête. Le connector a généré le code de pairing correspondant à votre numéro."
-      title='Code de pairing prêt'
+      eyebrow='Koneksi seluler'
+      subtitle='Stack Anda siap. Connector telah membuat kode pairing sesuai dengan nomor Anda.'
+      title='Kode pairing siap'
       actions={
         onContinue ? (
           <Button type='primary' size='large' onClick={onContinue}>
-            Continuer
+            Lanjut
           </Button>
         ) : null
       }
@@ -364,19 +364,19 @@ export function PairingCodeReadyScreen({
           </span>
           <div className='min-w-0'>
             <p className='m-0 text-lg font-semibold text-[var(--color-text-primary)]'>
-              Associez votre appareil
+              Hubungkan perangkat Anda
             </p>
             <p className='m-0 mt-2 text-sm leading-7 text-[var(--color-text-secondary)]'>
               {phoneNumber
-                ? `Entrez ce code dans WhatsApp pour ${phoneNumber}.`
-                : 'Entrez ce code dans WhatsApp pour continuer.'}
+                ? `Masukkan kode ini di WhatsApp untuk ${phoneNumber}.`
+                : 'Masukkan kode ini di WhatsApp untuk melanjutkan.'}
             </p>
           </div>
         </div>
 
         <div className='mt-8 rounded-[26px] border border-[rgba(17,27,33,0.08)] bg-[var(--color-surface-muted)] px-6 py-8 text-center'>
           <p className='m-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]'>
-            Code de pairing
+            Kode pairing
           </p>
           <p className='m-0 mt-3 text-[clamp(2.1rem,8vw,4.4rem)] font-semibold tracking-[0.2em] text-[var(--color-text-primary)]'>
             {formattedCode}

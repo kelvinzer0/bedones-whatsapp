@@ -13,21 +13,21 @@ const { Paragraph, Title } = Typography
 const LEADS_BENEFITS = [
   {
     icon: <TagsOutlined className='text-lg' />,
-    title: 'Repérez rapidement vos contacts prioritaires',
+    title: 'Identifikasi dengan cepat kontak prioritas Anda',
     description:
-      'Retrouvez au même endroit les conversations à suivre, les demandes chaudes et les personnes à relancer.',
+      'Temukan di satu tempat percakapan yang perlu diikuti, permintaan panas, dan orang yang perlu diingatkan.',
   },
   {
     icon: <ApartmentOutlined className='text-lg' />,
-    title: 'Suivez vos prochaines actions sans perdre le fil',
+    title: 'Ikuti tindakan berikutnya tanpa kehilangan jejak',
     description:
-      'La page Leads vous aidera à visualiser les étapes importantes, du premier contact jusqu’à la conversion.',
+      'Halaman Leads akan membantu Anda memvisualisasikan langkah-langkah penting, dari kontak pertama hingga konversi.',
   },
   {
     icon: <TeamOutlined className='text-lg' />,
-    title: 'Gardez une vue claire sur vos opportunités',
+    title: 'Pantau peluang Anda dengan jelas',
     description:
-      'Vos labels resteront la base pour mieux organiser les conversations et gagner du temps au quotidien.',
+      'Label Anda akan tetap menjadi dasar untuk mengatur percakapan dengan lebih baik dan menghemat waktu setiap hari.',
   },
 ]
 
@@ -36,7 +36,7 @@ export function meta() {
     { title: 'Leads - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Page Leads du dashboard WhatsApp Agent',
+      content: 'Halaman Leads dashboard WhatsApp Agent',
     },
   ]
 }
@@ -57,13 +57,13 @@ export default function LeadsPage() {
             <div className='relative flex flex-col gap-4'>
               <div className='max-w-3xl'>
                 <Title level={3} className='!mb-2 !text-white'>
-                  Retrouvez bientôt ici les conversations à suivre en priorité.
+                  Temukan di sini segera percakapan yang perlu diprioritaskan.
                 </Title>
                 <Paragraph className='!mb-0 !text-white/80'>
-                  Vous y retrouverez vos contacts à relancer, vos opportunités
-                  actives et les échanges à traiter en premier. En attendant,
-                  vous pouvez déjà organiser vos labels et nous dire ce qui vous
-                  serait le plus utile.
+                  Anda akan menemukan kontak yang perlu diingatkan, peluang
+                  aktif, dan percakapan yang perlu ditangani lebih dulu. Sementara
+                  itu, Anda sudah dapat mengatur label dan memberi tahu kami apa
+                  yang paling berguna bagi Anda.
                 </Paragraph>
               </div>
 
@@ -77,19 +77,19 @@ export default function LeadsPage() {
                     navigate('/support', {
                       state: {
                         category: 'amelioration',
-                        subject: 'Besoin autour de la page Leads',
+                        subject: 'Kebutuhan seputar halaman Leads',
                       },
                     })
                   }
                 >
-                  Nous dire ce dont vous avez besoin
+                  Beri tahu kami kebutuhan Anda
                 </Button>
                 <Button
                   shape='round'
                   className='!border-white/30 !bg-white/10 !text-white'
                   onClick={() => navigate('/context')}
                 >
-                  Organiser mes labels
+                  Atur label saya
                 </Button>
               </div>
             </div>

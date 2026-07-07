@@ -43,7 +43,7 @@ export function ProductCard({
       setSuggestions(result)
       setShowAnalysis(true)
     } catch (error) {
-      console.error("Erreur lors de l'analyse:", error)
+      console.error('Kesalahan saat analisis:', error)
     } finally {
       setAnalyzing(false)
     }
@@ -92,11 +92,11 @@ export function ProductCard({
               width={120}
               height={120}
               className='rounded-lg object-cover'
-              fallback="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23f0f0f0' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='14'%3EPas d'image%3C/text%3E%3C/svg%3E"
+              fallback="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Crect fill='%23f0f0f0' width='120' height='120'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='14'%3ETidak ada gambar%3C/text%3E%3C/svg%3E"
             />
           ) : (
             <div className='w-[120px] h-[120px] bg-gray-100 rounded-lg flex items-center justify-center text-gray-400'>
-              Pas d'image
+              Tidak ada gambar
             </div>
           )}
         </div>
@@ -127,14 +127,14 @@ export function ProductCard({
               onClick={handleAnalyze}
               disabled={showAnalysis}
             >
-              {showAnalysis ? 'Analysé' : "Analyser avec l'IA"}
+              {showAnalysis ? 'Dianalisis' : 'Analisis dengan IA'}
             </Button>
 
             <Checkbox
               checked={product.approved}
               onChange={e => onApprove(product.id, e.target.checked)}
             >
-              <span className='font-medium'>Approuvé</span>
+              <span className='font-medium'>Disetujui</span>
             </Checkbox>
           </div>
 

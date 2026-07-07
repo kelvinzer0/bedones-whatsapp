@@ -34,10 +34,10 @@ interface LocationState {
 
 export function meta() {
   return [
-    { title: 'Confirmation - WhatsApp Agent' },
+    { title: 'Konfirmasi - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Confirmez votre code pour vous connecter',
+      content: 'Konfirmasi kode Anda untuk masuk',
     },
   ]
 }
@@ -59,8 +59,8 @@ export default function VerifyOtpPage() {
   const handleVerifyOtp = async (values?: OtpFormValues) => {
     if (!pairingToken) {
       notification.error({
-        message: 'Erreur',
-        description: 'Token de session manquant',
+        message: 'Kesalahan',
+        description: 'Token sesi tidak ditemukan',
       })
       navigate('/auth/login')
       return
@@ -86,8 +86,8 @@ export default function VerifyOtpPage() {
       login(response.data.user)
 
       notification.success({
-        message: 'Connexion réussie',
-        description: 'Vous êtes maintenant connecté',
+        message: 'Berhasil masuk',
+        description: 'Anda sekarang sudah masuk',
       })
 
       // Refresh user to get up-to-date context score (if not returned by confirm-pairing)
@@ -112,8 +112,8 @@ export default function VerifyOtpPage() {
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
       notification.error({
-        message: 'Erreur',
-        description: err.response?.data?.message || 'Code invalide ou expiré',
+        message: 'Kesalahan',
+        description: err.response?.data?.message || 'Kode tidak valid atau kedaluwarsa',
       })
     } finally {
       setIsVerifying(false)
@@ -134,32 +134,32 @@ export default function VerifyOtpPage() {
             <div className='bg-white pt-12 px-12 text-center'>
               <h1 className='text-2xl font-normal text-[#111b21] leading-[30px] mb-4'>
                 {isPairingScenario
-                  ? 'Connexion de votre appareil'
-                  : 'Connexion'}
+                  ? 'Sambungkan perangkat Anda'
+                  : 'Masuk'}
               </h1>
               <div className='text-base text-[#494949] leading-6'>
                 {isPairingScenario ? (
                   <>
                     <p className='mb-0'>
-                      Scannez le QR code ou entrez le code de pairing sur votre
-                      téléphone WhatsApp Business
+                      Pindai kode QR atau masukkan kode pairing di ponsel
+                      WhatsApp Business Anda
                     </p>
                     <p className='mb-0 mt-2'>
-                      Code de pairing: <strong>{state?.code}</strong>
+                      Kode pairing: <strong>{state?.code}</strong>
                     </p>
                     <p className='mt-2'>
-                      Pas de panique, nous ne répondrons à aucun de vos clients
-                      pour le moment
+                      Jangan khawatir, kami tidak akan menjawab klien Anda apa
+                      pun untuk saat ini
                     </p>
                   </>
                 ) : (
                   <>
                     <p className='mb-0'>
-                      Veuillez ouvrir la conversation{' '}
-                      <strong>{state?.phoneNumber}</strong> (votre numéro) sur
-                      votre application WhatsApp
+                      Silakan buka percakapan{' '}
+                      <strong>{state?.phoneNumber}</strong> (nomor Anda) di
+                      aplikasi WhatsApp Anda
                     </p>
-                    <p>et saisir ci-dessous le code qui s'y trouve</p>
+                    <p>dan masukkan di bawah ini kode yang ada di sana</p>
                   </>
                 )}
               </div>
@@ -174,11 +174,11 @@ export default function VerifyOtpPage() {
                     rules={[
                       {
                         required: true,
-                        message: 'Veuillez entrer le code',
+                        message: 'Silakan masukkan kode',
                       },
                       {
                         len: 6,
-                        message: 'Le code doit contenir 6 chiffres',
+                        message: 'Kode harus terdiri dari 6 digit',
                       },
                     ]}
                     className='mb-0'
@@ -204,7 +204,7 @@ export default function VerifyOtpPage() {
             {isPairingScenario && (
               <div className='px-12 py-8 flex justify-center'>
                 <p className='text-sm text-[#494949] text-center'>
-                  En attente de la confirmation sur votre téléphone...
+                  Menunggu konfirmasi di ponsel Anda...
                 </p>
               </div>
             )}
@@ -229,7 +229,7 @@ export default function VerifyOtpPage() {
                     className='h-[46px] px-8 bg-[#24d366] border-none hover:bg-[#1fb855] flex items-center gap-2'
                   >
                     <span className='text-sm font-medium tracking-[0.35px]'>
-                      Vérifier le code
+                      Verifikasi kode
                     </span>
                     <ArrowRightOutlined />
                   </Button>
@@ -243,7 +243,7 @@ export default function VerifyOtpPage() {
                     className='h-[46px] px-8 bg-[#24d366] border-none hover:bg-[#1fb855] flex items-center gap-2'
                   >
                     <span className='text-sm font-medium tracking-[0.35px]'>
-                      J'ai scanné le code
+                      Saya sudah memindai kode
                     </span>
                     <ArrowRightOutlined />
                   </Button>
@@ -255,13 +255,13 @@ export default function VerifyOtpPage() {
                 type='secondary'
                 className='block text-center text-sm leading-6'
               >
-                En cliquant sur continuer, vous acceptez notre{' '}
-                <Link href='/auth/privacy'>politique de confidentialité</Link>{' '}
-                et nos{' '}
+                Dengan mengeklik lanjut, Anda menyetujui{' '}
+                <Link href='/auth/privacy'>kebijakan privasi</Link>{' '}
+                dan{' '}
                 <Link href='/auth/terms'>
-                  conditions générales d&apos;utilisation
+                  syarat dan ketentuan
                 </Link>
-                .
+                kami.
               </Text>
             </div>
           </div>

@@ -36,21 +36,21 @@ type SupportFormValues = {
 }
 
 const CATEGORY_OPTIONS = [
-  { label: 'Question produit', value: 'question' },
-  { label: 'Bug ou incident', value: 'bug' },
-  { label: "Demande d'évolution", value: 'amelioration' },
-  { label: 'Upgrade / abonnement', value: 'upgrade' },
+  { label: 'Pertanyaan produk', value: 'question' },
+  { label: 'Bug atau insiden', value: 'bug' },
+  { label: 'Permintaan penyempurnaan', value: 'amelioration' },
+  { label: 'Upgrade / langganan', value: 'upgrade' },
 ]
 
 export function SupportFeedbackModal({
   appArea = 'dashboard-support',
-  description = 'Nous vous répondrons dans les 24h',
+  description = 'Kami akan membalas dalam 24 jam',
   endpoint,
   initialCategory = 'question',
   onClose,
   open,
   subject,
-  title = 'Envoyer nous votre message',
+  title = 'Kirim pesan Anda kepada kami',
 }: SupportFeedbackModalProps) {
   const location = useLocation()
   const { notification } = App.useApp()
@@ -97,7 +97,7 @@ export function SupportFeedbackModal({
         user?.businessInfo?.profile_name ||
         user?.whatsappProfile?.pushname ||
         phoneLabel ||
-        'Utilisateur WhatsApp Agent'
+        'Pengguna WhatsApp Agent'
 
       const eventId = await sendSupportFeedback({
         category: values.category,
@@ -118,7 +118,7 @@ export function SupportFeedbackModal({
         },
         email: fallbackEmail,
         endpoint,
-        message: `${phoneLabel ? `Téléphone de rappel : ${phoneLabel}\n\n` : ''}${values.message.trim()}`,
+        message: `${phoneLabel ? `Telepon callback: ${phoneLabel}\n\n` : ''}${values.message.trim()}`,
         name: fallbackName,
         subject: subject?.trim(),
       })

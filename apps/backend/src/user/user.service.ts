@@ -122,7 +122,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     return this.prisma.user.update({
@@ -143,11 +143,11 @@ export class UserService {
     try {
       const user = await this.getById(userId);
       if (!user) {
-        throw new NotFoundException('User not found');
+        throw new NotFoundException('Pengguna tidak ditemukan');
       }
 
       if (!user.phoneNumber) {
-        throw new InternalServerErrorException('User phone number not found');
+        throw new InternalServerErrorException('Nomor telepon pengguna tidak ditemukan');
       }
 
       // Trigger synchronization using UserSyncService
@@ -176,7 +176,7 @@ export class UserService {
         error,
       );
       throw new InternalServerErrorException(
-        'Failed to synchronize WhatsApp data. Please ensure your WhatsApp is connected.',
+        'Gagal menyinkronkan data WhatsApp. Pastikan WhatsApp Anda terhubung.',
       );
     }
   }
@@ -189,7 +189,7 @@ export class UserService {
 
     if (!parsedDsn) {
       throw new BadRequestException(
-        'La configuration Sentry du feedback est invalide.',
+        'Konfigurasi Sentry feedback tidak valid.',
       );
     }
 
@@ -262,7 +262,7 @@ export class UserService {
         );
 
         throw new InternalServerErrorException(
-          "Le support n'a pas pu recevoir votre message.",
+          "Support tidak dapat menerima pesan Anda.",
         );
       }
 
@@ -278,7 +278,7 @@ export class UserService {
       );
 
       throw new InternalServerErrorException(
-        "Le support n'a pas pu recevoir votre message.",
+        "Support tidak dapat menerima pesan Anda.",
       );
     }
   }
@@ -301,7 +301,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     // Get orders count

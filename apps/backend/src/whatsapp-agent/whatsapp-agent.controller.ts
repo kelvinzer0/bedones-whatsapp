@@ -49,7 +49,7 @@ export class WhatsAppAgentController {
     const agent = await this.whatsappAgentService.getAgentForUser(userId);
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found for this user');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan untuk pengguna ini');
     }
 
     return agent;

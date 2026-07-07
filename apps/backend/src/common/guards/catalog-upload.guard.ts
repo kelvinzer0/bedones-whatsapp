@@ -36,7 +36,7 @@ export class CatalogUploadGuard implements CanActivate {
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       this.logger.error('❌ Missing or invalid Authorization header');
-      throw new UnauthorizedException('Missing or invalid token');
+      throw new UnauthorizedException('Token tidak ada atau tidak valid');
     }
 
     const token = authHeader.substring(7); // Enlever "Bearer "
@@ -45,7 +45,7 @@ export class CatalogUploadGuard implements CanActivate {
       // Vérifier et décoder le token
       const jwtSecret = this.configService.get<string>('JWT_SECRET');
       if (!jwtSecret) {
-        throw new Error('JWT_SECRET not configured');
+        throw new Error('JWT_SECRET tidak dikonfigurasi');
       }
 
       const payload = jwt.verify(token, jwtSecret) as CatalogUploadTokenPayload;
@@ -53,13 +53,13 @@ export class CatalogUploadGuard implements CanActivate {
       // Vérifier le type de token
       if (payload.type !== 'catalog-upload') {
         this.logger.error('❌ Invalid token type');
-        throw new UnauthorizedException('Invalid token type');
+        throw new UnauthorizedException('Tipe token tidak valid');
       }
 
       // Vérifier que le clientId est présent
       if (!payload.clientId) {
         this.logger.error('❌ Token missing clientId');
-        throw new UnauthorizedException('Token missing clientId');
+        throw new UnauthorizedException('Token tidak memiliki clientId');
       }
 
       // Injecter le clientId dans la requête
@@ -70,14 +70,14 @@ export class CatalogUploadGuard implements CanActivate {
     } catch (error: any) {
       if (error instanceof jwt.JsonWebTokenError) {
         this.logger.error('❌ Invalid token signature');
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException('Token tidak valid');
       } else if (error instanceof jwt.TokenExpiredError) {
         this.logger.error('❌ Token expired');
-        throw new UnauthorizedException('Token expired');
+        throw new UnauthorizedException('Token kedaluwarsa');
       }
 
       this.logger.error(`❌ Token verification failed: ${error.message}`);
-      throw new UnauthorizedException('Token verification failed');
+      throw new UnauthorizedException('Verifikasi token gagal');
     }
   }
 }

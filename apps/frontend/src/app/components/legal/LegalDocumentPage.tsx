@@ -32,11 +32,11 @@ export default function LegalDocumentPage({
             href='/auth/login'
             className='!rounded-full !px-5'
           >
-            Revenir à l&apos;application
+            Kembali ke aplikasi
           </Button>
 
           <p className='hidden text-right text-xs tracking-[0.18em] text-text-muted uppercase sm:block'>
-            Document public
+            Dokumen publik
           </p>
         </div>
       </header>
@@ -54,7 +54,7 @@ export default function LegalDocumentPage({
               {introduction}
             </p>
             <div className='mt-8 inline-flex rounded-full border border-[rgba(17,27,33,0.08)] bg-[rgba(17,27,33,0.03)] px-4 py-2 text-xs font-medium tracking-[0.14em] text-text-muted uppercase'>
-              Mise à jour : {updatedAt}
+              Diperbarui: {updatedAt}
             </div>
           </section>
 
@@ -78,22 +78,22 @@ export default function LegalDocumentPage({
 
           <footer className='mt-8 rounded-[24px] border border-[rgba(17,27,33,0.08)] bg-[rgba(255,255,255,0.78)] px-6 py-5 text-sm leading-7 text-text-muted shadow-card'>
             <p>
-              Pour toute question liée à ces documents, contactez l&apos;équipe
-              Bedones depuis l&apos;application ou par vos canaux de support
-              habituels.
+              Untuk pertanyaan terkait dokumen ini, hubungi tim
+              Bedones dari dalam aplikasi atau melalui kanal
+              dukungan yang biasa Anda gunakan.
             </p>
             <div className='mt-3 flex flex-wrap gap-4'>
               <Link
                 to='/auth/privacy'
                 className='font-medium text-text-dark underline underline-offset-4 hover:text-primary-green'
               >
-                Politique de confidentialité
+                Kebijakan privasi
               </Link>
               <Link
                 to='/auth/terms'
                 className='font-medium text-text-dark underline underline-offset-4 hover:text-primary-green'
               >
-                Conditions générales d&apos;utilisation
+                Syarat & ketentuan penggunaan
               </Link>
             </div>
           </footer>

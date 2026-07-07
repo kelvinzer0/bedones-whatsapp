@@ -6,10 +6,10 @@ import { useAuth } from '../hooks/useAuth'
 
 export function meta() {
   return [
-    { title: 'WhatsApp Agent - Accueil' },
+    { title: 'WhatsApp Agent - Beranda' },
     {
       name: 'description',
-      content: 'Plateforme de gestion WhatsApp Business avec IA',
+      content: 'Platform manajemen WhatsApp Business dengan AI',
     },
   ]
 }
@@ -35,7 +35,7 @@ export default function Home() {
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center'>
       <div className='text-center'>
         <Spin size='large' />
-        <p className='mt-4 text-gray-600'>Chargement...</p>
+        <p className='mt-4 text-gray-600'>Memuat...</p>
       </div>
     </div>
   )

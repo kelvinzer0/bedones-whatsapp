@@ -34,7 +34,7 @@ import {
 } from '../components/status-scheduler/utils'
 
 function formatStoriesMonthLabel(value: Date, isDesktop: boolean) {
-  const monthLabel = new Intl.DateTimeFormat('fr-FR', {
+  const monthLabel = new Intl.DateTimeFormat('id-ID', {
     month: 'long',
     year: 'numeric',
   }).format(value)
@@ -43,16 +43,16 @@ function formatStoriesMonthLabel(value: Date, isDesktop: boolean) {
     return monthLabel
   }
 
-  return `Stories de ${monthLabel.charAt(0).toUpperCase()}${monthLabel.slice(1)}`
+  return `Stories ${monthLabel.charAt(0).toUpperCase()}${monthLabel.slice(1)}`
 }
 
 export function meta() {
   return [
-    { title: 'Status scheduler - WhatsApp Agent' },
+    { title: 'Penjadwal status - WhatsApp Agent' },
     {
       name: 'description',
       content:
-        'Calendrier de planification des statuts WhatsApp avec édition par journée',
+        'Kalender penjadwalan status WhatsApp dengan pengeditan per hari',
     },
   ]
 }
@@ -181,8 +181,8 @@ export default function StatusSchedulerPage() {
 
     if (slots.length === 0) {
       notification.error({
-        message: 'Date manquante',
-        description: 'Ajoutez au moins une date de publication.',
+        message: 'Tanggal wajib diisi',
+        description: 'Tambahkan setidaknya satu tanggal publikasi.',
       })
       return
     }
@@ -209,8 +209,8 @@ export default function StatusSchedulerPage() {
         }
 
         notification.success({
-          message: 'Story mise à jour',
-          description: 'La planification a été enregistrée.',
+          message: 'Story diperbarui',
+          description: 'Penjadwalan telah disimpan.',
         })
       } else {
         let lastCreatedSchedule: StatusSchedule | null = null
@@ -237,11 +237,11 @@ export default function StatusSchedulerPage() {
         }
 
         notification.success({
-          message: 'Story programmée',
+          message: 'Story dijadwalkan',
           description:
             slots.length > 1
-              ? `${slots.length} stories ont été ajoutées au calendrier.`
-              : 'La story a été ajoutée au calendrier.',
+              ? `${slots.length} stories ditambahkan ke kalender.`
+              : 'Story telah ditambahkan ke kalender.',
         })
       }
 
@@ -250,8 +250,8 @@ export default function StatusSchedulerPage() {
     } catch (error) {
       notification.error({
         message: editingSchedule
-          ? 'Mise à jour impossible'
-          : 'Création impossible',
+          ? 'Tidak dapat memperbarui'
+          : 'Tidak dapat membuat',
         description: getErrorMessage(error),
       })
     }
@@ -262,12 +262,12 @@ export default function StatusSchedulerPage() {
       const response = await cancelMutation.mutateAsync(scheduleId)
       applyMutationResponse(response)
       notification.success({
-        message: 'Story supprimée',
-        description: 'La planification a été retirée du calendrier.',
+        message: 'Story dihapus',
+        description: 'Penjadwalan telah dihapus dari kalender.',
       })
     } catch (error) {
       notification.error({
-        message: 'Suppression impossible',
+        message: 'Tidak dapat menghapus',
         description: getErrorMessage(error),
       })
     }
@@ -320,7 +320,7 @@ export default function StatusSchedulerPage() {
   return (
     <>
       <DashboardHeader
-        title={isDesktop ? 'Planifier vos stories' : null}
+        title={isDesktop ? 'Jadwalkan story Anda' : null}
         isBackgroundLoading={schedulesQuery.isFetching && !!schedulesQuery.data}
         right={
           <DatePicker
@@ -344,15 +344,14 @@ export default function StatusSchedulerPage() {
             <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
               <div>
                 <p className='m-0 text-lg font-semibold text-[var(--color-text-primary)]'>
-                  Comment programmer un status
+                  Cara menjadwalkan status
                 </p>
                 <p className='mb-0 mt-2 text-sm leading-[1.7] text-[var(--color-text-secondary)]'>
-                  Il vous suffit de cliquer sur une date et de remplir le
-                  formulaire.
+                  Anda cukup klik tanggal dan isi formulir.
                 </p>
               </div>
 
-              <Button onClick={() => setShowHelpCard(false)}>Fermer</Button>
+              <Button onClick={() => setShowHelpCard(false)}>Tutup</Button>
             </div>
           </div>
         ) : null}
@@ -365,8 +364,8 @@ export default function StatusSchedulerPage() {
           <Alert
             type='error'
             showIcon
-            message='Impossible de charger le calendrier'
-            description='Les stories planifiées n’ont pas pu être récupérées depuis le backend.'
+            message='Tidak dapat memuat kalender'
+            description='Story terjadwal tidak dapat diambil dari backend.'
           />
         ) : (
           <div className='story-calendar-shell overflow-hidden rounded-[24px] border-none bg-white p-3 shadow-card sm:p-4 lg:flex-1 lg:min-h-0'>

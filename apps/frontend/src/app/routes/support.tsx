@@ -16,11 +16,11 @@ type SupportLocationState = {
 
 export function meta() {
   return [
-    { title: 'Support - WhatsApp Agent' },
+    { title: 'Dukungan - WhatsApp Agent' },
     {
       name: 'description',
       content:
-        'Point d’entrée support avec FAQ, assistance IA et formulaire Sentry',
+        'Titik masuk dukungan dengan FAQ, asisten AI, dan formulir Sentry',
     },
   ]
 }
@@ -33,30 +33,30 @@ export default function SupportPage() {
 
   return (
     <>
-      <DashboardHeader title='Support et Aides' />
+      <DashboardHeader title='Dukungan dan Bantuan' />
 
       <div className='w-full space-y-4 px-4 py-5 sm:px-6 sm:py-6'>
         <div className='merge-border-radius grid gap-2'>
           <ActionCard
-            title='Lire nos questions reponses'
-            subtitle='Consulter les questions les plus souvent poser par les clients et leurs réponses'
-            actionLabel='Lire la FAQ'
+            title='Baca pertanyaan dan jawaban kami'
+            subtitle='Lihat pertanyaan yang paling sering ditanyakan klien beserta jawabannya'
+            actionLabel='Baca FAQ'
             icon={<QuestionCircleOutlined />}
             onAction={() => navigate('/faq')}
           />
 
           <ActionCard
-            title='Discuter avec un de nos agent IA'
-            subtitle='Obtenez une réponse instantanée d’un agent qui maitrise parfaitement votre entreprise'
-            actionLabel='Poser une question'
+            title='Bicara dengan salah satu agent AI kami'
+            subtitle='Dapatkan jawaban instan dari agent yang menguasai sepenuhnya perusahaan Anda'
+            actionLabel='Ajukan pertanyaan'
             icon={<MessageOutlined />}
             onAction={() => navigate('/context')}
           />
 
           <ActionCard
-            title='Discuter avec un membre du support'
-            subtitle='Envoyer nous un message pour recevoir une réponse dans les 24h au plus tard'
-            actionLabel='Envoyer un message'
+            title='Bicara dengan anggota tim dukungan'
+            subtitle='Kirimkan kami pesan untuk menerima jawaban dalam 24 jam maksimal'
+            actionLabel='Kirim pesan'
             icon={<CustomerServiceOutlined />}
             onAction={() => setContactModalOpen(true)}
           />

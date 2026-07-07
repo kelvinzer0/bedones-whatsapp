@@ -372,7 +372,7 @@ export class OnboardingService {
       let aiResponse: string;
       try {
         if (!this.primaryModel && !this.fallbackModel) {
-          throw new Error('No AI model configured');
+          throw new Error('Tidak ada model AI yang dikonfigurasi');
         }
         this.logger.log(
           `🤖 [User ${userId}] Starting initial evaluation with AI`,
@@ -519,7 +519,7 @@ export class OnboardingService {
       });
 
       if (!thread) {
-        throw new Error('Thread not found');
+        throw new Error('Thread tidak ditemukan');
       }
 
       // Save user message
@@ -558,7 +558,7 @@ export class OnboardingService {
       let aiResponse: string;
       try {
         if (!this.primaryModel && !this.fallbackModel) {
-          throw new Error('No AI model configured');
+          throw new Error('Tidak ada model AI yang dikonfigurasi');
         }
         this.logger.log(
           `🤖 [User ${userId}] Calling AI agent (message count: ${thread.messages.length})`,
@@ -679,12 +679,12 @@ export class OnboardingService {
     });
 
     if (!thread) {
-      throw new Error('No onboarding thread found for user');
+      throw new Error('Tidak ada thread onboarding untuk pengguna ini');
     }
 
     if (thread.status === 'completed') {
       return {
-        message: 'Onboarding already completed',
+        message: 'Onboarding sudah selesai',
         score: thread.score,
         warning: null,
       };
@@ -713,7 +713,7 @@ export class OnboardingService {
     );
 
     return {
-      message: 'Onboarding terminé avec succès !',
+      message: 'Onboarding berhasil diselesaikan!',
       score: thread.score,
       warning,
     };
@@ -761,7 +761,7 @@ export class OnboardingService {
     user?: UserContext,
   ): Promise<string> {
     if (!this.agent) {
-      throw new Error('Agent not initialized');
+      throw new Error('Agent belum diinisialisasi');
     }
 
     // Emit thinking status

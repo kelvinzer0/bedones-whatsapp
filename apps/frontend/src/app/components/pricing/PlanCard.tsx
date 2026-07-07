@@ -39,7 +39,7 @@ function renderPlanFooter(config: PlanConfig, duration: BillingDuration) {
         <span className='ml-1'>{creditSummary.suffix}</span>
       </p>
       <p className='m-0'>
-        Puis{' '}
+        Lalu{' '}
         <span className='font-bold text-[var(--color-text-primary)]'>
           {config.overagePrice}
         </span>{' '}
@@ -103,7 +103,7 @@ export function PlanCard({
               {displayPrice}
             </span>
             <span className='ml-2 text-[18px] font-normal text-[var(--color-text-secondary)]'>
-              par mois
+              per bulan
             </span>
           </div>
         </div>
@@ -112,7 +112,7 @@ export function PlanCard({
           <div className='pointer-events-none absolute inset-x-0 bottom-full hidden h-4 bg-white md:block' />
           <div>
             {isCurrent ? (
-              <div className='pricing-current-button'>Votre forfait actuel</div>
+              <div className='pricing-current-button'>Paket Anda saat ini</div>
             ) : config.ctaLabel ? (
               <Button
                 className='dark-button w-full'
@@ -120,7 +120,7 @@ export function PlanCard({
                 iconPosition='end'
                 onClick={() => onUpgrade(planKey)}
               >
-                {`Passer ${getDurationCtaLabel(duration)} mois en ${planLabel} pour ${totalPrice}`}
+                {`Naik ke ${getDurationCtaLabel(duration)} bulan di ${planLabel} seharga ${totalPrice}`}
               </Button>
             ) : (
               <div className='h-[46px]' />

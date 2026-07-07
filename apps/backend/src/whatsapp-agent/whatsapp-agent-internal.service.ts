@@ -43,7 +43,7 @@ export class WhatsAppAgentInternalService {
     ]);
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan');
     }
 
     return {
@@ -95,7 +95,7 @@ export class WhatsAppAgentInternalService {
     }
 
     if (Object.keys(updateData).length === 0) {
-      throw new BadRequestException('At least one updatable field is required');
+      throw new BadRequestException('Setidaknya satu field yang dapat diperbarui wajib diisi');
     }
 
     await this.prisma.whatsAppAgent.update({

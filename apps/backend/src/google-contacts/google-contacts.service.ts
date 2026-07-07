@@ -122,7 +122,7 @@ export class GoogleContactsService {
 
   async handleOAuthCallback(code: string, state: string): Promise<string> {
     if (!code || !state) {
-      throw new BadRequestException('Missing OAuth code or state');
+      throw new BadRequestException('Kode OAuth atau state tidak ada');
     }
 
     const userId = await this.consumeState(state);
@@ -320,7 +320,7 @@ export class GoogleContactsService {
 
     if (!config?.client_id || !config?.client_secret) {
       throw new InternalServerErrorException(
-        'Invalid Google OAuth client secret file',
+        'File client secret Google OAuth tidak valid',
       );
     }
 
@@ -335,14 +335,14 @@ export class GoogleContactsService {
 
     if (!redirectUri) {
       throw new InternalServerErrorException(
-        'Missing GOOGLE_CONTACTS_REDIRECT_URI',
+        'GOOGLE_CONTACTS_REDIRECT_URI tidak ada',
       );
     }
 
     const clientConfig = this.getClientSecretConfig();
     if (!clientConfig.redirect_uris?.includes(redirectUri)) {
       throw new InternalServerErrorException(
-        'GOOGLE_CONTACTS_REDIRECT_URI is not declared in the Google client secret file',
+        'GOOGLE_CONTACTS_REDIRECT_URI tidak dideklarasikan dalam file client secret Google',
       );
     }
 
@@ -365,7 +365,7 @@ export class GoogleContactsService {
     }
 
     throw new InternalServerErrorException(
-      'Google OAuth client secret file not found',
+      'File client secret Google OAuth tidak ditemukan',
     );
   }
 
@@ -394,14 +394,14 @@ export class GoogleContactsService {
     const rawValue = await this.cacheManager.get<string>(cacheKey);
 
     if (!rawValue) {
-      throw new BadRequestException('Invalid or expired OAuth state');
+      throw new BadRequestException('State OAuth tidak valid atau kedaluwarsa');
     }
 
     await this.cacheManager.del(cacheKey);
 
     const parsed = JSON.parse(rawValue) as { userId?: string };
     if (!parsed.userId) {
-      throw new BadRequestException('OAuth state is missing the user id');
+      throw new BadRequestException('State OAuth tidak memiliki user id');
     }
 
     return parsed.userId;
@@ -458,7 +458,7 @@ export class GoogleContactsService {
     });
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found for this user');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan untuk pengguna ini');
     }
 
     await this.prisma.whatsAppAgent.update({
@@ -484,7 +484,7 @@ export class GoogleContactsService {
     });
 
     if (!agent?.encryptedGoogleContactsToken) {
-      throw new BadRequestException('Google Contacts is not connected');
+      throw new BadRequestException('Google Contacts tidak terhubung');
     }
 
     const token = this.decryptStoredToken(agent.encryptedGoogleContactsToken);
@@ -501,7 +501,7 @@ export class GoogleContactsService {
     if (!token.refreshToken) {
       await this.markGoogleContactsDisconnected(agentId);
       throw new BadRequestException(
-        'Missing Google refresh token, please reconnect Google Contacts',
+        'Refresh token Google tidak ada, silakan hubungkan kembali Google Contacts',
       );
     }
 
@@ -562,7 +562,7 @@ export class GoogleContactsService {
       throw new BadRequestException(
         error?.response?.data?.error_description ||
           error?.response?.data?.error ||
-          'Google refresh token is no longer valid',
+          'Refresh token Google tidak lagi valid',
       );
     }
   }
@@ -641,10 +641,10 @@ export class GoogleContactsService {
     },
   ): Promise<{ resourceName?: string }> {
     const noteLines = [
-      'Source: WhatsApp',
-      `Pseudo WhatsApp: ${input.whatsappPushName || input.displayName}`,
-      `Chat ID: ${input.whatsappChatId}`,
-      `Contact ID: ${input.whatsappContactId}`,
+      'Sumber: WhatsApp',
+      `Nama Pengguna WhatsApp: ${input.whatsappPushName || input.displayName}`,
+      `ID Chat: ${input.whatsappChatId}`,
+      `ID Kontak: ${input.whatsappContactId}`,
     ];
 
     const payload: Record<string, unknown> = {

@@ -14,7 +14,7 @@ const { Text, Paragraph } = Typography
 function HiddenProductOverlay() {
   return (
     <div className='absolute text-white inset-0 bg-black/50 rounded-t-lg flex items-center justify-center pointer-events-none'>
-      <Tooltip title='Produit masqué dans le catalogue'>
+      <Tooltip title='Produk disembunyikan di katalog'>
         <EyeInvisibleOutlined style={{ fontSize: '32px' }} />
       </Tooltip>
     </div>

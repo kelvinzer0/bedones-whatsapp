@@ -37,7 +37,7 @@ export class ConnectorSignatureGuard implements CanActivate {
 
     if (!signature) {
       this.logger.error('❌ Missing X-Connector-Signature header');
-      throw new UnauthorizedException('Missing signature');
+      throw new UnauthorizedException('Signature tidak ada');
     }
 
     // Générer la signature attendue
@@ -51,7 +51,7 @@ export class ConnectorSignatureGuard implements CanActivate {
       this.logger.error('❌ Invalid signature');
       this.logger.debug(`Expected: ${expectedSignature}`);
       this.logger.debug(`Received: ${signature}`);
-      throw new UnauthorizedException('Invalid signature');
+      throw new UnauthorizedException('Signature tidak valid');
     }
 
     this.logger.debug('✅ Signature verified');

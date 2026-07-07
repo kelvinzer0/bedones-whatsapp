@@ -94,14 +94,14 @@ function isCameroonEligible(user: ReturnType<typeof useAuth>['user']) {
 
 function getPaymentMethodLabel(provider?: string | null) {
   if (provider === 'stripe') {
-    return 'carte'
+    return 'kartu'
   }
 
   if (provider === 'notch_pay') {
     return 'Mobile Money'
   }
 
-  return 'paiement'
+  return 'pembayaran'
 }
 
 function buildPaymentResultState(input: {
@@ -119,7 +119,7 @@ function buildPaymentResultState(input: {
 }
 
 function formatCreditsCount(value: number) {
-  return value.toLocaleString('fr-FR')
+  return value.toLocaleString('id-ID')
 }
 
 function getCreditsRemaining(user: ReturnType<typeof useAuth>['user']) {
@@ -254,10 +254,10 @@ function PaymentChoiceCard({
 
 export function meta() {
   return [
-    { title: 'Souscriptions - WhatsApp Agent' },
+    { title: 'Langganan - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Choisissez une souscription WhatsApp Agent',
+      content: 'Pilih langganan WhatsApp Agent',
     },
   ]
 }
@@ -314,59 +314,59 @@ export default function PricingPage() {
 
     if (paymentResult.status === 'success') {
       return {
-        actionLabel: 'Continuer',
-        primaryText: 'Votre souscription est maintenant active.',
+        actionLabel: 'Lanjut',
+        primaryText: 'Langganan Anda sekarang aktif.',
         secondaryText:
           totalCredits !== null
-            ? `Vous avez maintenant accès à ${formatCreditsCount(totalCredits)} crédits. Quand ils se terminent, vous pourrez en racheter à tout moment.`
-            : 'Vos crédits viennent d’être ajoutés à votre compte. Quand ils se terminent, vous pourrez en racheter à tout moment.',
+            ? `Anda sekarang memiliki akses ke ${formatCreditsCount(totalCredits)} kredit. Saat habis, Anda dapat membeli lagi kapan saja.`
+            : 'Kredit Anda baru saja ditambahkan ke akun Anda. Saat habis, Anda dapat membeli lagi kapan saja.',
         showSuccessIcon: true,
-        title: 'Paiement confirmé',
+        title: 'Pembayaran dikonfirmasi',
       }
     }
 
     if (paymentResult.status === 'pending') {
       return {
-        actionLabel: 'Compris',
+        actionLabel: 'Mengerti',
         primaryText:
-          'Nous n’avons pas encore reçu la confirmation finale de votre paiement.',
+          'Kami belum menerima konfirmasi akhir dari pembayaran Anda.',
         secondaryText:
-          'Si le débit est validé, vos crédits seront ajoutés automatiquement dès réception de la confirmation.',
+          'Jika pembayaran divalidasi, kredit Anda akan ditambahkan otomatis setelah konfirmasi diterima.',
         showSuccessIcon: false,
-        title: 'Paiement en cours de vérification',
+        title: 'Pembayaran sedang diverifikasi',
       }
     }
 
     const failureDescriptionByReason: Record<string, string> = {
       expired:
-        'La session de paiement a expiré avant confirmation. Vous pouvez relancer un nouveau paiement.',
+        'Sesi pembayaran telah berakhir sebelum dikonfirmasi. Anda dapat memulai pembayaran baru.',
       missing_session:
-        'Le provider est revenu sans session exploitable. Nous n’avons pas pu vérifier le paiement.',
+        'Provider kembali tanpa sesi yang dapat digunakan. Kami tidak dapat memverifikasi pembayaran.',
       no_reference:
-        'Le provider est revenu sans référence exploitable. Nous n’avons pas pu rapprocher le paiement.',
+        'Provider kembali tanpa referensi yang dapat digunakan. Kami tidak dapat mencocokkan pembayaran.',
       payment_not_found:
-        'Le retour du provider a bien été reçu, mais aucune transaction locale correspondante n’a été retrouvée.',
+        'Respons provider telah diterima, namun tidak ada transaksi lokal yang sesuai ditemukan.',
       reference_mismatch:
-        'Les références reçues par le backend ne correspondent pas à la transaction attendue.',
+        'Referensi yang diterima backend tidak sesuai dengan transaksi yang diharapkan.',
       server_error:
-        'Nous n’avons pas pu vérifier automatiquement votre paiement après le retour du provider.',
+        'Kami tidak dapat memverifikasi pembayaran Anda secara otomatis setelah kembali dari provider.',
     }
 
     return {
-      actionLabel: 'Réessayer',
+      actionLabel: 'Coba lagi',
       primaryText:
         paymentResult.status === 'cancelled'
-          ? `Le paiement par ${paymentLabel} a été interrompu avant confirmation.`
+          ? `Pembayaran dengan ${paymentLabel} terhenti sebelum dikonfirmasi.`
           : (paymentResult.reason &&
               failureDescriptionByReason[paymentResult.reason]) ||
-            'La transaction n’a pas pu être validée.',
+            'Transaksi tidak dapat divalidasi.',
       secondaryText:
-        'Vous pouvez relancer le paiement maintenant. Si vous avez été débité, vos crédits seront ajoutés dès réception de la confirmation.',
+        'Anda dapat memulai ulang pembayaran sekarang. Jika Anda telah didebit, kredit Anda akan ditambahkan setelah konfirmasi diterima.',
       showSuccessIcon: false,
       title:
         paymentResult.status === 'cancelled'
-          ? 'Paiement annulé'
-          : 'Impossible de vérifier le paiement',
+          ? 'Pembayaran dibatalkan'
+          : 'Tidak dapat memverifikasi pembayaran',
     }
   }, [paymentResult, user])
 
@@ -504,7 +504,7 @@ export default function PricingPage() {
     if (selectedDuration === 1) {
       return (
         <p className='m-0 flex h-[34px] items-center justify-center text-sm text-[var(--color-text-soft)]'>
-          Sans réduction
+          Tanpa diskon
         </p>
       )
     }
@@ -514,13 +514,13 @@ export default function PricingPage() {
     return (
       <div className='flex items-center justify-center gap-2'>
         <span className='text-sm text-[var(--color-text-secondary)]'>
-          Profiter de
+          Nikmati
         </span>
         <span className='inline-flex h-[34px] min-w-[34px] items-center justify-center rounded-full bg-[#24D366] px-2 text-sm font-bold text-black'>
           {pct}%
         </span>
         <span className='text-sm text-[var(--color-text-secondary)]'>
-          de réduction pour {selectedDuration} mois
+          diskon untuk {selectedDuration} bulan
         </span>
       </div>
     )
@@ -633,9 +633,9 @@ export default function PricingPage() {
 
       if (!formatted) {
         notification.error({
-          message: 'Numéro requis',
+          message: 'Nomor wajib diisi',
           description:
-            'Veuillez renseigner un numéro Mobile Money valide au format international.',
+            'Silakan masukkan nomor Mobile Money yang valid dalam format internasional.',
         })
         return
       }
@@ -714,10 +714,10 @@ export default function PricingPage() {
       const description =
         error instanceof Error
           ? error.message
-          : 'Impossible de démarrer le paiement.'
+          : 'Tidak dapat memulai pembayaran.'
 
       notification.error({
-        message: 'Checkout indisponible',
+        message: 'Checkout tidak tersedia',
         description,
       })
       setIsSubmitting(false)
@@ -726,7 +726,7 @@ export default function PricingPage() {
 
   return (
     <>
-      <DashboardHeader title='Souscriptions' />
+      <DashboardHeader title='Langganan' />
 
       <div className='w-full space-y-8 px-4 py-5 sm:px-6 sm:py-6'>
         <div className='sticky top-10 z-10 -mx-4 mb-8 flex flex-col items-center gap-3 bg-white px-4 py-4 text-center md:relative md:top-0'>
@@ -782,7 +782,7 @@ export default function PricingPage() {
                 : closePaymentResultModal
             }
           >
-            {paymentResultContent?.actionLabel || 'Fermer'}
+            {paymentResultContent?.actionLabel || 'Tutup'}
           </Button>,
         ]}
         title={
@@ -793,7 +793,7 @@ export default function PricingPage() {
               </span>
             ) : null}
             <h2 className='m-0 text-[length:var(--font-size-title-sm)] font-semibold text-[var(--color-text-primary)]'>
-              {paymentResultContent?.title || 'Résultat du paiement'}
+              {paymentResultContent?.title || 'Hasil pembayaran'}
             </h2>
           </div>
         }
@@ -808,7 +808,7 @@ export default function PricingPage() {
             </p>
             {paymentResult.reference && paymentResult.status !== 'success' ? (
               <p className='m-0 text-xs font-medium tracking-[0.02em] text-[var(--color-text-soft)]'>
-                Référence: {paymentResult.reference}
+                Referensi: {paymentResult.reference}
               </p>
             ) : null}
           </div>
@@ -827,7 +827,7 @@ export default function PricingPage() {
             onClick={closeCheckoutModal}
             disabled={isSubmitting}
           >
-            Annuler
+            Batal
           </Button>,
           <Button
             key='submit'
@@ -838,13 +838,13 @@ export default function PricingPage() {
             iconPosition='end'
           >
             {paymentMethod === 'CARD'
-              ? 'Payer par carte'
-              : 'Payer par Mobile Money'}
+              ? 'Bayar dengan kartu'
+              : 'Bayar dengan Mobile Money'}
           </Button>,
         ]}
         title={
           <h2 className='m-0 text-[length:var(--font-size-title-sm)] font-semibold text-[var(--color-text-primary)]'>
-            Choisir un moyen de paiement
+            Pilih metode pembayaran
           </h2>
         }
       >
@@ -861,11 +861,11 @@ export default function PricingPage() {
                     {selectedPlanMonthly}
                   </span>
                   <span className='ml-2 text-lg font-normal text-[var(--color-text-secondary)]'>
-                    par mois
+                    per bulan
                   </span>
                   {selectedPlanCredits ? (
                     <p className='mt-3 mb-0 text-sm font-medium leading-6 text-[var(--color-text-secondary)]'>
-                      {selectedPlanCredits} crédits inclus sur la période
+                      {selectedPlanCredits} kredit termasuk dalam periode
                     </p>
                   ) : null}
                 </div>
@@ -879,7 +879,7 @@ export default function PricingPage() {
           <div className='space-y-3'>
             <PaymentChoiceCard
               active={paymentMethod === 'CARD'}
-              title='Carte'
+              title='Kartu'
               icon={<CreditCardOutlined />}
               description='Visa / Mastercard'
               onClick={() => handlePaymentMethodSelection('CARD')}
@@ -893,7 +893,7 @@ export default function PricingPage() {
               description={
                 mobileMoneyEnabled
                   ? 'Orange Money / MTN Mobile Money'
-                  : 'Disponible uniquement pour les numéros du Cameroun.'
+                  : 'Hanya tersedia untuk nomor Kamerun.'
               }
               onClick={() => handlePaymentMethodSelection('MOBILE_MONEY')}
             />
@@ -902,7 +902,7 @@ export default function PricingPage() {
           {paymentMethod === 'MOBILE_MONEY' ? (
             <Form form={form} layout='vertical'>
               <FormItem
-                label='Numéro Mobile Money'
+                label='Nomor Mobile Money'
                 name='phone'
                 className='auth-phone-field w-full'
                 rules={[
@@ -910,7 +910,7 @@ export default function PricingPage() {
                     validator: (_, value?: CountryPhoneValue) => {
                       const error = getCountryPhoneValidationError(value, {
                         defaultCountryCode: DEFAULT_PHONE_COUNTRY_CODE,
-                        requiredMessage: 'Veuillez entrer votre numéro.',
+                        requiredMessage: 'Silakan masukkan nomor Anda.',
                       })
 
                       return error
@@ -925,8 +925,8 @@ export default function PricingPage() {
                 />
               </FormItem>
               <p className='m-0 text-sm leading-6 text-[var(--color-text-secondary)]'>
-                Nous utiliserons ce numéro pour préremplir la page de paiement
-                et limiter le paiement au Cameroun.
+                Kami akan menggunakan nomor ini untuk mengisi otomatis halaman pembayaran
+                dan membatasi pembayaran di Kamerun.
               </p>
             </Form>
           ) : null}

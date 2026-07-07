@@ -51,7 +51,7 @@ export class StatusSchedulerService {
   async listForUser(userId: string, query: StatusScheduleQueryDto) {
     if (query.startDate && query.endDate && query.startDate > query.endDate) {
       throw new BadRequestException(
-        'startDate must be before or equal to endDate',
+        'startDate harus sebelum atau sama dengan endDate',
       );
     }
 
@@ -103,7 +103,7 @@ export class StatusSchedulerService {
       existing.status === StatusScheduleState.PROCESSING
     ) {
       throw new BadRequestException(
-        'This scheduled status can no longer be edited',
+        'Status terjadwal ini tidak dapat lagi diedit',
       );
     }
 
@@ -145,7 +145,7 @@ export class StatusSchedulerService {
       existing.status === StatusScheduleState.PROCESSING
     ) {
       throw new BadRequestException(
-        'This scheduled status can no longer be cancelled',
+        'Status terjadwal ini tidak dapat lagi dibatalkan',
       );
     }
 
@@ -222,7 +222,7 @@ export class StatusSchedulerService {
         );
 
         if (!result.success) {
-          throw new Error(result.error || 'Status publication failed');
+          throw new Error(result.error || 'Publikasi status gagal');
         }
 
         await this.prisma.statusSchedule.update({
@@ -290,12 +290,12 @@ export class StatusSchedulerService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     if (!user.whatsappAgent) {
       throw new BadRequestException(
-        'A WhatsApp agent is required before scheduling statuses',
+        'Agent WhatsApp diperlukan sebelum menjadwalkan status',
       );
     }
 
@@ -311,7 +311,7 @@ export class StatusSchedulerService {
     });
 
     if (!schedule || schedule.userId !== userId) {
-      throw new NotFoundException('Scheduled status not found');
+      throw new NotFoundException('Status terjadwal tidak ditemukan');
     }
 
     return schedule;
@@ -354,12 +354,12 @@ export class StatusSchedulerService {
 
     if (Number.isNaN(scheduledFor.getTime())) {
       throw new BadRequestException(
-        'scheduledFor must be a valid ISO datetime',
+        'scheduledFor harus berupa datetime ISO yang valid',
       );
     }
 
     if (scheduledFor.getTime() <= Date.now()) {
-      throw new BadRequestException('scheduledFor must be in the future');
+      throw new BadRequestException('scheduledFor harus di masa depan');
     }
 
     const timezone = this.normalizeTimezone(input.timezone);
@@ -373,13 +373,13 @@ export class StatusSchedulerService {
 
     if (input.contentType === StatusScheduleContentType.TEXT && !textContent) {
       throw new BadRequestException(
-        'textContent is required for a text status',
+        'textContent wajib diisi untuk status teks',
       );
     }
 
     if (input.contentType !== StatusScheduleContentType.TEXT && !mediaUrl) {
       throw new BadRequestException(
-        'mediaUrl is required for an image or video status',
+        'mediaUrl wajib diisi untuk status gambar atau video',
       );
     }
 
@@ -406,7 +406,7 @@ export class StatusSchedulerService {
       }).format(new Date());
       return timezone;
     } catch {
-      throw new BadRequestException('timezone must be a valid IANA timezone');
+      throw new BadRequestException('timezone harus berupa zona waktu IANA yang valid');
     }
   }
 
@@ -438,7 +438,7 @@ export class StatusSchedulerService {
 
       if (upload.contentType !== contentType) {
         throw new BadRequestException(
-          `mediaUrl must contain a ${contentType.toLowerCase()} file`,
+          `mediaUrl harus berisi file ${contentType.toLowerCase()}`,
         );
       }
 
@@ -457,7 +457,7 @@ export class StatusSchedulerService {
     const match = value.match(/^data:([^;]+);base64,(.+)$/s);
 
     if (!match) {
-      throw new BadRequestException('mediaUrl must be a valid data URL');
+      throw new BadRequestException('mediaUrl harus berupa data URL yang valid');
     }
 
     const [, mimeType, base64Payload] = match;
@@ -468,7 +468,7 @@ export class StatusSchedulerService {
         buffer: Buffer.from(base64Payload, 'base64'),
       };
     } catch {
-      throw new BadRequestException('mediaUrl contains invalid base64 data');
+      throw new BadRequestException('mediaUrl berisi data base64 yang tidak valid');
     }
   }
 
@@ -476,14 +476,14 @@ export class StatusSchedulerService {
     try {
       const parsed = new URL(value);
       if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        throw new BadRequestException('mediaUrl must be a public http(s) URL');
+        throw new BadRequestException('mediaUrl harus berupa URL http(s) publik');
       }
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
 
-      throw new BadRequestException('mediaUrl must be a valid URL');
+      throw new BadRequestException('mediaUrl harus berupa URL yang valid');
     }
   }
 
@@ -514,7 +514,7 @@ export class StatusSchedulerService {
 
     if (!result.success || !result.url) {
       throw new BadRequestException(
-        result.error || 'Unable to upload story media',
+        result.error || 'Tidak dapat mengunggah media story',
       );
     }
 
@@ -540,7 +540,7 @@ export class StatusSchedulerService {
     }
 
     throw new BadRequestException(
-      'Only image and video files are supported for stories',
+      'Hanya file gambar dan video yang didukung untuk story',
     );
   }
 
@@ -585,7 +585,7 @@ export class StatusSchedulerService {
     const day = parts.find((part) => part.type === 'day')?.value;
 
     if (!year || !month || !day) {
-      throw new BadRequestException('Unable to compute scheduled day');
+      throw new BadRequestException('Tidak dapat menghitung hari terjadwal');
     }
 
     return `${year}-${month}-${day}`;

@@ -29,15 +29,15 @@ export const CONTENT_TYPE_META: Record<
 > = {
   IMAGE: {
     icon: <PictureOutlined />,
-    label: 'Texte + image',
+    label: 'Teks + gambar',
   },
   TEXT: {
     icon: <NotificationOutlined />,
-    label: 'Texte',
+    label: 'Teks',
   },
   VIDEO: {
     icon: <PlayCircleOutlined />,
-    label: 'Vidéo',
+    label: 'Video',
   },
 }
 
@@ -102,10 +102,10 @@ export function createSlotValue(day: string) {
 
 export function getSchedulePreview(schedule: StatusSchedule) {
   if (schedule.contentType === 'TEXT') {
-    return schedule.textContent || 'Story texte'
+    return schedule.textContent || 'Story teks'
   }
 
-  return schedule.caption || 'Story média'
+  return schedule.caption || 'Story media'
 }
 
 export function toIsoString(value: Dayjs) {
@@ -125,7 +125,7 @@ export function getErrorMessage(error: unknown) {
     return error.message
   }
 
-  return 'Une erreur est survenue.'
+  return 'Terjadi kesalahan.'
 }
 
 export function getCalendarStatusDotClass(status: StatusSchedule['status']) {

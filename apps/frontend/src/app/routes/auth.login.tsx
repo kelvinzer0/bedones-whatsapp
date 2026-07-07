@@ -34,10 +34,10 @@ interface FormValues {
 
 export function meta() {
   return [
-    { title: 'Connexion - WhatsApp Agent' },
+    { title: 'Masuk - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Connectez-vous avec votre numéro WhatsApp Business',
+      content: 'Masuk dengan nomor WhatsApp Business Anda',
     },
   ]
 }
@@ -97,8 +97,8 @@ export default function LoginPage() {
           if (response.data.scenario === 'connected') {
             console.log('✅ User is already connected')
             notification.success({
-              message: 'Connexion réussie',
-              description: 'Vous allez être redirigé...',
+              message: 'Berhasil masuk',
+              description: 'Anda akan dialihkan...',
             })
 
             // Stop polling
@@ -173,8 +173,8 @@ export default function LoginPage() {
 
     if (!fullPhoneNumber) {
       notification.error({
-        message: 'Erreur',
-        description: 'Veuillez entrer un numéro de téléphone valide',
+        message: 'Kesalahan',
+        description: 'Silakan masukkan nomor telepon yang valid',
       })
       return
     }
@@ -200,9 +200,9 @@ export default function LoginPage() {
         // Scénario 1: OTP (utilisateur déjà connecté)
         if (scenario === 'otp') {
           notification.success({
-            message: 'Code envoyé',
+            message: 'Kode terkirim',
             description:
-              'Un code de vérification a été envoyé sur votre WhatsApp',
+              'Kode verifikasi telah dikirim ke WhatsApp Anda',
           })
           navigate('/auth/verify-otp', {
             state: {
@@ -217,8 +217,8 @@ export default function LoginPage() {
         // Scénario 2: Pairing (mobile, nouvel utilisateur)
         if (scenario === 'pairing') {
           notification.success({
-            message: 'Code de pairing généré',
-            description: 'Veuillez entrer le code dans WhatsApp',
+            message: 'Kode pairing dibuat',
+            description: 'Silakan masukkan kode di WhatsApp',
           })
           navigate('/auth/verify-otp', {
             state: {
@@ -233,9 +233,9 @@ export default function LoginPage() {
 
         if (scenario === 'provisioning') {
           notification.info({
-            message: 'Préparation de votre stack',
+            message: 'Menyiapkan stack Anda',
             description:
-              response.data.message || 'Nous mettons votre instance en route...',
+              response.data.message || 'Kami sedang menjalankan instance Anda...',
           })
           navigate('/auth/provisioning', {
             state: {
@@ -250,10 +250,10 @@ export default function LoginPage() {
 
         if (scenario === 'payment_required') {
           notification.warning({
-            message: 'Recharge requise',
+            message: 'Isi ulang diperlukan',
             description:
               response.data.message ||
-              'Rechargez vos crédits avant de reconnecter votre agent.',
+              'Isi ulang kredit Anda sebelum menyambungkan ulang agen Anda.',
             duration: 8,
           })
           navigate(response.data.pricingUrl || '/pricing')
@@ -271,8 +271,8 @@ export default function LoginPage() {
             // User is already connected
             if (qrResponse.data.scenario === 'connected') {
               notification.success({
-                message: 'Connexion réussie',
-                description: 'Vous êtes déjà connecté',
+                message: 'Berhasil masuk',
+                description: 'Anda sudah masuk',
               })
 
               if (qrResponse.data.accessToken) {
@@ -300,14 +300,14 @@ export default function LoginPage() {
               setQrCode(qrResponse.data.qrCode)
 
               notification.success({
-                message: 'Code QR généré',
-                description: 'Scannez le code QR avec votre WhatsApp',
+                message: 'Kode QR dibuat',
+                description: 'Pindai kode QR dengan WhatsApp Anda',
               })
             } else {
               // No QR code yet, polling will fetch it
               notification.info({
-                message: 'Vérification en cours',
-                description: qrResponse.data.message || 'Veuillez patienter...',
+                message: 'Verifikasi sedang berlangsung',
+                description: qrResponse.data.message || 'Silakan tunggu...',
               })
             }
           }
@@ -323,16 +323,16 @@ export default function LoginPage() {
         err.response?.data?.message?.includes('code de jumelage a échoué')
       ) {
         notification.error({
-          message: 'Impossible de se connecter',
+          message: 'Tidak dapat masuk',
           description: err.response.data.message,
           duration: 10,
         })
       } else {
         notification.error({
-          message: 'Erreur',
+          message: 'Kesalahan',
           description:
             err.response?.data?.message ||
-            'Une erreur est survenue lors de la connexion',
+            'Terjadi kesalahan saat masuk',
         })
       }
     } finally {
@@ -368,12 +368,12 @@ export default function LoginPage() {
               {/* Header */}
               <div className='text-center mb-8'>
                 <h1 className='text-xl font-medium text-text-dark leading-9 mb-2'>
-                  Votre business <span className='text-black'>piloté</span> par{' '}
-                  <span className='text-primary-green'>L&apos;IA</span>
+                  Bisnis Anda <span className='text-black'>dijalankan</span> oleh{' '}
+                  <span className='text-primary-green'>AI</span>
                 </h1>
                 <p className='text-base text-text-muted'>
-                  Veuillez scanner le code QR ci-dessous avec votre numéro{' '}
-                  <span className='text-text-dark'>WhatsApp Business</span>
+                  Silakan pindai kode QR di bawah ini dengan nomor{' '}
+                  <span className='text-text-dark'>WhatsApp Business</span> Anda
                 </p>
               </div>
 
@@ -387,8 +387,8 @@ export default function LoginPage() {
                 {isPolling && <Spin />}
                 <span>
                   {isPolling
-                    ? 'Vérification en cours...'
-                    : 'En attente de la connexion...'}
+                    ? 'Verifikasi sedang berlangsung...'
+                    : 'Menunggu koneksi...'}
                 </span>
               </div>
 
@@ -410,7 +410,7 @@ export default function LoginPage() {
                 }}
                 className='mt-6'
               >
-                Retour
+                Kembali
               </Button>
             </div>
           </div>
@@ -428,13 +428,13 @@ export default function LoginPage() {
             {/* Header */}
             <div className='text-center mb-8'>
               <h1 className='text-xl font-medium text-text-dark leading-9 mb-2'>
-                Votre business <span className='text-black'>piloté</span> par{' '}
-                <span className='text-primary-green'>L&apos;IA</span>
+                Bisnis Anda <span className='text-black'>dijalankan</span> oleh{' '}
+                <span className='text-primary-green'>AI</span>
               </h1>
               <p className='text-base text-text-muted'>
-                Saisissez votre numéro{' '}
-                <span className='text-text-dark'>Whatsapp Business</span> pour
-                commencer
+                Masukkan nomor{' '}
+                <span className='text-text-dark'>WhatsApp Business</span> Anda
+                untuk memulai
               </p>
             </div>
 
@@ -451,7 +451,7 @@ export default function LoginPage() {
                     validator: (_, value?: CountryPhoneValue) => {
                       const error = getCountryPhoneValidationError(value, {
                         defaultCountryCode: DEFAULT_PHONE_COUNTRY_CODE,
-                        requiredMessage: 'Veuillez entrer votre numéro.',
+                        requiredMessage: 'Silakan masukkan nomor Anda.',
                       })
 
                       return error
@@ -474,7 +474,7 @@ export default function LoginPage() {
                   loading={isLoading}
                   className='min-w-[220px] !h-[46px] !rounded-full px-8'
                 >
-                  Continuer
+                  Lanjut
                   <ArrowRightOutlined />
                 </Button>
               </FormItem>
@@ -483,13 +483,13 @@ export default function LoginPage() {
                 type='secondary'
                 className='block max-w-[420px] text-center text-sm leading-6'
               >
-                En cliquant sur continuer, vous acceptez notre{' '}
-                <Link href='/auth/privacy'>politique de confidentialité</Link>{' '}
-                et nos{' '}
+                Dengan mengeklik lanjut, Anda menyetujui{' '}
+                <Link href='/auth/privacy'>kebijakan privasi</Link>{' '}
+                dan{' '}
                 <Link href='/auth/terms'>
-                  conditions générales d&apos;utilisation
+                  syarat dan ketentuan
                 </Link>
-                .
+                kami.
               </Text>
             </Form>
           </div>
@@ -508,7 +508,7 @@ export default function LoginPage() {
             icon={<QuestionCircleOutlined />}
             iconPosition={'end'}
           >
-            Des questions ?
+            Ada pertanyaan?
           </Button>
           <Button
             type='default'
@@ -517,7 +517,7 @@ export default function LoginPage() {
             icon={<CustomerServiceOutlined />}
             iconPosition={'end'}
           >
-            Aide
+            Bantuan
           </Button>
           <Button
             type='default'
@@ -528,7 +528,7 @@ export default function LoginPage() {
             icon={<DollarOutlined />}
             iconPosition={'end'}
           >
-            Prix
+            Harga
           </Button>
         </div>
       </div>
@@ -572,7 +572,7 @@ export default function LoginPage() {
             type='primary'
             onClick={() => setSelectedFeatureKey(null)}
           >
-            Fermer
+            Tutup
           </Button>,
         ]}
         title={
@@ -599,9 +599,9 @@ export default function LoginPage() {
         endpoint='/auth/support-feedback'
         appArea='landing-help'
         initialCategory='amelioration'
-        subject="Besoin partagé depuis la page d'accueil"
-        title='Dites-nous ce dont vous avez besoin'
-        description='Expliquez votre besoin et nous reviendrons vers vous rapidement.'
+        subject="Kebutuhan yang dibagikan dari beranda"
+        title='Beri tahu kami apa yang Anda butuhkan'
+        description='Jelaskan kebutuhan Anda dan kami akan segera menghubungi Anda kembali.'
       />
     </div>
   )

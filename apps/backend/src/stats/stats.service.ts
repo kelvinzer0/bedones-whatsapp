@@ -41,7 +41,7 @@ export class StatsService {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Pengguna tidak ditemukan');
     }
 
     const today = getUtcToday();
@@ -126,7 +126,7 @@ export class StatsService {
     processedUsers: number;
   }> {
     if (!isIsoDay(day)) {
-      throw new BadRequestException('day must use YYYY-MM-DD format');
+      throw new BadRequestException('day harus menggunakan format YYYY-MM-DD');
     }
 
     const agents = await this.prisma.whatsAppAgent.findMany({
@@ -174,12 +174,12 @@ export class StatsService {
     const endDate = requestedEnd > today ? today : requestedEnd;
 
     if (!isIsoDay(requestedStart) || !isIsoDay(endDate)) {
-      throw new BadRequestException('Dates must use YYYY-MM-DD format');
+      throw new BadRequestException('Tanggal harus menggunakan format YYYY-MM-DD');
     }
 
     if (requestedStart > endDate) {
       throw new BadRequestException(
-        'startDate must be before or equal to endDate',
+        'startDate harus sebelum atau sama dengan endDate',
       );
     }
 

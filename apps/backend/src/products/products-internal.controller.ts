@@ -89,7 +89,7 @@ export class ProductsInternalController {
   ) {
     const normalizedRetailerId = retailerId?.trim();
     if (!normalizedRetailerId) {
-      throw new BadRequestException('retailerId is required');
+      throw new BadRequestException('retailerId wajib diisi');
     }
 
     return this.productsInternalService.getProductByRetailerId(
@@ -122,7 +122,7 @@ export class ProductsInternalController {
   ) {
     const normalizedProductId = productId?.trim();
     if (!normalizedProductId) {
-      throw new BadRequestException('productId is required');
+      throw new BadRequestException('productId wajib diisi');
     }
 
     return this.productsInternalService.getProductByAnyId(
@@ -157,7 +157,7 @@ export class ProductsInternalController {
     const parsedIds = parseKeywordsQuery(ids);
 
     if (parsedIds.length === 0) {
-      throw new BadRequestException('At least one id is required');
+      throw new BadRequestException('Setidaknya satu id wajib diisi');
     }
 
     return this.productsInternalService.getProductsByAnyIds(
@@ -191,7 +191,7 @@ export class ProductsInternalController {
     const parsedKeywords = parseKeywordsQuery(keywords);
 
     if (parsedKeywords.length === 0) {
-      throw new BadRequestException('At least one keyword is required');
+      throw new BadRequestException('Setidaknya satu kata kunci wajib diisi');
     }
 
     return this.productsInternalService.searchProductsByKeywords(

@@ -16,8 +16,8 @@ interface LocationState {
 
 export function meta() {
   return [
-    { title: 'Code de pairing - WhatsApp Agent' },
-    { name: 'description', content: 'Entrez votre code de pairing WhatsApp' },
+    { title: 'Kode pairing - WhatsApp Agent' },
+    { name: 'description', content: 'Masukkan kode pairing WhatsApp Anda' },
   ]
 }
 
@@ -37,8 +37,8 @@ export default function PairingCodePage() {
   useEffect(() => {
     if (!state?.code || !state?.phoneNumber || !state?.pairingToken) {
       notification.error({
-        message: 'Erreur',
-        description: 'Informations de pairing manquantes',
+        message: 'Kesalahan',
+        description: 'Informasi pairing tidak lengkap',
       })
       navigate('/auth/login')
     }
@@ -62,8 +62,8 @@ export default function PairingCodePage() {
   const handleConfirmPairing = async () => {
     if (!state?.pairingToken) {
       notification.error({
-        message: 'Erreur',
-        description: 'Token de pairing manquant',
+        message: 'Kesalahan',
+        description: 'Token pairing tidak ditemukan',
       })
       return
     }
@@ -88,8 +88,8 @@ export default function PairingCodePage() {
       setPairingCompleted(true)
 
       notification.success({
-        message: 'Connexion réussie',
-        description: 'Votre compte WhatsApp a été lié avec succès',
+        message: 'Berhasil masuk',
+        description: 'Akun WhatsApp Anda telah berhasil ditautkan',
       })
 
       // Navigate to onboarding
@@ -100,10 +100,10 @@ export default function PairingCodePage() {
       console.error('Error confirming pairing:', error)
 
       notification.error({
-        message: 'Erreur',
+        message: 'Kesalahan',
         description:
           error.response?.data?.message ||
-          'Une erreur est survenue lors de la confirmation. Veuillez vérifier que vous avez bien entré le code dans WhatsApp.',
+          'Terjadi kesalahan saat konfirmasi. Pastikan Anda telah memasukkan kode di WhatsApp.',
       })
     } finally {
       setIsConfirming(false)
@@ -139,32 +139,32 @@ export default function PairingCodePage() {
               </svg>
             </div>
             <Title level={2} className='mb-4'>
-              Code expiré
+              Kode kedaluwarsa
             </Title>
             <Paragraph className='text-lg text-gray-600 mb-8'>
-              Le code de pairing a expiré après 5 minutes d'inactivité.
+              Kode pairing telah kedaluwarsa setelah 5 menit tidak aktif.
               <br />
-              Veuillez générer un nouveau code pour continuer.
+              Silakan buat kode baru untuk melanjutkan.
             </Paragraph>
             <Button
               type='primary'
               size='large'
               onClick={() => navigate('/auth/login')}
             >
-              Générer un nouveau code
+              Buat kode baru
             </Button>
           </div>
         ) : (
           <>
             <div className='text-center mb-8'>
               <Title level={2} className='mb-2'>
-                Confirmation du {state?.phoneNumber}
+                Konfirmasi untuk {state?.phoneNumber}
               </Title>
               <Link
                 to='/auth/login'
                 className='text-blue-500 hover:text-blue-600'
               >
-                Changer ce numéro de tel
+                Ubah nomor ini
               </Link>
             </div>
 
@@ -178,7 +178,7 @@ export default function PairingCodePage() {
             {/* Instructions */}
             <div className='mb-8'>
               <Title level={4} className='mb-4'>
-                Instructions:
+                Instruksi:
               </Title>
 
               {!useManualPairing ? (
@@ -189,11 +189,11 @@ export default function PairingCodePage() {
                     current={pairingCompleted ? 3 : 2}
                     items={[
                       {
-                        title: 'Ouvrir la notification de connexion reçue',
+                        title: 'Buka notifikasi masuk yang diterima',
                         description: (
                           <>
-                            Vous devriez recevoir une notification WhatsApp sur
-                            votre téléphone.
+                            Anda akan menerima notifikasi WhatsApp di
+                            ponsel Anda.
                             <br />
                             <Button
                               variant={'link'}
@@ -201,26 +201,26 @@ export default function PairingCodePage() {
                               className={'-ml-4'}
                               onClick={() => setUseManualPairing(true)}
                             >
-                              Je n'ai pas reçu de notification
+                              Saya tidak menerima notifikasi
                             </Button>
                           </>
                         ),
                         status: 'finish',
                       },
                       {
-                        title: 'Entrer le code ci-dessous',
+                        title: 'Masukkan kode di bawah ini',
                         description: (
                           <>
-                            Entrez ce code dans WhatsApp:{' '}
+                            Masukkan kode ini di WhatsApp:{' '}
                             <strong>{formattedCode}</strong>
                           </>
                         ),
                         status: pairingCompleted ? 'finish' : 'process',
                       },
                       {
-                        title: 'Appuyer sur le bouton ci-dessous',
+                        title: 'Tekan tombol di bawah ini',
                         description:
-                          'Une fois le code entré, cliquez sur "J\'ai terminé"',
+                          'Setelah kode dimasukkan, klik "Saya selesai"',
                         status: pairingCompleted ? 'finish' : 'wait',
                         icon: pairingCompleted ? (
                           <CheckCircleOutlined />
@@ -237,32 +237,32 @@ export default function PairingCodePage() {
                   items={[
                     {
                       title:
-                        'Allez dans Paramètres Whatsapp de votre téléphone',
+                        'Buka Pengaturan WhatsApp di ponsel Anda',
                       description:
-                        'Tapez sur les trois points en haut à droite',
+                        'Ketuk tiga titik di kanan atas',
                       status: 'finish',
                     },
                     {
-                      title: 'Appareils connectés',
-                      description: 'Sélectionnez "Appareils connectés"',
+                      title: 'Perangkat terhubung',
+                      description: 'Pilih "Perangkat terhubung"',
                       status: 'finish',
                     },
                     {
-                      title: 'Associer un appareil',
-                      description: 'Appuyez sur "Associer un appareil"',
+                      title: 'Hubungkan perangkat',
+                      description: 'Tekan "Hubungkan perangkat"',
                       status: 'finish',
                     },
                     {
-                      title: 'Associer avec un numéro de téléphone',
-                      description: 'Qui se trouve tout en bas',
+                      title: 'Hubungkan dengan nomor telepon',
+                      description: 'Yang ada di bagian paling bawah',
                       status: 'finish',
                     },
                     {
-                      title: 'Entrez le code',
+                      title: 'Masukkan kode',
                       description: (
                         <>
-                          Sélectionnez "Associer avec un numéro de téléphone" et
-                          entrez ce code: <strong>{formattedCode}</strong>
+                          Pilih "Hubungkan dengan nomor telepon" dan
+                          masukkan kode ini: <strong>{formattedCode}</strong>
                         </>
                       ),
                       status: pairingCompleted ? 'finish' : 'process',
@@ -279,7 +279,7 @@ export default function PairingCodePage() {
             {!pairingCompleted && (
               <div className='text-center py-6 border-t border-gray-200'>
                 <Paragraph className='text-base mb-4'>
-                  Une fois que vous avez entré le code dans WhatsApp :
+                  Setelah Anda memasukkan kode di WhatsApp:
                 </Paragraph>
                 <Button
                   type='primary'
@@ -288,10 +288,10 @@ export default function PairingCodePage() {
                   onClick={handleConfirmPairing}
                   className='min-w-[200px]'
                 >
-                  {isConfirming ? 'Vérification...' : "J'ai terminé"}
+                  {isConfirming ? 'Memverifikasi...' : 'Saya selesai'}
                 </Button>
                 <Text type='secondary' className='block mt-3 text-sm'>
-                  Assurez-vous d'avoir entré le code de pairing avant de cliquer
+                  Pastikan Anda telah memasukkan kode pairing sebelum mengeklik
                 </Text>
                 <div className='mt-4'>
                   <Button
@@ -300,7 +300,7 @@ export default function PairingCodePage() {
                     onClick={() => navigate('/auth/login')}
                     className='min-w-[200px]'
                   >
-                    Régénérer le code
+                    Buat ulang kode
                   </Button>
                 </div>
               </div>
@@ -311,10 +311,10 @@ export default function PairingCodePage() {
               <div className='text-center py-6 border-t border-gray-200'>
                 <CheckCircleOutlined className='text-5xl text-green-500 mb-4' />
                 <Paragraph className='text-base mb-0 font-medium text-green-600'>
-                  Connexion réussie !
+                  Berhasil masuk!
                 </Paragraph>
                 <Text type='secondary' className='text-sm'>
-                  Redirection vers l'onboarding...
+                  Mengalihkan ke onboarding...
                 </Text>
               </div>
             )}

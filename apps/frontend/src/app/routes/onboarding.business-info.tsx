@@ -24,21 +24,21 @@ interface DeliveryLocation {
 }
 
 const countries = [
-  { label: 'Cameroun', value: 'CM' },
-  { label: "Côte d'Ivoire", value: 'CI' },
-  { label: 'Sénégal', value: 'SN' },
+  { label: 'Kamerun', value: 'CM' },
+  { label: 'Pantai Gading', value: 'CI' },
+  { label: 'Senegal', value: 'SN' },
   { label: 'Mali', value: 'ML' },
   { label: 'Burkina Faso', value: 'BF' },
-  { label: 'Bénin', value: 'BJ' },
+  { label: 'Benin', value: 'BJ' },
   { label: 'Togo', value: 'TG' },
 ]
 
 export function meta() {
   return [
-    { title: 'Informations boutique - WhatsApp Agent' },
+    { title: 'Informasi toko - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Configurez les informations de votre boutique',
+      content: 'Konfigurasikan informasi toko Anda',
     },
   ]
 }
@@ -102,13 +102,13 @@ export default function OnboardingBusinessInfo() {
       // TODO: Replace with actual API endpoint
       await apiClient.post('/settings/business', businessData)
 
-      message.success('Informations sauvegardées avec succès')
+      message.success('Informasi berhasil disimpan')
       navigate('/onboarding/advanced-options')
     } catch (error: any) {
       console.error('Erreur lors de la sauvegarde:', error)
       message.error(
         error.response?.data?.message ||
-          'Erreur lors de la sauvegarde des informations'
+          'Kesalahan saat menyimpan informasi'
       )
     } finally {
       setLoading(false)
@@ -135,47 +135,47 @@ export default function OnboardingBusinessInfo() {
         }}
       >
         {/* Business Location */}
-        <Card title='Localisation de la boutique' className='mb-6'>
+        <Card title='Lokasi toko' className='mb-6'>
           <Form.Item
-            label='Pays'
+            label='Negara'
             name='country'
             rules={[
-              { required: true, message: 'Veuillez sélectionner un pays' },
+              { required: true, message: 'Silakan pilih negara' },
             ]}
           >
             <Select
               size='large'
-              placeholder='Sélectionnez votre pays'
+              placeholder='Pilih negara Anda'
               options={countries}
             />
           </Form.Item>
 
           <Form.Item
-            label='Ville'
+            label='Kota'
             name='city'
-            rules={[{ required: true, message: 'Veuillez entrer votre ville' }]}
+            rules={[{ required: true, message: 'Silakan masukkan kota Anda' }]}
           >
-            <Input size='large' placeholder='Ex: Douala' />
+            <Input size='large' placeholder='Cth: Douala' />
           </Form.Item>
 
           <Form.Item
-            label='Adresse'
+            label='Alamat'
             name='address'
             rules={[
-              { required: true, message: 'Veuillez entrer votre adresse' },
+              { required: true, message: 'Silakan masukkan alamat Anda' },
             ]}
           >
             <Input.TextArea
               size='large'
               rows={3}
-              placeholder='Ex: Quartier Akwa, Rue de la Joie'
+              placeholder='Cth: Quartier Akwa, Rue de la Joie'
             />
           </Form.Item>
         </Card>
 
         {/* Delivery Locations */}
         <Card
-          title='Emplacements de livraison'
+          title='Lokasi pengiriman'
           className='mb-6'
           extra={
             <Button
@@ -183,7 +183,7 @@ export default function OnboardingBusinessInfo() {
               icon={<PlusOutlined />}
               onClick={handleAddLocation}
             >
-              Ajouter un emplacement
+              Tambah lokasi
             </Button>
           }
         >
@@ -202,7 +202,7 @@ export default function OnboardingBusinessInfo() {
                       icon={<DeleteOutlined />}
                       onClick={() => handleRemoveLocation(index)}
                     >
-                      Supprimer
+                      Hapus
                     </Button>
                   )
                 }
@@ -210,14 +210,14 @@ export default function OnboardingBusinessInfo() {
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Pays
+                      Negara
                     </label>
                     <Select
                       value={location.country}
                       onChange={value =>
                         handleLocationChange(index, 'country', value)
                       }
-                      placeholder='Sélectionnez'
+                      placeholder='Pilih'
                       options={countries}
                       className='w-full'
                     />
@@ -225,33 +225,33 @@ export default function OnboardingBusinessInfo() {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Ville
+                      Kota
                     </label>
                     <Input
                       value={location.city}
                       onChange={e =>
                         handleLocationChange(index, 'city', e.target.value)
                       }
-                      placeholder='Ex: Yaoundé'
+                      placeholder='Cth: Yaoundé'
                     />
                   </div>
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Nom de la zone
+                      Nama zona
                     </label>
                     <Input
                       value={location.zoneName}
                       onChange={e =>
                         handleLocationChange(index, 'zoneName', e.target.value)
                       }
-                      placeholder='Ex: Centre-ville'
+                      placeholder='Cth: Pusat kota'
                     />
                   </div>
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Prix (FCFA)
+                      Harga (FCFA)
                     </label>
                     <InputNumber
                       value={location.price}
@@ -273,10 +273,10 @@ export default function OnboardingBusinessInfo() {
         </Card>
 
         {/* Payment Methods */}
-        <Card title='Moyens de paiement' className='mb-6'>
+        <Card title='Metode pembayaran' className='mb-6'>
           <Form.Item name='cash' valuePropName='checked'>
             <Checkbox>
-              <span className='font-medium'>Espèces (Cash)</span>
+              <span className='font-medium'>Tunai (Cash)</span>
             </Checkbox>
           </Form.Item>
 
@@ -298,29 +298,29 @@ export default function OnboardingBusinessInfo() {
               getFieldValue('mobileMoneyEnabled') && (
                 <div className='ml-6 space-y-4 mt-4 p-4 bg-gray-50 rounded-lg'>
                   <Form.Item
-                    label='Numéro Mobile Money'
+                    label='Nomor Mobile Money'
                     name='mobileMoneyNumber'
                     rules={[
                       {
                         required: getFieldValue('mobileMoneyEnabled'),
-                        message: 'Veuillez entrer votre numéro',
+                        message: 'Silakan masukkan nomor Anda',
                       },
                     ]}
                   >
-                    <Input size='large' placeholder='Ex: +237 6XX XXX XXX' />
+                    <Input size='large' placeholder='Cth: +237 6XX XXX XXX' />
                   </Form.Item>
 
                   <Form.Item
-                    label='Nom du compte'
+                    label='Nama akun'
                     name='mobileMoneyName'
                     rules={[
                       {
                         required: getFieldValue('mobileMoneyEnabled'),
-                        message: 'Veuillez entrer le nom du compte',
+                        message: 'Silakan masukkan nama akun',
                       },
                     ]}
                   >
-                    <Input size='large' placeholder='Ex: Jean Dupont' />
+                    <Input size='large' placeholder='Cth: Jean Dupont' />
                   </Form.Item>
 
                   <Form.Item
@@ -328,7 +328,7 @@ export default function OnboardingBusinessInfo() {
                     valuePropName='checked'
                   >
                     <Checkbox>
-                      Demander une preuve de paiement aux clients
+                      Minta bukti pembayaran dari klien
                     </Checkbox>
                   </Form.Item>
                 </div>
@@ -340,7 +340,7 @@ export default function OnboardingBusinessInfo() {
         {/* Action Buttons */}
         <div className='flex items-center justify-between pt-6 border-t'>
           <Button size='large' onClick={handlePrevious}>
-            Précédent
+            Sebelumnya
           </Button>
 
           <Button
@@ -349,7 +349,7 @@ export default function OnboardingBusinessInfo() {
             htmlType='submit'
             loading={loading}
           >
-            Continuer
+            Lanjut
           </Button>
         </div>
       </Form>

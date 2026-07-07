@@ -40,7 +40,7 @@ export class AgentInternalGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Missing or invalid token');
+      throw new UnauthorizedException('Token tidak ada atau tidak valid');
     }
 
     const token = authHeader.substring(7);
@@ -48,18 +48,18 @@ export class AgentInternalGuard implements CanActivate {
 
     if (!secret) {
       this.logger.error('AGENT_INTERNAL_JWT_SECRET not configured');
-      throw new UnauthorizedException('Internal auth is not configured');
+      throw new UnauthorizedException('Autentikasi internal tidak dikonfigurasi');
     }
 
     try {
       const payload = jwt.verify(token, secret) as AgentInternalJwtPayload;
 
       if (payload.type !== 'agent-internal') {
-        throw new UnauthorizedException('Invalid token type');
+        throw new UnauthorizedException('Tipe token tidak valid');
       }
 
       if (!payload.sub) {
-        throw new UnauthorizedException('Token missing agent id');
+        throw new UnauthorizedException('Token tidak memiliki agent id');
       }
 
       const agent = await this.prisma.whatsAppAgent.findUnique({
@@ -72,11 +72,11 @@ export class AgentInternalGuard implements CanActivate {
       });
 
       if (!agent || !agent.userId) {
-        throw new UnauthorizedException('Unknown agent');
+        throw new UnauthorizedException('Agent tidak dikenal');
       }
 
       if (agent.status === 'DELETED') {
-        throw new UnauthorizedException('Agent is deleted');
+        throw new UnauthorizedException('Agent telah dihapus');
       }
 
       request.agentContext = {
@@ -91,17 +91,17 @@ export class AgentInternalGuard implements CanActivate {
       }
 
       if (error instanceof jwt.TokenExpiredError) {
-        throw new UnauthorizedException('Token expired');
+        throw new UnauthorizedException('Token kedaluwarsa');
       }
 
       if (error instanceof jwt.JsonWebTokenError) {
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException('Token tidak valid');
       }
 
       this.logger.error(
         `Internal token verification failed: ${error?.message || error}`,
       );
-      throw new UnauthorizedException('Token verification failed');
+      throw new UnauthorizedException('Verifikasi token gagal');
     }
   }
 }

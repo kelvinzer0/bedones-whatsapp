@@ -137,7 +137,7 @@ export class WebhooksController {
 
       return {
         success: true,
-        message: 'WhatsApp connection processed successfully',
+        message: 'Koneksi WhatsApp berhasil diproses',
         userId: result.user.id,
       };
     } catch (error: any) {
@@ -194,19 +194,19 @@ export class WebhooksController {
           this.logger.warn(
             `[${timestamp}] ⚠️ QR event data is not an array: ${typeof payload.data}`,
           );
-          throw new BadRequestException('QR event data must be an array');
+          throw new BadRequestException('Data event QR harus berupa array');
         }
 
         if (payload.data.length === 0) {
           this.logger.warn(`[${timestamp}] ⚠️ QR event data array is empty`);
-          throw new BadRequestException('QR event data array cannot be empty');
+          throw new BadRequestException('Array data event QR tidak boleh kosong');
         }
 
         const [qrCode] = payload.data;
 
         if (typeof qrCode !== 'string' || qrCode.trim().length === 0) {
           this.logger.warn(`[${timestamp}] ⚠️ QR code is not a valid string`);
-          throw new BadRequestException('QR code must be a non-empty string');
+          throw new BadRequestException('Kode QR harus berupa string non-empty');
         }
 
         this.logger.log(
@@ -226,7 +226,7 @@ export class WebhooksController {
 
             return {
               success: true,
-              message: 'Targeted QR code emitted successfully',
+              message: 'Kode QR yang ditargetkan berhasil dikirim',
             };
           }
         }
@@ -257,7 +257,7 @@ export class WebhooksController {
 
           return {
             success: true,
-            message: `QR code broadcasted to ${keys.length} session(s)`,
+            message: `Kode QR disiarkan ke ${keys.length} sesi`,
           };
         } else {
           this.logger.warn(
@@ -265,7 +265,7 @@ export class WebhooksController {
           );
           return {
             success: true,
-            message: 'No active sessions to broadcast to',
+            message: 'Tidak ada sesi aktif untuk disiarkan',
           };
         }
       }
@@ -286,7 +286,7 @@ export class WebhooksController {
             `[${timestamp}] ⚠️ Pairing success event data is not a valid object`,
           );
           throw new BadRequestException(
-            'Pairing success data must be a valid object',
+            'Data pairing success harus berupa objek yang valid',
           );
         }
 
@@ -302,7 +302,7 @@ export class WebhooksController {
             `[${timestamp}] ⚠️ Pairing success event missing or invalid phoneNumber`,
           );
           throw new BadRequestException(
-            'Missing or invalid phoneNumber in pairing success data',
+            'phoneNumber tidak ada atau tidak valid dalam data pairing success',
           );
         }
 
@@ -316,7 +316,7 @@ export class WebhooksController {
             `[${timestamp}] ⚠️ Pairing success event missing or invalid id`,
           );
           throw new BadRequestException(
-            'Missing or invalid id in pairing success data',
+            'id tidak ada atau tidak valid dalam data pairing success',
           );
         }
 
@@ -370,7 +370,7 @@ export class WebhooksController {
 
           return {
             success: true,
-            message: 'WhatsApp connection processed successfully',
+            message: 'Koneksi WhatsApp berhasil diproses',
             userId: result.user.id,
           };
         } catch (error: any) {
@@ -401,7 +401,7 @@ export class WebhooksController {
       this.logger.log(`[${timestamp}] ℹ️ Event ${payload.event} processed`);
       return {
         success: true,
-        message: `Event ${payload.event} received`,
+        message: `Event ${payload.event} diterima`,
       };
     } catch (error: any) {
       this.logger.error(

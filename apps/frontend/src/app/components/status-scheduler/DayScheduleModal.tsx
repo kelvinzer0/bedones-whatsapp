@@ -20,13 +20,13 @@ function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) {
   const menuItems: MenuProps['items'] = [
     {
       key: 'edit',
-      label: 'Modifier',
+      label: 'Ubah',
       onClick: () => onEdit(schedule),
     },
     {
       danger: true,
       key: 'delete',
-      label: 'Supprimer',
+      label: 'Hapus',
       onClick: () => onDelete(schedule.id),
     },
   ]
@@ -71,7 +71,7 @@ function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) {
           ) : (
             <Image
               src={schedule.mediaUrl}
-              alt='Story programmée'
+              alt='Story terjadwal'
               preview={false}
               className='block h-full! w-full object-cover'
             />
@@ -117,15 +117,15 @@ export function DayScheduleModal({
     <Modal
       open={open}
       onCancel={onCancel}
-      title={`Stories du ${formatDayHeading(selectedDay)}`}
+      title={`Stories tanggal ${formatDayHeading(selectedDay)}`}
       footer={[
-        <Button onClick={onCancel}>Fermer</Button>,
+        <Button onClick={onCancel}>Tutup</Button>,
         <Button
           type='primary'
           onClick={() => onOpenComposer(selectedDay)}
           disabled={!canCreateOnSelectedDay}
         >
-          Programmer une story
+          Jadwalkan story
         </Button>,
       ]}
       width={560}
@@ -135,8 +135,8 @@ export function DayScheduleModal({
       <div className='m-1 space-y-6'>
         {schedules.length === 0 ? (
           <p className='m-0 text-sm leading-[1.7] text-[var(--color-text-secondary)]'>
-            Aucune story programmée pour cette date. Cliquez sur "Programmer une
-            story" pour en ajouter une.
+            Belum ada story terjadwal untuk tanggal ini. Klik "Jadwalkan
+            story" untuk menambahkan.
           </p>
         ) : null}
 
@@ -145,7 +145,7 @@ export function DayScheduleModal({
             <section className='space-y-3'>
               <div className='flex items-center gap-2 text-[var(--color-text-primary)]'>
                 <ClockCircleOutlined />
-                <span className='text-base font-semibold'>À venir</span>
+                <span className='text-base font-semibold'>Akan datang</span>
               </div>
               <div className='space-y-3'>
                 {groupedSchedules.pending.map(schedule => (
@@ -164,7 +164,7 @@ export function DayScheduleModal({
             <section className='space-y-3'>
               <div className='flex items-center gap-2 text-[var(--color-text-primary)]'>
                 <CheckCircleOutlined />
-                <span className='text-base font-semibold'>Envoyée</span>
+                <span className='text-base font-semibold'>Terkirim</span>
               </div>
               <div className='space-y-3'>
                 {groupedSchedules.sent.map(schedule => (
@@ -183,7 +183,7 @@ export function DayScheduleModal({
             <section className='space-y-3'>
               <div className='flex items-center gap-2 text-[var(--color-text-primary)]'>
                 <CloseCircleOutlined />
-                <span className='text-base font-semibold'>À corriger</span>
+                <span className='text-base font-semibold'>Perlu diperbaiki</span>
               </div>
               <div className='space-y-3'>
                 {groupedSchedules.failed.map(schedule => (
@@ -202,7 +202,7 @@ export function DayScheduleModal({
             <div className='rounded-[var(--radius-card)] border border-dashed border-[var(--color-field-border-muted)] bg-[var(--color-surface-muted)] px-4 py-10'>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description='Aucune story programmée pour cette date.'
+                description='Belum ada story terjadwal untuk tanggal ini.'
               />
             </div>
           ) : null}

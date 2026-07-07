@@ -51,16 +51,16 @@ export function AgentProductionCard() {
         productionEnabled: true,
       })
       notification.success({
-        message: 'IA activée en production',
+        message: 'IA diaktifkan di produksi',
       })
       handleCloseModal()
       checkAuth()
     } catch (error) {
       console.error('Failed to save config:', error)
       notification.error({
-        message: 'Erreur lors de la sauvegarde',
+        message: 'Kesalahan saat menyimpan',
         description:
-          error instanceof Error ? error.message : 'La configuration a échoué.',
+          error instanceof Error ? error.message : 'Konfigurasi gagal.',
       })
     } finally {
       setLoading(false)
@@ -82,27 +82,27 @@ export function AgentProductionCard() {
               iconPosition='end'
               onClick={handleOpenModal}
             >
-              {agentConfig?.productionEnabled ? 'Configurer' : "Activer l'IA"}
+              {agentConfig?.productionEnabled ? 'Konfigurasi' : 'Aktifkan IA'}
             </Button>
           </div>
           <div>
             <Text strong className='block mb-1'>
-              Activer l&apos;IA pour tout vos contacts
+              Aktifkan IA untuk semua kontak Anda
             </Text>
             <Text type='secondary'>
               {agentConfig?.productionEnabled ? (
                 <>
-                  L&apos;IA est activée.{' '}
+                  IA diaktifkan.{' '}
                   {(agentConfig?.labelsToNotReply?.length ?? 0) > 0 &&
-                    `Label "${agentConfig?.labelsToNotReply?.[0]}" configuré.`}{' '}
+                    `Label "${agentConfig?.labelsToNotReply?.[0]}" dikonfigurasi.`}{' '}
                   <Link underline onClick={handleOpenModal}>
-                    Modifier
+                    Ubah
                   </Link>
                 </>
               ) : (
                 <>
-                  L&apos;IA répondra à tous les contacts sauf aux contacts
-                  exclus. <Link onClick={handleOpenModal}>Configurer</Link>
+                  IA akan membalas semua kontak kecuali kontak yang
+                  dikecualikan. <Link onClick={handleOpenModal}>Konfigurasi</Link>
                 </>
               )}
             </Text>
@@ -111,12 +111,12 @@ export function AgentProductionCard() {
       </Card>
 
       <Modal
-        title='Configuration du mode production'
+        title='Konfigurasi mode produksi'
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={[
           <Button key='cancel' onClick={handleCloseModal}>
-            Annuler
+            Batal
           </Button>,
           <Button
             key='save'
@@ -124,7 +124,7 @@ export function AgentProductionCard() {
             loading={loading}
             onClick={() => form.submit()}
           >
-            Sauvegarder
+            Simpan
           </Button>,
         ]}
         width={600}
@@ -134,34 +134,34 @@ export function AgentProductionCard() {
           layout='vertical'
           onFinish={handleSave}
           initialValues={{
-            labelName: "Désactiver l'IA",
+            labelName: 'Nonaktifkan IA',
           }}
         >
           <div className='flex flex-col gap-6 py-4'>
             <div>
               <FormItem
                 name='labelName'
-                label="Label d'exclusion"
+                label='Label pengecualian'
                 rules={[
                   {
                     required: true,
-                    message: 'Veuillez entrer un nom de label',
+                    message: 'Silakan masukkan nama label',
                   },
                 ]}
               >
-                <Input placeholder='Nom du label' prefix={<TagOutlined />} />
+                <Input placeholder='Nama label' prefix={<TagOutlined />} />
               </FormItem>
 
               {labelNameValue?.trim() && (
                 <Alert
-                  message='Comment ça marche ?'
+                  message='Bagaimana cara kerjanya?'
                   description={
                     <>
-                      Nous allons créer le label{' '}
-                      <strong>&quot;{labelNameValue.trim()}&quot;</strong> sur
-                      votre WhatsApp. Pour exclure un contact des réponses
-                      automatiques, ajoutez simplement ce label à sa
-                      conversation.
+                      Kami akan membuat label{' '}
+                      <strong>&quot;{labelNameValue.trim()}&quot;</strong> di
+                      WhatsApp Anda. Untuk mengkecualikan kontak dari balasan
+                      otomatis, cukup tambahkan label ini ke
+                      percakapannya.
                     </>
                   }
                   type='info'

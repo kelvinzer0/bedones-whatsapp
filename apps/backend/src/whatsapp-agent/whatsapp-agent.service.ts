@@ -46,7 +46,7 @@ export class WhatsAppAgentService {
     const agent = await this.getAgentForUser(userId);
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found for this user');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan untuk pengguna ini');
     }
 
     const protocol = resolveServiceProtocol(agent.ipAddress);
@@ -58,7 +58,7 @@ export class WhatsAppAgentService {
    */
   async getConnectorUrl(agent: WhatsAppAgent): Promise<string> {
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found for this user');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan untuk pengguna ini');
     }
 
     const protocol = resolveServiceProtocol(agent.ipAddress);
@@ -78,7 +78,7 @@ export class WhatsAppAgentService {
     });
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan');
     }
 
     const updateData: any = { status };
@@ -106,7 +106,7 @@ export class WhatsAppAgentService {
     });
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan');
     }
 
     const protocol = resolveServiceProtocol(agent.ipAddress);
@@ -156,7 +156,7 @@ export class WhatsAppAgentService {
     });
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan');
     }
 
     // Soft delete by setting status to DELETED
@@ -181,7 +181,7 @@ export class WhatsAppAgentService {
     });
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found for user');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan untuk pengguna ini');
     }
 
     const connectorUrl = await this.getConnectorUrl(agent);
@@ -281,7 +281,7 @@ export class WhatsAppAgentService {
     });
 
     if (!agent) {
-      throw new NotFoundException('WhatsApp agent not found for user');
+      throw new NotFoundException('Agent WhatsApp tidak ditemukan untuk pengguna ini');
     }
 
     const updateData: Partial<{
@@ -421,7 +421,7 @@ export class WhatsAppAgentService {
     if (!phoneMatch) {
       return {
         allowed: false,
-        reason: 'Invalid userId format',
+        reason: 'Format userId tidak valid',
       };
     }
 
@@ -440,7 +440,7 @@ export class WhatsAppAgentService {
     if (!user) {
       return {
         allowed: false,
-        reason: 'User not found',
+        reason: 'Pengguna tidak ditemukan',
       };
     }
 
@@ -449,7 +449,7 @@ export class WhatsAppAgentService {
     if (!agent) {
       return {
         allowed: false,
-        reason: 'Agent not configured for this user',
+        reason: 'Agent tidak dikonfigurasi untuk pengguna ini',
       };
     }
 
@@ -457,7 +457,7 @@ export class WhatsAppAgentService {
     if (agent.status !== WhatsAppAgentStatus.RUNNING) {
       return {
         allowed: false,
-        reason: `Agent is not running (status: ${agent.status})`,
+        reason: `Agent tidak berjalan (status: ${agent.status})`,
       };
     }
 
@@ -477,7 +477,7 @@ export class WhatsAppAgentService {
         );
         return {
           allowed: false,
-          reason: `Contact has label "${blockedLabel?.name}" which is in the do-not-reply list`,
+          reason: `Kontak memiliki label "${blockedLabel?.name}" yang ada dalam daftar tidak-balas`,
         };
       }
     }
@@ -492,7 +492,7 @@ export class WhatsAppAgentService {
         return {
           allowed: false,
           reason:
-            'Test mode active but no test labels configured. Please configure test labels.',
+            'Mode uji aktif tetapi tidak ada label uji yang dikonfigurasi. Silakan konfigurasikan label uji.',
         };
       }
 
@@ -509,7 +509,7 @@ export class WhatsAppAgentService {
         );
         return {
           allowed: false,
-          reason: `Test mode active. Contact must have one of these labels: ${agent.testLabels.join(', ')}`,
+          reason: `Mode uji aktif. Kontak harus memiliki salah satu label berikut: ${agent.testLabels.join(', ')}`,
         };
       }
 

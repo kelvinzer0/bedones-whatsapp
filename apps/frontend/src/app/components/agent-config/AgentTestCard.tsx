@@ -50,16 +50,16 @@ export function AgentTestCard() {
         testLabels: [labelName],
       })
       notification.success({
-        message: 'Configuration sauvegardée',
+        message: 'Konfigurasi tersimpan',
       })
       handleCloseModal()
       checkAuth()
     } catch (error) {
       console.error('Failed to save config:', error)
       notification.error({
-        message: 'Erreur lors de la sauvegarde',
+        message: 'Kesalahan saat menyimpan',
         description:
-          error instanceof Error ? error.message : 'La configuration a échoué.',
+          error instanceof Error ? error.message : 'Konfigurasi gagal.',
       })
     } finally {
       setLoading(false)
@@ -88,24 +88,24 @@ export function AgentTestCard() {
           </div>
           <div>
             <Text strong className='block mb-1'>
-              Activation ciblée
+              Aktivasi tertarget
             </Text>
             <Text type='secondary'>
               {hasConfig
-                ? `Label "${agentConfig?.testLabels?.[0]}" configuré`
-                : "L'IA ne répondra que pour les contacts avec le label configuré"}
+                ? `Label "${agentConfig?.testLabels?.[0]}" dikonfigurasi`
+                : 'IA hanya akan membalas untuk kontak dengan label yang dikonfigurasi'}
             </Text>
           </div>
         </div>
       </Card>
 
       <Modal
-        title="Configuration de l'activation ciblée"
+        title='Konfigurasi aktivasi tertarget'
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={[
           <Button key='cancel' onClick={handleCloseModal}>
-            Annuler
+            Batal
           </Button>,
           <Button
             key='save'
@@ -113,7 +113,7 @@ export function AgentTestCard() {
             loading={loading}
             onClick={() => form.submit()}
           >
-            Sauvegarder
+            Simpan
           </Button>,
         ]}
         width={600}
@@ -123,33 +123,33 @@ export function AgentTestCard() {
           layout='vertical'
           onFinish={handleSave}
           initialValues={{
-            labelName: 'Test avec IA',
+            labelName: 'Tes dengan IA',
           }}
         >
           <div className='flex flex-col gap-6 py-4'>
             <div>
               <FormItem
                 name='labelName'
-                label='Label actif'
+                label='Label aktif'
                 rules={[
                   {
                     required: true,
-                    message: 'Veuillez entrer un nom de label',
+                    message: 'Silakan masukkan nama label',
                   },
                 ]}
               >
-                <Input placeholder='Nom du label' prefix={<TagOutlined />} />
+                <Input placeholder='Nama label' prefix={<TagOutlined />} />
               </FormItem>
 
               {labelNameValue?.trim() && (
                 <Alert
-                  message='Comment ça marche ?'
+                  message='Bagaimana cara kerjanya?'
                   description={
                     <>
-                      Nous allons créer le label{' '}
-                      <strong>&quot;{labelNameValue.trim()}&quot;</strong> sur
-                      votre WhatsApp. Pour activer l&apos;IA sur une
-                      conversation, ajoutez-y simplement ce label.
+                      Kami akan membuat label{' '}
+                      <strong>&quot;{labelNameValue.trim()}&quot;</strong> di
+                      WhatsApp Anda. Untuk mengaktifkan IA pada sebuah
+                      percakapan, cukup tambahkan label ini ke percakapan tersebut.
                     </>
                   }
                   type='info'

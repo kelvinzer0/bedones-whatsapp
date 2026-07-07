@@ -90,13 +90,13 @@ export default function AuthProvisioningPage() {
         const err = error as { response?: { data?: { message?: string } } }
         setErrorMessage(
           err.response?.data?.message ||
-            'La connexion WhatsApp a été détectée, mais la finalisation a échoué.'
+            'Koneksi WhatsApp terdeteksi, namun finalisasi gagal.'
         )
       }
     })
 
     socket.on('auth:error', (payload: { error?: string }) => {
-      setErrorMessage(payload.error || 'La connexion a rencontré un problème.')
+      setErrorMessage(payload.error || 'Koneksi mengalami masalah.')
     })
 
     socket.on('connect_error', error => {
@@ -115,8 +115,8 @@ export default function AuthProvisioningPage() {
     }
 
     notification.success({
-      message: 'Code prêt',
-      description: 'Le code de pairing a été généré pour votre numéro.',
+      message: 'Kode siap',
+      description: 'Kode pairing telah dibuat untuk nomor Anda.',
     })
 
     navigate('/auth/verify-otp', {
@@ -141,7 +141,7 @@ export default function AuthProvisioningPage() {
         qrCode={qrCode}
         subtitle={
           errorMessage ||
-          "Votre stack est prête ou en train d'arriver. Nous récupérons le QR code dès que le connector l'émet."
+          "Stack Anda sudah siap atau sedang dalam perjalanan. Kami mengambil kode QR segera setelah connector memancarkannya."
         }
       />
     )

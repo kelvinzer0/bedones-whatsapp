@@ -58,13 +58,13 @@ export class CatalogService {
     });
 
     if (!user) {
-      throw new Error(`User not found for phone number: ${cleanedPhoneNumber}`);
+      throw new Error(`Pengguna tidak ditemukan untuk nomor telepon: ${cleanedPhoneNumber}`);
     }
 
     const agentId = user.whatsappAgent?.id;
     if (!agentId) {
       throw new Error(
-        `WhatsApp agent not found for phone number: ${cleanedPhoneNumber}`,
+        `Agent WhatsApp tidak ditemukan untuk nomor telepon: ${cleanedPhoneNumber}`,
       );
     }
 
@@ -145,7 +145,7 @@ export class CatalogService {
         );
         return {
           success: false,
-          error: result.error || 'Upload failed',
+          error: result.error || 'Upload gagal',
         };
       }
     } catch (error: unknown) {
@@ -211,7 +211,7 @@ export class CatalogService {
         this.logger.error(`❌ [ERROR] Avatar upload failed for ${clientId}`);
         return {
           success: false,
-          error: 'Upload failed',
+          error: 'Upload gagal',
         };
       }
     } catch (error: unknown) {
@@ -252,7 +252,7 @@ export class CatalogService {
         this.logger.error(`❌ [ERROR] User not found: ${clientId}`);
         return {
           success: false,
-          error: 'User not found',
+          error: 'Pengguna tidak ditemukan',
         };
       }
 
@@ -451,7 +451,7 @@ export class CatalogService {
         this.logger.error(`❌ [ERROR] User not found: ${clientId}`);
         return {
           success: false,
-          error: 'User not found',
+          error: 'Pengguna tidak ditemukan',
         };
       }
 
@@ -927,11 +927,11 @@ export class CatalogService {
       });
 
       if (!user) {
-        throw new Error('User not found');
+        throw new Error('Pengguna tidak ditemukan');
       }
 
       if (!user.whatsappAgent) {
-        throw new Error('WhatsApp agent not configured for this user');
+        throw new Error('Agent WhatsApp tidak dikonfigurasi untuk pengguna ini');
       }
 
       const agent = user.whatsappAgent;

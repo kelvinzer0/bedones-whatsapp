@@ -90,7 +90,7 @@ function parseMarkdownSections(markdown: string): ParsedSection[] {
 
   const lines = normalized.split(/\r?\n/)
   const sections: Array<{ body: string[]; title: string }> = []
-  let currentTitle = 'Résumé'
+  let currentTitle = 'Ringkasan'
   let currentBody: string[] = []
 
   const flushSection = () => {
@@ -111,7 +111,7 @@ function parseMarkdownSections(markdown: string): ParsedSection[] {
 
     if (headingMatch) {
       flushSection()
-      currentTitle = headingMatch[1].trim() || 'Section'
+      currentTitle = headingMatch[1].trim() || 'Bagian'
       continue
     }
 
@@ -180,10 +180,10 @@ function parseMarkdownSections(markdown: string): ParsedSection[] {
 
 export function meta() {
   return [
-    { title: "Contexte de l'IA - WhatsApp Agent" },
+    { title: "Konteks AI - WhatsApp Agent" },
     {
       name: 'description',
-      content: "Configurez le contexte de l'IA pour améliorer les réponses",
+      content: "Konfigurasikan konteks AI untuk meningkatkan jawaban",
     },
   ]
 }
@@ -249,7 +249,7 @@ export default function ContextOnboardingPage() {
     cachedThread?.context ?? ''
   )
   const [loadingStatus, setLoadingStatus] = useState<string>(
-    'Réflexion en cours...'
+    'Sedang berpikir...'
   )
   const [showActivationModal, setShowActivationModal] = useState(false)
   const [hasShownModal, setHasShownModal] = useState(false)
@@ -465,31 +465,31 @@ export default function ContextOnboardingPage() {
 
     socket.on('onboarding:tool_executing', (data: { toolName: string }) => {
       const toolMessages: Record<string, string> = {
-        getAllGroups: 'Récupération des groupes...',
-        getAllLabels: 'Récupération des labels...',
-        getContactList: 'Récupération des contacts...',
-        getMyProfileName: 'Récupération du profil...',
-        getCollections: 'Récupération des collections...',
-        getMessages: 'Récupération des messages...',
-        addNewLabel: 'Création du label...',
-        editLabel: 'Modification du label...',
-        deleteLabel: 'Suppression du label...',
-        createGroup: 'Création du groupe...',
-        getProductsFromCollection: 'Récupération des produits...',
-        readBusinessProfile: 'Lecture du profil business...',
-        readProducts: 'Lecture des produits...',
-        updateContext: 'Mise à jour du contexte...',
-        updateNeeds: 'Mise à jour des besoins...',
+        getAllGroups: 'Mengambil grup...',
+        getAllLabels: 'Mengambil label...',
+        getContactList: 'Mengambil kontak...',
+        getMyProfileName: 'Mengambil profil...',
+        getCollections: 'Mengambil koleksi...',
+        getMessages: 'Mengambil pesan...',
+        addNewLabel: 'Membuat label...',
+        editLabel: 'Mengubah label...',
+        deleteLabel: 'Menghapus label...',
+        createGroup: 'Membuat grup...',
+        getProductsFromCollection: 'Mengambil produk...',
+        readBusinessProfile: 'Membaca profil bisnis...',
+        readProducts: 'Membaca produk...',
+        updateContext: 'Memperbarui konteks...',
+        updateNeeds: 'Memperbarui kebutuhan...',
       }
 
       setLoadingStatus(
-        toolMessages[data.toolName] || `Exécution de ${data.toolName}...`
+        toolMessages[data.toolName] || `Menjalankan ${data.toolName}...`
       )
     })
 
     socket.on('onboarding:thinking', (data: { isThinking: boolean }) => {
       if (data.isThinking) {
-        setLoadingStatus('Réflexion en cours...')
+        setLoadingStatus('Sedang berpikir...')
       }
     })
 
@@ -497,7 +497,7 @@ export default function ContextOnboardingPage() {
       'onboarding:cancelled',
       (data: { success: boolean; restoredContent: string | null }) => {
         setIsSubmitting(false)
-        setLoadingStatus('Réflexion en cours...')
+        setLoadingStatus('Sedang berpikir...')
 
         if (data.restoredContent) {
           setInputValue(data.restoredContent)
@@ -515,10 +515,10 @@ export default function ContextOnboardingPage() {
       'onboarding:error',
       (data: { message: string; retryable: boolean; type: string }) => {
         setIsSubmitting(false)
-        setLoadingStatus('Réflexion en cours...')
+        setLoadingStatus('Sedang berpikir...')
 
         notification.error({
-          message: 'Erreur technique',
+          message: 'Kesalahan teknis',
           description: data.message,
           duration: data.retryable ? 10 : 0,
         })
@@ -584,7 +584,7 @@ export default function ContextOnboardingPage() {
     if (!inputValue.trim()) return
 
     setIsSubmitting(true)
-    setLoadingStatus('Réflexion en cours...')
+    setLoadingStatus('Sedang berpikir...')
 
     const userMessage: ThreadMessage = {
       id: `user-${Date.now()}`,
@@ -627,8 +627,8 @@ export default function ContextOnboardingPage() {
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
       notification.error({
-        message: 'Erreur',
-        description: err.response?.data?.message || 'Une erreur est survenue',
+        message: 'Kesalahan',
+        description: err.response?.data?.message || 'Terjadi kesalahan',
       })
       setIsSubmitting(false)
     }
@@ -662,10 +662,10 @@ export default function ContextOnboardingPage() {
     <div className='w-full space-y-4 px-4 py-5 sm:px-6 sm:py-6'>
       <div className='flex flex-wrap gap-3'>
         <Button onClick={toggleAllSections}>
-          {allSectionsExpanded ? 'Tout plier' : 'Tout déplier'}
+          {allSectionsExpanded ? 'Lipat semua' : 'Buka semua'}
         </Button>
         <Button icon={<EditOutlined />} onClick={() => setViewMode('chat')}>
-          Modifier
+          Ubah
         </Button>
       </div>
 
@@ -706,7 +706,7 @@ export default function ContextOnboardingPage() {
         </div>
       ) : (
         <div className='rounded-[var(--radius-card)] bg-white p-5 text-sm text-[var(--color-text-secondary)] shadow-card'>
-          Le contexte généré par l&apos;IA est encore vide.
+          Konteks yang dihasilkan oleh AI masih kosong.
         </div>
       )}
     </div>
@@ -725,7 +725,7 @@ export default function ContextOnboardingPage() {
             <div className='py-12 text-center text-gray-500'>
               <Spin size='large' />
               <p className='mt-4'>
-                En attente de l&apos;analyse initiale de l&apos;IA...
+                Menunggu analisis awal AI...
               </p>
             </div>
           ) : (
@@ -781,7 +781,7 @@ export default function ContextOnboardingPage() {
                     handleSubmit()
                   }
                 }}
-                placeholder='Écrivez votre réponse... (Entrée pour envoyer, Shift+Entrée pour nouvelle ligne)'
+                placeholder='Tulis jawaban Anda... (Enter untuk mengirim, Shift+Enter untuk baris baru)'
                 variant='borderless'
                 className='flex-1 !bg-transparent text-sm'
                 disabled={isSubmitting}
@@ -826,11 +826,11 @@ export default function ContextOnboardingPage() {
             className={`flex items-center justify-center rounded-full border px-4 py-2 ${getScoreBadgeClass(score)}`}
           >
             <span className='text-sm font-semibold tracking-wide'>
-              Score • {score}%
+              Skor • {score}%
             </span>
           </div>
         }
-        title={"Contexte de l'IA"}
+        title={"Konteks AI"}
       />
 
       {viewMode === 'summary' ? renderSummaryView() : renderChatView()}
@@ -841,7 +841,7 @@ export default function ContextOnboardingPage() {
         footer={
           <div className='flex justify-center'>
             <Button onClick={() => setShowActivationModal(false)}>
-              Continuer à améliorer le contexte
+              Lanjutkan meningkatkan konteks
             </Button>
           </div>
         }
@@ -850,14 +850,14 @@ export default function ContextOnboardingPage() {
         title={
           <div className='space-y-2'>
             <h2 className='m-0 text-[var(--font-size-title-sm)] font-semibold text-[var(--color-text-primary)]'>
-              Votre IA est prête !
+              AI Anda siap!
             </h2>
             <Text
               type='secondary'
               className='m-0 text-base text-[var(--color-text-secondary)] !font-normal'
             >
-              Vous pouvez maintenant activer votre agent ou continuer à fournir
-              des informations pour le rendre plus précis.
+              Anda sekarang dapat mengaktifkan agent atau terus memberikan
+              informasi untuk membuatnya lebih akurat.
             </Text>
           </div>
         }

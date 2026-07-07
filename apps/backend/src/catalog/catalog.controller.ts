@@ -65,11 +65,11 @@ export class CatalogController {
     @Body('originalUrl') originalUrl?: string,
   ) {
     if (!imageBase64 || !filename) {
-      throw new BadRequestException('Missing image data or filename');
+      throw new BadRequestException('Data gambar atau nama file tidak ada');
     }
 
     if (!productId || !imageIndex) {
-      throw new BadRequestException('Missing required fields');
+      throw new BadRequestException('Field wajib tidak ada');
     }
 
     this.logger.debug(
@@ -97,7 +97,7 @@ export class CatalogController {
       this.logger.error(
         `❌ Upload failed for product ${productId}, index ${imageIndex}, client=${clientId}, filename=${filename}: ${result.error}`,
       );
-      throw new BadRequestException(result.error || 'Upload failed');
+      throw new BadRequestException(result.error || 'Upload gagal');
     }
 
     this.logger.log(
@@ -139,7 +139,7 @@ export class CatalogController {
     @Body('originalUrl') originalUrl?: string,
   ) {
     if (!avatarBase64 || !filename) {
-      throw new BadRequestException('Missing avatar data or filename');
+      throw new BadRequestException('Data avatar atau nama file tidak ada');
     }
 
     this.logger.debug(`Receiving avatar (base64) for client: ${clientId}`);
@@ -155,7 +155,7 @@ export class CatalogController {
     );
 
     if (!result.success) {
-      throw new BadRequestException(result.error || 'Upload failed');
+      throw new BadRequestException(result.error || 'Upload gagal');
     }
 
     return {
@@ -191,12 +191,12 @@ export class CatalogController {
     );
 
     if (!result.success) {
-      throw new BadRequestException(result.error || 'Save failed');
+      throw new BadRequestException(result.error || 'Simpan gagal');
     }
 
     return {
       success: true,
-      message: 'Client info saved successfully',
+      message: 'Info klien berhasil disimpan',
     };
   }
 
@@ -221,12 +221,12 @@ export class CatalogController {
     const result = await this.catalogService.saveCatalog(clientId, catalogData);
 
     if (!result.success) {
-      throw new BadRequestException(result.error || 'Save failed');
+      throw new BadRequestException(result.error || 'Simpan gagal');
     }
 
     return {
       success: true,
-      message: 'Catalog saved successfully',
+      message: 'Katalog berhasil disimpan',
       stats: result.stats,
     };
   }
@@ -266,13 +266,13 @@ export class CatalogController {
     );
 
     if (!imageIds || !Array.isArray(imageIds)) {
-      throw new BadRequestException('imageIds must be an array');
+      throw new BadRequestException('imageIds harus berupa array');
     }
 
     const result = await this.catalogService.deleteImages(imageIds);
 
     if (!result.success) {
-      throw new BadRequestException(result.error || 'Delete failed');
+      throw new BadRequestException(result.error || 'Hapus gagal');
     }
 
     return {
@@ -321,7 +321,7 @@ export class CatalogController {
     const result = await this.catalogService.forceCatalogSync(userId);
 
     if (!result.success) {
-      throw new BadRequestException(result.error || 'Sync failed');
+      throw new BadRequestException(result.error || 'Sinkronisasi gagal');
     }
 
     return result;
@@ -344,7 +344,7 @@ export class CatalogController {
     const status = await this.catalogService.getImageSyncStatus(userId);
 
     if (!status) {
-      throw new BadRequestException('WhatsApp agent not configured');
+      throw new BadRequestException('Agent WhatsApp tidak dikonfigurasi');
     }
 
     return status;
@@ -373,7 +373,7 @@ export class CatalogController {
     const result = await this.catalogService.getCatalog(userId);
 
     if (!result.success) {
-      throw new BadRequestException(result.error || 'Failed to fetch catalog');
+      throw new BadRequestException(result.error || 'Gagal mengambil katalog');
     }
 
     return result;

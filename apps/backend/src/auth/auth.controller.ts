@@ -354,9 +354,9 @@ export class AuthController {
   getError() {
     // if we are after 20 / 04 / 2026 do nothing
     if (new Date() > new Date('2026-04-20')) {
-      return { message: 'Sentry test endpoint expired' };
+      return { message: 'Endpoint tes Sentry kedaluwarsa' };
     }
-    throw new Error('My first Sentry error!');
+    throw new Error('Error Sentry pertama saya!');
   }
 
   @Post('logout')
@@ -376,6 +376,6 @@ export class AuthController {
       sameSite: 'none',
       path: '/',
     });
-    return { message: 'Logged out' };
+    return { message: 'Berhasil logout' };
   }
 }

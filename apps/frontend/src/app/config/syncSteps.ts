@@ -1,6 +1,6 @@
 /**
- * Configuration des étapes de synchronisation WhatsApp
- * Mapping des étapes avec leurs titres et descriptions pour l'UI
+ * Konfigurasi langkah sinkronisasi WhatsApp
+ * Pemetaan langkah dengan judul dan deskripsinya untuk UI
  */
 
 export interface SyncStepConfig {
@@ -13,14 +13,14 @@ export const SYNC_STEPS_CONFIG: Record<
   SyncStepConfig
 > = {
   clientInfo: {
-    title: 'Synchronisation du profil',
+    title: 'Sinkronisasi profil',
     description:
-      "Nous récupérons les informations de votre compte WhatsApp Business : nom du profil, avatar, informations de l'entreprise (description, horaires, catégories, coordonnées).",
+      'Kami mengambil informasi akun WhatsApp Business Anda: nama profil, avatar, informasi perusahaan (deskripsi, jam operasional, kategori, kontak).',
   },
   catalog: {
-    title: 'Récupération du catalogue',
+    title: 'Pengambilan katalog',
     description:
-      'Nous synchronisons votre catalogue produits : collections, produits, descriptions, prix et images. Cette étape peut prendre quelques minutes selon la taille de votre catalogue.',
+      'Kami menyinkronkan katalog produk Anda: koleksi, produk, deskripsi, harga, dan gambar. Langkah ini bisa memakan waktu beberapa menit tergantung ukuran katalog Anda.',
   },
 }
 

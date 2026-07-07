@@ -50,12 +50,12 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException('Pesanan tidak ditemukan');
     }
 
     if (order.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to access this order',
+        'Anda tidak memiliki izin untuk mengakses pesanan ini',
       );
     }
 
@@ -68,23 +68,23 @@ export class OrdersService {
   async create(userId: string, data: CreateOrderDto): Promise<Order> {
     // Validate required fields
     if (!data.whatsappChatId || data.whatsappChatId.trim() === '') {
-      throw new BadRequestException('WhatsApp Chat ID is required');
+      throw new BadRequestException('WhatsApp Chat ID wajib diisi');
     }
 
     if (!data.customerName || data.customerName.trim() === '') {
-      throw new BadRequestException('Customer name is required');
+      throw new BadRequestException('Nama pelanggan wajib diisi');
     }
 
     if (!data.customerPhone || data.customerPhone.trim() === '') {
-      throw new BadRequestException('Customer phone is required');
+      throw new BadRequestException('Nomor telepon pelanggan wajib diisi');
     }
 
     if (!data.products) {
-      throw new BadRequestException('Products are required');
+      throw new BadRequestException('Produk wajib diisi');
     }
 
     if (!data.totalAmount || data.totalAmount <= 0) {
-      throw new BadRequestException('Total amount must be greater than 0');
+      throw new BadRequestException('Total jumlah harus lebih besar dari 0');
     }
 
     // No need to verify whatsappChatId - it's just a reference to live WhatsApp data
@@ -96,12 +96,12 @@ export class OrdersService {
       });
 
       if (!deliveryLocation) {
-        throw new NotFoundException('Delivery location not found');
+        throw new NotFoundException('Lokasi pengiriman tidak ditemukan');
       }
 
       if (deliveryLocation.userId !== userId) {
         throw new ForbiddenException(
-          'You do not have permission to use this delivery location',
+          'Anda tidak memiliki izin untuk menggunakan lokasi pengiriman ini',
         );
       }
     }
@@ -113,12 +113,12 @@ export class OrdersService {
       });
 
       if (!paymentMethod) {
-        throw new NotFoundException('Payment method not found');
+        throw new NotFoundException('Metode pembayaran tidak ditemukan');
       }
 
       if (paymentMethod.userId !== userId) {
         throw new ForbiddenException(
-          'You do not have permission to use this payment method',
+          'Anda tidak memiliki izin untuk menggunakan metode pembayaran ini',
         );
       }
     }
@@ -156,12 +156,12 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException('Pesanan tidak ditemukan');
     }
 
     if (order.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this order',
+        'Anda tidak memiliki izin untuk memperbarui pesanan ini',
       );
     }
 
@@ -172,12 +172,12 @@ export class OrdersService {
       });
 
       if (!deliveryLocation) {
-        throw new NotFoundException('Delivery location not found');
+        throw new NotFoundException('Lokasi pengiriman tidak ditemukan');
       }
 
       if (deliveryLocation.userId !== userId) {
         throw new ForbiddenException(
-          'You do not have permission to use this delivery location',
+          'Anda tidak memiliki izin untuk menggunakan lokasi pengiriman ini',
         );
       }
     }
@@ -189,12 +189,12 @@ export class OrdersService {
       });
 
       if (!paymentMethod) {
-        throw new NotFoundException('Payment method not found');
+        throw new NotFoundException('Metode pembayaran tidak ditemukan');
       }
 
       if (paymentMethod.userId !== userId) {
         throw new ForbiddenException(
-          'You do not have permission to use this payment method',
+          'Anda tidak memiliki izin untuk menggunakan metode pembayaran ini',
         );
       }
     }
@@ -242,12 +242,12 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException('Pesanan tidak ditemukan');
     }
 
     if (order.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this order',
+        'Anda tidak memiliki izin untuk memperbarui pesanan ini',
       );
     }
 
@@ -271,12 +271,12 @@ export class OrdersService {
     });
 
     if (!order) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException('Pesanan tidak ditemukan');
     }
 
     if (order.userId !== userId) {
       throw new ForbiddenException(
-        'You do not have permission to update this order',
+        'Anda tidak memiliki izin untuk memperbarui pesanan ini',
       );
     }
 

@@ -59,7 +59,7 @@ export class OnboardingController {
         console.error('Failed to handle user message:', error);
       });
 
-    return { message: 'Message received, processing...' };
+    return { message: 'Pesan diterima, sedang diproses...' };
   }
 
   /**

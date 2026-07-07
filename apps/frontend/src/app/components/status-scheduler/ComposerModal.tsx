@@ -88,7 +88,7 @@ export function ComposerModal({
       onCancel={onCancel}
       footer={[
         <Button key='cancel' onClick={onCancel}>
-          Annuler
+          Batal
         </Button>,
         <Button
           key='submit'
@@ -98,7 +98,7 @@ export function ComposerModal({
           loading={isPending}
           onClick={() => form.submit()}
         >
-          {editingSchedule ? 'Enregistrer' : 'Programmer'}
+          {editingSchedule ? 'Simpan' : 'Jadwalkan'}
         </Button>,
       ]}
       width={560}
@@ -107,10 +107,10 @@ export function ComposerModal({
       title={
         <div className='space-y-2'>
           <h2 className='m-0 text-[var(--font-size-title-sm)] font-semibold text-[var(--color-text-primary)]'>
-            {editingSchedule ? 'Modifier une story' : 'Programmer une story'}
+            {editingSchedule ? 'Ubah story' : 'Jadwalkan story'}
           </h2>
           <p className='m-0 text-sm leading-[1.7] font-normal text-[var(--color-text-secondary)]'>
-            Elle sera envoyée comme depuis votre smartphone
+            Ini akan dikirim seolah-olah dari ponsel cerdas Anda
           </p>
         </div>
       }
@@ -126,9 +126,9 @@ export function ComposerModal({
           }}
         >
           <Form.Item
-            label='Type'
+            label='Tipe'
             name='contentType'
-            rules={[{ required: true, message: 'Choisissez un type.' }]}
+            rules={[{ required: true, message: 'Pilih tipe.' }]}
           >
             <Select
               options={Object.entries(CONTENT_TYPE_META).map(
@@ -144,7 +144,7 @@ export function ComposerModal({
             {(fields, { add, remove }) => (
               <div className='space-y-3'>
                 <label className='block text-base text-[var(--color-text-secondary)]'>
-                  Date (s) et heure (s)
+                  Tanggal dan waktu
                 </label>
 
                 {fields.map(field => (
@@ -155,7 +155,7 @@ export function ComposerModal({
                       rules={[
                         {
                           required: true,
-                          message: 'Choisissez une date de publication.',
+                          message: 'Pilih tanggal publikasi.',
                         },
                         {
                           validator: (_, value?: Dayjs | null) => {
@@ -166,7 +166,7 @@ export function ComposerModal({
                             return value.isBefore(getMinimumScheduleTime())
                               ? Promise.reject(
                                   new Error(
-                                    `Choisissez une date au moins 2 minutes après cet instant.`
+                                    `Pilih tanggal setidaknya 2 menit setelah saat ini.`
                                   )
                                 )
                               : Promise.resolve()
@@ -197,7 +197,7 @@ export function ComposerModal({
                         onClick={() => remove(field.name)}
                         className={'h-13!'}
                       >
-                        Retirer
+                        Hapus
                       </Button>
                     ) : null}
                   </div>
@@ -211,7 +211,7 @@ export function ComposerModal({
                       add({ scheduledFor: createSlotValue(selectedDay) })
                     }
                   >
-                    Ajouter une autre date
+                    Tambah tanggal lain
                   </Button>
                 ) : null}
               </div>
@@ -220,17 +220,17 @@ export function ComposerModal({
 
           {contentType !== 'TEXT' ? (
             <>
-              <Form.Item className='mt-6' label='Message' name='caption'>
-                <Input.TextArea rows={5} placeholder='S’adapter à au client' />
+              <Form.Item className='mt-6' label='Pesan' name='caption'>
+                <Input.TextArea rows={5} placeholder='Sesuaikan dengan klien' />
               </Form.Item>
 
               <Form.Item
-                label='Illustration'
+                label='Ilustrasi'
                 name='mediaUrl'
                 rules={[
                   {
                     required: true,
-                    message: 'Ajoutez un média pour cette story.',
+                    message: 'Tambahkan media untuk story ini.',
                   },
                 ]}
               >
@@ -248,12 +248,12 @@ export function ComposerModal({
                           ) : (
                             <img
                               src={currentMediaUrl}
-                              alt='Aperçu'
+                              alt='Pratinjau'
                               className='block w-full max-h-[220px] rounded-[var(--radius-control)] object-cover'
                             />
                           )}
                         </div>
-                        <Button variant={'text'}>Changer le fichier</Button>
+                        <Button variant={'text'}>Ganti file</Button>
                       </div>
                     ) : (
                       <div className='space-y-3'>
@@ -262,11 +262,11 @@ export function ComposerModal({
                         </div>
                         <div>
                           <p className='m-0 text-lg font-semibold text-[var(--color-text-primary)]'>
-                            Cliquer ici pour charger vos images
+                            Klik di sini untuk memuat gambar Anda
                           </p>
                           <p className='mb-0 mt-2 text-sm leading-[1.7] text-[var(--color-text-secondary)]'>
-                            Vous pouvez envoyer plusieurs images et ensuite
-                            choisir l’ordre des publications
+                            Anda dapat mengirim beberapa gambar dan kemudian
+                            memilih urutan publikasi
                           </p>
                         </div>
                       </div>
@@ -278,13 +278,13 @@ export function ComposerModal({
           ) : (
             <Form.Item
               className='mt-6'
-              label='Votre message'
+              label='Pesan Anda'
               name='textContent'
               rules={[
-                { required: true, message: 'Ajoutez le texte de la story.' },
+                { required: true, message: 'Tambahkan teks story.' },
               ]}
             >
-              <Input.TextArea rows={6} placeholder='S’adapter à au client' />
+              <Input.TextArea rows={6} placeholder='Sesuaikan dengan klien' />
             </Form.Item>
           )}
         </Form>

@@ -13,9 +13,9 @@ const suggestionTypeLabels: Record<
   AISuggestion['type'],
   { label: string; color: string }
 > = {
-  spelling: { label: 'Orthographe', color: 'orange' },
-  metadata: { label: 'Métadonnées', color: 'blue' },
-  improvement: { label: 'Amélioration', color: 'green' },
+  spelling: { label: 'Ejaan', color: 'orange' },
+  metadata: { label: 'Metadata', color: 'blue' },
+  improvement: { label: 'Penyempurnaan', color: 'green' },
 }
 
 export function AIAnalysisPanel({
@@ -26,8 +26,8 @@ export function AIAnalysisPanel({
   if (suggestions.length === 0) {
     return (
       <Alert
-        message='Aucune suggestion'
-        description="L'IA n'a trouvé aucune amélioration à proposer pour ce produit."
+        message='Tidak ada saran'
+        description='IA tidak menemukan penyempurnaan yang dapat diberikan untuk produk ini.'
         type='success'
         showIcon
       />
@@ -38,7 +38,7 @@ export function AIAnalysisPanel({
     <div className='space-y-3'>
       <div className='flex items-center gap-2 mb-3'>
         <Tag color='blue'>
-          {suggestions.length} suggestion{suggestions.length > 1 ? 's' : ''}
+          {suggestions.length} saran{suggestions.length > 1 ? '' : ''}
         </Tag>
       </div>
 
@@ -61,7 +61,7 @@ export function AIAnalysisPanel({
               <div className='space-y-2'>
                 <div>
                   <span className='text-xs text-gray-500 uppercase'>
-                    Actuel:
+                    Saat ini:
                   </span>
                   <p className='text-sm text-gray-700 line-through'>
                     {suggestion.current}
@@ -70,7 +70,7 @@ export function AIAnalysisPanel({
 
                 <div>
                   <span className='text-xs text-gray-500 uppercase'>
-                    Suggestion:
+                    Saran:
                   </span>
                   <p className='text-sm text-green-700 font-medium'>
                     {suggestion.suggested}
@@ -79,7 +79,7 @@ export function AIAnalysisPanel({
 
                 <div>
                   <span className='text-xs text-gray-500 uppercase'>
-                    Raison:
+                    Alasan:
                   </span>
                   <p className='text-sm text-gray-600 italic'>
                     {suggestion.reason}
@@ -95,14 +95,14 @@ export function AIAnalysisPanel({
                 icon={<CheckOutlined />}
                 onClick={() => onApply(suggestion)}
               >
-                Appliquer
+                Terapkan
               </Button>
               <Button
                 size='small'
                 icon={<CloseOutlined />}
                 onClick={() => onDismiss(suggestion)}
               >
-                Ignorer
+                Abaikan
               </Button>
             </Space>
           </div>

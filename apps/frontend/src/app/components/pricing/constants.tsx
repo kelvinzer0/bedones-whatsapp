@@ -50,9 +50,9 @@ export const PLAN_ORDER: PlanKey[] = ['free', 'pro', 'business']
 
 export const BILLING_OPTIONS: Array<{ label: string; value: BillingDuration }> =
   [
-    { label: 'Un mois', value: 1 },
-    { label: '6 mois', value: 6 },
-    { label: 'Un an', value: 12 },
+    { label: 'Satu bulan', value: 1 },
+    { label: '6 bulan', value: 6 },
+    { label: 'Satu tahun', value: 12 },
   ]
 
 export const DURATION_DISCOUNT: Record<BillingDuration, number> = {
@@ -71,32 +71,32 @@ export const PAYMENT_METHODS = [
 export const PLAN_CONTENT: Record<PlanKey, PlanConfig> = {
   free: {
     creditAmount: '200',
-    creditSuffix: 'crédits offerts',
+    creditSuffix: 'kredit gratis',
     features: [
       {
         items: [
           {
             description:
-              'Discuter avec l’agent pour lui dire comment répondre à vos clients.',
+              'Bicaralah dengan agent untuk memberitahukan cara membalas pelanggan Anda.',
             icon: <TextContextIcon className='h-6 w-6' />,
-            label: 'Contextes personnalisés',
+            label: 'Konteks yang dipersonalisasi',
           },
           {
             description:
-              'L’agent analyse et mémorise les images et descriptions de vos produits.',
+              'Agent menganalisis dan mengingat gambar serta deskripsi produk Anda.',
             icon: <CatalogLearnIcon className='h-6 w-6' />,
-            label: 'Apprentissage du catalogue',
+            label: 'Pembelajaran katalog',
           },
         ],
-        title: 'Compréhension de votre entreprise',
+        title: 'Pemahaman bisnis Anda',
       },
       {
         items: [
           {
             description:
-              'L’agent comprend les notes vocales comme si c’était du texte.',
+              'Agent memahami catatan suara seolah-olah itu adalah teks.',
             icon: <AudioWaveIcon className='h-6 w-6' />,
-            label: 'Compréhension des audio',
+            label: 'Pemahaman audio',
           },
         ],
         title: 'Audio',
@@ -105,46 +105,46 @@ export const PLAN_CONTENT: Record<PlanKey, PlanConfig> = {
         items: [
           {
             description:
-              'Quand une image contient le code d’un produit, celui-ci est alors identifié.',
+              'Saat gambar memuat kode produk, produk tersebut akan dikenali.',
             icon: <BarcodeSearchIcon className='h-6 w-6' />,
-            label: 'Recherche par retailer ID',
+            label: 'Pencarian berdasarkan retailer ID',
           },
           {
             description:
-              'Quand une image ressemble à une des images de vos produits, celui-ci est alors identifié.',
+              'Saat gambar mirip dengan salah satu gambar produk Anda, produk tersebut akan dikenali.',
             icon: <SimilarityIcon className='h-6 w-6' />,
-            label: 'Recherche par similarité',
+            label: 'Pencarian berdasarkan kemiripan',
           },
         ],
-        title: 'Image',
+        title: 'Gambar',
       },
     ],
     monthlyPrice: 0,
   },
   pro: {
-    accentLabel: 'Populaire',
+    accentLabel: 'Populer',
     creditAmount: '1 000',
-    creditSuffix: 'crédits par mois,',
-    ctaLabel: 'Passer à la version Pro',
+    creditSuffix: 'kredit per bulan,',
+    ctaLabel: 'Naik ke versi Pro',
     features: [
       {
         items: [
           {
             description:
-              'L’image est analysée dans le contexte de votre entreprise pour savoir si son contenu cadre fortement avec un de vos produits.',
+              'Gambar dianalisis dalam konteks bisnis Anda untuk mengetahui apakah isinya sangat sesuai dengan salah satu produk Anda.',
             icon: <AIImageSearchIcon className='h-6 w-6' />,
-            label: 'Recherche par compréhension',
+            label: 'Pencarian berdasarkan pemahaman',
           },
         ],
-        title: 'Image',
+        title: 'Gambar',
       },
       {
         items: [
           {
             description:
-              'Programmer l’envoi de vos stories en avances peut-importe la période.',
+              'Jadwalkan pengiriman stories Anda di awal untuk periode apa pun.',
             icon: <StoryScheduleIcon className='h-6 w-6' />,
-            label: 'Planification de stories',
+            label: 'Penjadwalan stories',
           },
         ],
         title: 'Stories',
@@ -153,32 +153,32 @@ export const PLAN_CONTENT: Record<PlanKey, PlanConfig> = {
         items: [
           {
             description:
-              'L’agent est capable d’agir même quand aucun message n’est reçu, pour écrire à un client pour un rappel par ex.',
+              'Agent dapat bertindak bahkan saat tidak ada pesan yang diterima, misalnya untuk mengirim pengingat ke pelanggan.',
             icon: <AsyncIcon className='h-6 w-6' />,
-            label: 'Tâches asynchrones',
+            label: 'Tugas asinkron',
           },
         ],
-        title: 'Tâches asynchrones',
+        title: 'Tugas asinkron',
       },
     ],
-    includedLabel: 'Tout dans Free, plus',
+    includedLabel: 'Semua di Free, plus',
     monthlyCredits: 1000,
     monthlyPrice: 10,
     overagePrice: '$0.01',
-    overageSuffix: 'par crédit supplémentaire',
+    overageSuffix: 'per kredit tambahan',
   },
   business: {
     creditAmount: '3 000',
-    creditSuffix: 'crédits par mois,',
-    ctaLabel: 'Passer à la version Business',
+    creditSuffix: 'kredit per bulan,',
+    ctaLabel: 'Naik ke versi Business',
     features: [
       {
         items: [
           {
             description:
-              'Une comparaison entre des vues vos stories pour savoir ce qui fonctionne le mieux.',
+              'Perbandingan antar tampilan stories Anda untuk mengetahui apa yang paling berhasil.',
             icon: <BarChartIcon className='h-6 w-6' />,
-            label: 'Statistiques des statuts',
+            label: 'Statistik status',
           },
         ],
         title: 'Stories',
@@ -187,44 +187,44 @@ export const PLAN_CONTENT: Record<PlanKey, PlanConfig> = {
         items: [
           {
             description:
-              'Créations automatique de contact pour les nouvelle conversations pour qu’il puisse voir vos statuts.',
+              'Pembuatan kontak otomatis untuk percakapan baru agar mereka dapat melihat status Anda.',
             icon: <ContactAddIcon className='h-6 w-6' />,
-            label: 'Sauvegarde automatique des contacts',
+            label: 'Penyimpanan kontak otomatis',
           },
         ],
-        title: 'Contacts',
+        title: 'Kontak',
       },
     ],
-    includedLabel: 'Tout dans Pro, plus',
+    includedLabel: 'Semua di Pro, plus',
     monthlyCredits: 3000,
     monthlyPrice: 25,
     overagePrice: '$0.008',
-    overageSuffix: 'par crédit supplémentaire',
+    overageSuffix: 'per kredit tambahan',
   },
 }
 
 export const CREDIT_FACTS: CreditFact[] = [
   {
     description:
-      'Chaque message texte reçu ou envoyé par l’agent consomme un crédit.',
+      'Setiap pesan teks yang diterima atau dikirim oleh agent menggunakan satu kredit.',
     illustration: (
       <TextIllustration className='h-[132px] w-[132px] text-[var(--color-text-secondary)]' />
     ),
-    title: 'Un crédit par texte',
+    title: 'Satu kredit per teks',
   },
   {
     description:
-      'Chaque analyse d’image consomme deux crédits, quel que soit le mode de recherche utilisé.',
+      'Setiap analisis gambar menggunakan dua kredit, terlepas dari mode pencarian yang digunakan.',
     illustration: (
       <ImageIllustration className='h-[130px] w-[130px] text-[var(--color-text-secondary)]' />
     ),
-    title: 'Deux crédits par image',
+    title: 'Dua kredit per gambar',
   },
   {
     description:
-      'La transcription et l’analyse d’un message vocal consomme un crédit et demi.',
+      'Transkripsi dan analisis pesan suara menggunakan satu setengah kredit.',
     illustration: <AudioIllustration className='h-[128px] w-[128px]' />,
-    title: '1.5 crédit par audio',
+    title: '1,5 kredit per audio',
   },
 ]
 
@@ -256,8 +256,8 @@ export function getPlanCreditsSummary(
     amount: formatCreditsAmount(totalCredits),
     suffix:
       duration === 1
-        ? 'crédits inclus,'
-        : `crédits inclus pour ${duration} mois,`,
+        ? 'kredit termasuk,'
+        : `kredit termasuk untuk ${duration} bulan,`,
   }
 }
 
@@ -274,7 +274,7 @@ export function getPlanLabel(plan: PlanKey) {
 }
 
 export function getDurationCtaLabel(duration: BillingDuration) {
-  return duration === 1 ? 'un' : `${duration}`
+  return duration === 1 ? 'satu' : `${duration}`
 }
 
 export function getTotalPrice(monthlyPrice: number, duration: BillingDuration) {

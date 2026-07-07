@@ -23,10 +23,10 @@ const { Title, Text, Link } = Typography
 
 export function meta() {
   return [
-    { title: 'Accueil - WhatsApp Agent' },
+    { title: 'Beranda - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Tableau de bord WhatsApp Agent',
+      content: 'Dashboard WhatsApp Agent',
     },
   ]
 }
@@ -57,18 +57,18 @@ export default function DashboardPage() {
       const authorizeUrl = response?.data?.authorizeUrl
 
       if (!authorizeUrl) {
-        throw new Error("L'URL d'autorisation Google est manquante.")
+        throw new Error('URL otorisasi Google tidak ditemukan.')
       }
 
       window.location.assign(authorizeUrl)
     } catch (error) {
       console.error('Failed to start Google OAuth:', error)
       notification.error({
-        message: 'Connexion Google impossible',
+        message: 'Koneksi Google tidak dapat dilakukan',
         description:
           error instanceof Error
             ? error.message
-            : 'Le flux OAuth Google a échoué.',
+            : 'Alur OAuth Google gagal.',
       })
       setGoogleConnectLoading(false)
     }
@@ -85,13 +85,13 @@ export default function DashboardPage() {
 
     if (status === 'connected') {
       notification.success({
-        message: 'Google Contacts connecté',
+        message: 'Google Contacts terhubung',
       })
       void checkAuth()
     } else {
       notification.error({
-        message: 'Connexion Google échouée',
-        description: message || 'Le callback Google n’a pas abouti.',
+        message: 'Koneksi Google gagal',
+        description: message || 'Callback Google tidak berhasil.',
       })
     }
 
@@ -111,12 +111,12 @@ export default function DashboardPage() {
 
   return (
     <>
-      <DashboardHeader title='Accueil' />
+      <DashboardHeader title='Beranda' />
 
       <div className='flex w-full flex-col gap-6 px-4 py-5 sm:px-6 sm:py-6 card-button-bottom'>
         <section>
           <Title level={5} className='mb-4'>
-            Tester ou passer en production
+            Uji coba atau beralih ke produksi
           </Title>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <AgentTestCard />
@@ -126,7 +126,7 @@ export default function DashboardPage() {
 
         <section>
           <Title level={5} className='mb-4'>
-            Usages et plan
+            Penggunaan dan paket
           </Title>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <Card
@@ -147,15 +147,15 @@ export default function DashboardPage() {
                     iconPosition='end'
                     onClick={() => navigate('/stats')}
                   >
-                    Voir les détails
+                    Lihat detail
                   </Button>
                 </div>
                 <div>
                   <Text strong className='mb-1 block'>
-                    50 messages traités aujourd&apos;hui
+                    50 pesan diproses hari ini
                   </Text>
                   <Text type='secondary'>
-                    Consulter plus de détails depuis la page de statistique
+                    Lihat lebih banyak detail dari halaman statistik
                   </Text>
                 </div>
               </div>
@@ -179,19 +179,19 @@ export default function DashboardPage() {
                     iconPosition='end'
                     onClick={() => navigate('/pricing')}
                   >
-                    Voir les souscriptions
+                    Lihat langganan
                   </Button>
                 </div>
                 <div>
                   <div className='mb-1 flex items-center gap-2'>
-                    <Text strong>Souscription</Text>
+                    <Text strong>Langganan</Text>
                     <span className='rounded-full bg-[#24d366] px-2.5 py-1 text-xs font-semibold text-black'>
                       {currentPlanLabel}
                     </span>
                   </div>
                   <Text type='secondary' className='block'>
-                    L&apos;IA répondra à tous les contacts sauf aux contacts
-                    exclus. <Link>Exclure des contacts</Link>
+                    AI akan membalas semua kontak kecuali kontak yang
+                    dikecualikan. <Link>Kecualikan kontak</Link>
                   </Text>
                 </div>
               </div>
@@ -201,7 +201,7 @@ export default function DashboardPage() {
 
         <section>
           <Title level={5} className='mb-4'>
-            Outils
+            Alat
           </Title>
           <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <Card
@@ -217,7 +217,7 @@ export default function DashboardPage() {
                   </div>
                   {googleContacts?.connected ? (
                     <span className='rounded-full bg-[#24d366] px-3 py-1 text-sm font-semibold text-black'>
-                      {googleContacts.contactsCount} contacts sauvegardés
+                      {googleContacts.contactsCount} kontak tersimpan
                     </span>
                   ) : (
                     <Button
@@ -228,7 +228,7 @@ export default function DashboardPage() {
                       loading={googleConnectLoading}
                       onClick={handleConnectGoogle}
                     >
-                      Connecter
+                      Hubungkan
                     </Button>
                   )}
                 </div>
@@ -238,8 +238,8 @@ export default function DashboardPage() {
                   </Text>
                   <Text type='secondary'>
                     {googleContacts?.connected
-                      ? 'Les nouveaux contacts WhatsApp sont sauvegardés automatiquement dans Google.'
-                      : 'Sauvegarder automatiquement les nouveaux contacts WhatsApp dans Google.'}
+                      ? 'Kontak WhatsApp baru otomatis disimpan di Google.'
+                      : 'Simpan otomatis kontak WhatsApp baru di Google.'}
                   </Text>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function DashboardPage() {
                     iconPosition='end'
                     onClick={openModerator}
                   >
-                    Connecter
+                    Hubungkan
                   </Button>
                 </div>
                 <div>
@@ -271,7 +271,7 @@ export default function DashboardPage() {
                     Facebook
                   </Text>
                   <Text type='secondary'>
-                    Réponses automatiquement aux commentaires sur vos pages
+                    Balas otomatis komentar di halaman Anda
                   </Text>
                 </div>
               </div>

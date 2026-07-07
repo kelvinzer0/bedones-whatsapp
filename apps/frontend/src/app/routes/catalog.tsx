@@ -135,10 +135,10 @@ function LazyProductCard({ product }: { product: Product }) {
 
 export function meta() {
   return [
-    { title: 'Catalogue - WhatsApp Agent' },
+    { title: 'Katalog - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Gérez votre catalogue de produits',
+      content: 'Kelola katalog produk Anda',
     },
   ]
 }
@@ -167,13 +167,13 @@ export default function CatalogPage() {
   const handleForceSync = async () => {
     try {
       setIsSyncing(true)
-      message.loading({ content: 'Synchronisation en cours...', key: 'sync' })
+      message.loading({ content: 'Sedang menyinkronkan...', key: 'sync' })
 
       const result = await catalogApi.forceSync()
 
       if (result.success) {
         message.success({
-          content: 'Synchronisation lancée !',
+          content: 'Sinkronisasi dimulai!',
           key: 'sync',
           duration: 3,
         })
@@ -187,16 +187,16 @@ export default function CatalogPage() {
         void queryClient.invalidateQueries({ queryKey: ['catalog'] })
       } else {
         message.error({
-          content: result.error || 'Échec de la synchronisation',
+          content: result.error || 'Sinkronisasi gagal',
           key: 'sync',
           duration: 5,
         })
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Erreur inconnue'
+        error instanceof Error ? error.message : 'Kesalahan tidak diketahui'
       message.error({
-        content: errorMessage || 'Erreur lors de la synchronisation',
+        content: errorMessage || 'Kesalahan saat menyinkronkan',
         key: 'sync',
         duration: 5,
       })
@@ -272,9 +272,7 @@ export default function CatalogPage() {
     return { collections: collectionsCount, products: productsCount }
   }, [catalogData])
 
-  const headerTitle = `${statistics.collections} collection${
-    statistics.collections > 1 ? 's' : ''
-  }, ${statistics.products} produit${statistics.products > 1 ? 's' : ''}`
+  const headerTitle = `${statistics.collections} koleksi, ${statistics.products} produk`
 
   const hasContent = useMemo(() => {
     if (!catalogData) return false
@@ -288,8 +286,8 @@ export default function CatalogPage() {
   const shouldShowIndexingAlert =
     hasContent && !(isIndexingCompleted && isIndexingAlertDismissed)
   const indexingAlertDescription = isIndexingCompleted
-    ? "Lorsqu'un de vos client nous enverra une image ou un terme concernant l'un de vos produits nos seront capable de l'identifier automatiquement"
-    : "Nos IA analyse vos images pour comprendre ce qu'elle contienne, et pouvoir identifier un produit quand un utilisateur envoie une de vos images."
+    ? "Saat salah satu klien Anda mengirimkan gambar atau istilah terkait salah satu produk Anda, kami akan dapat mengidentifikasinya secara otomatis."
+    : "AI kami menganalisis gambar Anda untuk memahami kontennya, dan dapat mengidentifikasi produk saat pengguna mengirim salah satu gambar Anda."
 
   if (isInitialLoading) {
     return <CatalogPageSkeleton />
@@ -307,7 +305,7 @@ export default function CatalogPage() {
             loading={isSyncing}
             icon={<SyncOutlined spin={isSyncing} />}
           >
-            Synchroniser
+            Sinkronkan
           </Button>
         }
       />
@@ -316,11 +314,11 @@ export default function CatalogPage() {
           <Alert
             type='error'
             showIcon
-            message='Impossible de charger le catalogue'
+            message='Tidak dapat memuat katalog'
             description={
               catalogQuery.error instanceof Error
                 ? catalogQuery.error.message
-                : 'Le backend n’a pas renvoyé les données du catalogue.'
+                : 'Backend tidak mengembalikan data katalog.'
             }
           />
         ) : null}
@@ -346,10 +344,10 @@ export default function CatalogPage() {
                   size={46}
                 />
                 <div className='flex flex-col'>
-                  <Text strong>Indexations du contenu</Text>
+                  <Text strong>Pengindeksan konten</Text>
                   <Text type='secondary' className='text-xs'>
                     {indexingStats.indexedProducts}/
-                    {indexingStats.totalProducts} produits indexés
+                    {indexingStats.totalProducts} produk diindeks
                   </Text>
                 </div>
               </div>
@@ -367,8 +365,7 @@ export default function CatalogPage() {
                   <div>
                     <Text className='text-lg block'>{collection.name}</Text>
                     <Text type='secondary' className='text-sm'>
-                      {collection.products.length} produit
-                      {collection.products.length > 1 ? 's' : ''}
+                      {collection.products.length} produk
                     </Text>
                   </div>
 
@@ -387,11 +384,10 @@ export default function CatalogPage() {
               <div className='flex flex-col gap-4'>
                 <div>
                   <Text className='text-lg block'>
-                    Produits non catégorisés
+                    Produk tidak terkategori
                   </Text>
                   <Text type='secondary' className='text-sm'>
-                    {catalogData.uncategorizedProducts.length} produit
-                    {catalogData.uncategorizedProducts.length > 1 ? 's' : ''}
+                    {catalogData.uncategorizedProducts.length} produk
                   </Text>
                 </div>
 
@@ -416,9 +412,9 @@ export default function CatalogPage() {
               }
               description={
                 <div className='flex flex-col gap-2'>
-                  <Text strong>Aucun résultat</Text>
+                  <Text strong>Tidak ada hasil</Text>
                   <Text type='secondary'>
-                    Importez votre catalogue WhatsApp Business pour commencer
+                    Impor katalog WhatsApp Business Anda untuk memulai
                   </Text>
                 </div>
               }

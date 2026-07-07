@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom'
 
 export function meta() {
   return [
-    { title: 'Options avancées - WhatsApp Agent' },
+    { title: 'Opsi lanjutan - WhatsApp Agent' },
     {
       name: 'description',
-      content: 'Configurez les options avancées de votre boutique',
+      content: 'Konfigurasikan opsi lanjutan toko Anda',
     },
   ]
 }
@@ -33,7 +33,7 @@ export default function OnboardingAdvancedOptions() {
         requestReview: values.requestReview || false,
       })
 
-      message.success('Configuration terminée avec succès!')
+      message.success('Konfigurasi selesai dengan berhasil!')
 
       // Navigate to dashboard
       setTimeout(() => {
@@ -43,7 +43,7 @@ export default function OnboardingAdvancedOptions() {
       console.error('Erreur lors de la sauvegarde:', error)
       message.error(
         error.response?.data?.message ||
-          'Erreur lors de la sauvegarde des options'
+          'Kesalahan saat menyimpan opsi'
       )
     } finally {
       setLoading(false)
@@ -83,17 +83,17 @@ export default function OnboardingAdvancedOptions() {
                 >
                   <Checkbox>
                     <span className='text-lg font-semibold'>
-                      Relancer automatiquement les clients
+                      Mengingatkan klien secara otomatis
                     </span>
                   </Checkbox>
                 </Form.Item>
                 <p className='text-gray-600 mt-2 ml-6'>
-                  Si un client fait une promesse de commande mais ne finalise
-                  pas, lui envoyer automatiquement un rappel après 24 heures.
+                  Jika seorang klien berjanji untuk memesan tetapi tidak
+                  menyelesaikannya, kirimkan otomatis pengingat setelah 24 jam.
                 </p>
                 <div className='ml-6 mt-3'>
-                  <Tag color='blue'>Recommandé</Tag>
-                  <Tag color='green'>Augmente les conversions</Tag>
+                  <Tag color='blue'>Direkomendasikan</Tag>
+                  <Tag color='green'>Meningkatkan konversi</Tag>
                 </div>
               </div>
             </div>
@@ -113,17 +113,17 @@ export default function OnboardingAdvancedOptions() {
                 >
                   <Checkbox>
                     <span className='text-lg font-semibold'>
-                      Demander un avis aux clients
+                      Minta ulasan dari klien
                     </span>
                   </Checkbox>
                 </Form.Item>
                 <p className='text-gray-600 mt-2 ml-6'>
-                  Une fois une commande marquée comme livrée, demander
-                  automatiquement un avis au client sur son expérience d'achat.
+                  Setelah pesanan ditandai sebagai terkirim, minta
+                  otomatis ulasan dari klien tentang pengalaman belanjanya.
                 </p>
                 <div className='ml-6 mt-3'>
-                  <Tag color='gold'>Recommandé</Tag>
-                  <Tag color='purple'>Améliore la réputation</Tag>
+                  <Tag color='gold'>Direkomendasikan</Tag>
+                  <Tag color='purple'>Meningkatkan reputasi</Tag>
                 </div>
               </div>
             </div>
@@ -134,32 +134,32 @@ export default function OnboardingAdvancedOptions() {
             title={
               <Space>
                 <TagsOutlined className='text-blue-600' />
-                <span>Système de tags</span>
+                <span>Sistem tag</span>
               </Space>
             }
             className='bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200'
           >
             <p className='text-gray-700 mb-4'>
-              Les tags vous permettent d'organiser et de filtrer vos clients,
-              commandes et produits.
+              Tag memungkinkan Anda mengatur dan memfilter klien,
+              pesanan, dan produk.
             </p>
 
             <div className='space-y-3'>
               <div>
                 <strong className='text-gray-900'>
-                  Exemples d'utilisation:
+                  Contoh penggunaan:
                 </strong>
                 <ul className='mt-2 ml-6 list-disc text-gray-600 space-y-1'>
-                  <li>Marquer les clients VIP pour un service prioritaire</li>
-                  <li>Identifier les produits en promotion</li>
-                  <li>Catégoriser les commandes par statut personnalisé</li>
-                  <li>Segmenter vos clients par région ou préférence</li>
+                  <li>Tandai klien VIP untuk layanan prioritas</li>
+                  <li>Identifikasi produk yang sedang promo</li>
+                  <li>Kategorikan pesanan berdasarkan status khusus</li>
+                  <li>Segmentasi klien berdasarkan wilayah atau preferensi</li>
                 </ul>
               </div>
 
               <Alert
-                message='Astuce'
-                description="Vous pourrez créer et gérer vos tags depuis le tableau de bord après l'onboarding."
+                message='Tips'
+                description="Anda dapat membuat dan mengelola tag dari dashboard setelah onboarding."
                 type='info'
                 showIcon
                 className='mt-4'
@@ -169,8 +169,8 @@ export default function OnboardingAdvancedOptions() {
 
           {/* Info Alert */}
           <Alert
-            message='Vous pourrez modifier ces options plus tard'
-            description='Ces paramètres peuvent être ajustés à tout moment depuis les paramètres de votre compte.'
+            message='Anda dapat mengubah opsi ini nanti'
+            description='Pengaturan ini dapat disesuaikan kapan saja dari pengaturan akun Anda.'
             type='info'
             showIcon
           />
@@ -178,7 +178,7 @@ export default function OnboardingAdvancedOptions() {
           {/* Action Buttons */}
           <div className='flex items-center justify-between pt-6 border-t'>
             <Button size='large' onClick={handlePrevious}>
-              Précédent
+              Sebelumnya
             </Button>
 
             <Button
@@ -187,7 +187,7 @@ export default function OnboardingAdvancedOptions() {
               htmlType='submit'
               loading={loading}
             >
-              Terminer et accéder au tableau de bord
+              Selesai dan akses dashboard
             </Button>
           </div>
         </div>
