@@ -75,7 +75,7 @@ export class LangChainAgentService {
         ...(baseURL ? { configuration: { baseURL } } : {}),
       });
       this.logger.log(
-        `OpenAI-compatible model initialized — model: ${this.openaiModel.modelName || 'gpt-4o'}, baseURL: ${baseURL || 'default OpenAI'}`,
+        `OpenAI-compatible model initialized — model: ${this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o'}, baseURL: ${baseURL || 'default OpenAI'}`,
       );
     } else {
       this.logger.warn('OpenAI API key not configured');

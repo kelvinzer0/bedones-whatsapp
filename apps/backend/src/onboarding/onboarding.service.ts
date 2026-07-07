@@ -81,23 +81,27 @@ export class OnboardingService {
     }
 
     // OpenAI-compatible model (custom baseURL supported via ChatXAI)
+    // ChatXAI extends ChatOpenAI, so configuration.baseURL works at runtime.
+    // Type cast needed because ChatXAI's TS input type doesn't expose configuration.
     const openaiApiKey = this.configService.get<string>('OPENAI_API_KEY');
     const openaiBaseUrl =
       this.configService.get<string>('OPENAI_API_BASE_URL');
     const openaiModelName =
       this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o';
-    const openaiModel =
-      openaiApiKey
-        ? new ChatXAI({
-            apiKey: openaiApiKey,
-            model: openaiModelName,
-            temperature: 0.7,
-            maxRetries: 2,
-            configuration: openaiBaseUrl
-              ? { baseURL: openaiBaseUrl }
-              : undefined,
-          })
-        : null;
+    const openaiModel = openaiApiKey
+      ? new ChatXAI({
+          apiKey: openaiApiKey,
+          model: openaiModelName,
+          temperature: 0.7,
+          maxRetries: 2,
+          ...(openaiBaseUrl
+            ? ({ configuration: { baseURL: openaiBaseUrl } } as Record<
+                string,
+                unknown
+              >)
+            : {}),
+        })
+      : null;
     if (openaiModel) {
       this.logger.log(
         `✅ OpenAI-compatible model initialized: ${openaiModelName} (baseURL: ${openaiBaseUrl || 'default'})`,

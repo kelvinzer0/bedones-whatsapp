@@ -483,7 +483,7 @@ export class WhatsAppAgentService implements OnModuleInit {
             : {}),
         });
         this.logger.log(
-          `✅ OpenAI-compatible model initialized (${isPrimary ? 'primary' : 'fallback'}) — model: ${model.modelName || 'gpt-4o'}, baseURL: ${baseURL || 'default OpenAI'}`,
+          `✅ OpenAI-compatible model initialized (${isPrimary ? 'primary' : 'fallback'}) — model: ${this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o'}, baseURL: ${baseURL || 'default OpenAI'}`,
         );
         return model;
       }
