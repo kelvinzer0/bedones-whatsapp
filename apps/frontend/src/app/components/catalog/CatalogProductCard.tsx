@@ -38,12 +38,12 @@ function formatCatalogPrice(
   const currencyForIntl = currencyUpper === 'FCFA' ? 'XAF' : currencyUpper
 
   try {
-    return new Intl.NumberFormat('fr-FR', {
+    return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: currencyForIntl,
     }).format(numericPrice)
   } catch {
-    const formatted = new Intl.NumberFormat('fr-FR', {
+    const formatted = new Intl.NumberFormat('id-ID', {
       maximumFractionDigits: 2,
     }).format(numericPrice)
     return `${formatted} ${currencyUpper}`

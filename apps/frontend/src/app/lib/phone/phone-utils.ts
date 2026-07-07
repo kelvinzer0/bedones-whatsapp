@@ -36,7 +36,7 @@ type CountryLookup = {
 
 const displayNames = (() => {
   try {
-    return new Intl.DisplayNames(['fr-FR', 'en-US'], { type: 'region' })
+    return new Intl.DisplayNames(['id-ID', 'en-US'], { type: 'region' })
   } catch {
     return null
   }
@@ -76,7 +76,7 @@ function compareCountries(left: CountryLookup, right: CountryLookup) {
     return leftRank - rightRank
   }
 
-  return left.name.localeCompare(right.name, 'fr', { sensitivity: 'base' })
+  return left.name.localeCompare(right.name, 'id', { sensitivity: 'base' })
 }
 
 function buildCountries() {

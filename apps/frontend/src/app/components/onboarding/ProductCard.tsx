@@ -66,12 +66,12 @@ export function ProductCard({
     const majorAmount = price / 100
 
     try {
-      return new Intl.NumberFormat('fr-FR', {
+      return new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: currencyForIntl,
       }).format(majorAmount)
     } catch {
-      const formatted = new Intl.NumberFormat('fr-FR', {
+      const formatted = new Intl.NumberFormat('id-ID', {
         maximumFractionDigits: 2,
       }).format(majorAmount)
       return `${formatted} ${currencyUpper}`

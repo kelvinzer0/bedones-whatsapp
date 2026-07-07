@@ -134,7 +134,7 @@ export function CountryPhoneInput({
 
           return `${leftOption?.label ?? ''}`.localeCompare(
             `${rightOption?.label ?? ''}`,
-            'fr',
+            'id',
             { sensitivity: 'base' }
           )
         }}

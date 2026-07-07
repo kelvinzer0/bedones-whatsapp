@@ -42,7 +42,7 @@ export const CONTENT_TYPE_META: Record<
 }
 
 export function formatTime(schedule: StatusSchedule) {
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat('id-ID', {
     hour: '2-digit',
     minute: '2-digit',
     timeZone: schedule.timezone,
@@ -50,7 +50,7 @@ export function formatTime(schedule: StatusSchedule) {
 }
 
 export function formatDayHeading(day: string) {
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat('id-ID', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

@@ -236,7 +236,7 @@ export function formatDisplayPrice(amount: number, maximumFractionDigits = 2) {
 }
 
 export function formatCreditsAmount(amount: number) {
-  return amount.toLocaleString('fr-FR')
+  return amount.toLocaleString('id-ID')
 }
 
 export function getPlanCreditsSummary(
