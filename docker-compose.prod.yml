@@ -118,13 +118,18 @@ services:
       WHATSAPP_CONNECTOR_BASE_URL: "http://whatsapp-connector:3001"
       CONNECTOR_SECRET: ${CONNECTOR_SECRET}
       WPPCONNECT_SECRET_KEY: ${WPPCONNECT_SECRET_KEY:-THISISMYSECURETOKEN}
-      # AI providers
+      # AI providers — OpenAI-compatible (primary)
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-zeroai}
+      OPENAI_API_BASE_URL: ${OPENAI_API_BASE_URL}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-openai}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-openai}
+      # AI providers — xAI Grok (optional fallback)
       XAI_API_KEY: ${XAI_API_KEY:-}
       XAI_MODEL: ${XAI_MODEL:-grok-3}
+      # AI providers — Gemini (optional, needed for embeddings/vision/audio)
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-pro}
-      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemini}
-      FALLBACK_MODEL: ${FALLBACK_MODEL:-grok}
       # Minio (optional - leave empty to disable)
       MINIO_ENDPOINT: ${MINIO_ENDPOINT:-}
       MINIO_PORT: ${MINIO_PORT:-9000}
@@ -199,15 +204,23 @@ services:
       # Auth
       AGENT_INTERNAL_JWT_SECRET: ${AGENT_INTERNAL_JWT_SECRET}
       AGENT_BACKEND_TOKEN: ${AGENT_BACKEND_TOKEN:-}
-      # AI providers
+      # AI providers — OpenAI-compatible (primary)
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-zeroai}
+      OPENAI_API_BASE_URL: ${OPENAI_API_BASE_URL}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-openai}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-openai}
+      # AI providers — xAI Grok (optional fallback)
       GROK_API_KEY: ${XAI_API_KEY:-}
+      GROK_MODEL: ${XAI_MODEL:-grok-3}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      XAI_MODEL: ${XAI_MODEL:-grok-3}
+      # AI providers — Gemini (optional, needed for embeddings/vision/audio)
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-pro}
       GEMINI_EMBEDDING_MODEL: text-embedding-004
       CLIP_IMAGE_MODEL: Xenova/clip-vit-base-patch16
       QDRANT_IMAGE_VECTOR_SIZE: "512"
-      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemini}
-      FALLBACK_MODEL: ${FALLBACK_MODEL:-grok}
     command:
       - /bin/sh
       - -c

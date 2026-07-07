@@ -80,6 +80,32 @@ export class OnboardingService {
       this.logger.warn('⚠️ No Gemini API key provided (GEMINI_API_KEY)');
     }
 
+    // OpenAI-compatible model (custom baseURL supported via ChatXAI)
+    const openaiApiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const openaiBaseUrl =
+      this.configService.get<string>('OPENAI_API_BASE_URL');
+    const openaiModelName =
+      this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o';
+    const openaiModel =
+      openaiApiKey
+        ? new ChatXAI({
+            apiKey: openaiApiKey,
+            model: openaiModelName,
+            temperature: 0.7,
+            maxRetries: 2,
+            configuration: openaiBaseUrl
+              ? { baseURL: openaiBaseUrl }
+              : undefined,
+          })
+        : null;
+    if (openaiModel) {
+      this.logger.log(
+        `✅ OpenAI-compatible model initialized: ${openaiModelName} (baseURL: ${openaiBaseUrl || 'default'})`,
+      );
+    } else {
+      this.logger.warn('⚠️ No OpenAI API key provided (OPENAI_API_KEY)');
+    }
+
     // Choose primary / fallback based on env prefs
     const primaryPref =
       this.configService.get<string>('PRIMARY_MODEL')?.toLowerCase() ||
@@ -90,16 +116,26 @@ export class OnboardingService {
     const pickModel = (name: string) => {
       if (name === 'grok' || name === 'xai') return grokModel;
       if (name === 'gemini') return geminiModel;
+      if (name === 'openai' || name === 'gpt' || name === 'custom')
+        return openaiModel;
       return null;
     };
 
     this.primaryModel =
-      pickModel(primaryPref) || geminiModel || grokModel || null;
+      pickModel(primaryPref) ||
+      openaiModel ||
+      geminiModel ||
+      grokModel ||
+      null;
 
     // Avoid same instance for fallback; pick alternative available
     const fallbackCandidate =
       pickModel(fallbackPref) ||
-      (this.primaryModel === geminiModel ? grokModel : geminiModel);
+      (this.primaryModel === openaiModel
+        ? geminiModel || grokModel
+        : this.primaryModel === geminiModel
+          ? openaiModel || grokModel
+          : openaiModel || geminiModel);
     this.fallbackModel =
       fallbackCandidate === this.primaryModel ? null : fallbackCandidate;
 

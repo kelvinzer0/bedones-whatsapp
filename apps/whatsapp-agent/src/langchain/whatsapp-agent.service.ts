@@ -463,20 +463,27 @@ export class WhatsAppAgentService implements OnModuleInit {
       }
 
       case 'openai':
-      case 'gpt': {
+      case 'gpt':
+      case 'custom': {
         const apiKey = this.configService.get<string>('OPENAI_API_KEY');
         if (!apiKey) {
           this.logger.warn(`⚠️ OPENAI_API_KEY not configured for ${modelType}`);
           return null;
         }
+        const baseURL =
+          this.configService.get<string>('OPENAI_API_BASE_URL') || undefined;
         const model = new ChatOpenAI({
           openAIApiKey: apiKey,
-          modelName: this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o',
+          modelName:
+            this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o',
           temperature: 0.7,
           maxRetries: retries,
+          ...(baseURL
+            ? { configuration: { baseURL } }
+            : {}),
         });
         this.logger.log(
-          `✅ OpenAI model initialized (${isPrimary ? 'primary' : 'fallback'})`,
+          `✅ OpenAI-compatible model initialized (${isPrimary ? 'primary' : 'fallback'}) — model: ${model.modelName || 'gpt-4o'}, baseURL: ${baseURL || 'default OpenAI'}`,
         );
         return model;
       }

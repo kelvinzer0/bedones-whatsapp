@@ -1,35 +1,56 @@
 import { BackendClientService } from '@app/backend-client/backend-client.service';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatOpenAI } from '@langchain/openai';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PromptGeneratorService {
   private readonly logger = new Logger(PromptGeneratorService.name);
-  private readonly model: ChatGoogleGenerativeAI;
+  private readonly model: ChatGoogleGenerativeAI | ChatOpenAI;
   private generationPromise: Promise<string> | null = null;
 
   constructor(
     private readonly backendClient: BackendClientService,
     private readonly configService: ConfigService,
   ) {
-    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-    if (!apiKey) {
-      throw new Error('Missing GEMINI_API_KEY for PromptGeneratorService');
-    }
+    // Try Gemini first, fall back to OpenAI-compatible endpoint
+    const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY');
+    const openaiApiKey = this.configService.get<string>('OPENAI_API_KEY');
 
-    this.model = new ChatGoogleGenerativeAI({
-      apiKey,
-      model:
-        this.configService.get<string>('GEMINI_PROMPT_GENERATOR_MODEL') ||
-        'gemini-3.1-pro-preview',
-      temperature: 0.2,
-      thinkingConfig: {
-        thinkingLevel: 'HIGH',
-      },
-      maxRetries: 2,
-    });
+    if (geminiApiKey) {
+      this.model = new ChatGoogleGenerativeAI({
+        apiKey: geminiApiKey,
+        model:
+          this.configService.get<string>('GEMINI_PROMPT_GENERATOR_MODEL') ||
+          'gemini-3.1-pro-preview',
+        temperature: 0.2,
+        thinkingConfig: {
+          thinkingLevel: 'HIGH',
+        },
+        maxRetries: 2,
+      });
+      this.logger.log('PromptGenerator using Gemini model');
+    } else if (openaiApiKey) {
+      const baseURL =
+        this.configService.get<string>('OPENAI_API_BASE_URL') || undefined;
+      this.model = new ChatOpenAI({
+        openAIApiKey: openaiApiKey,
+        modelName:
+          this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o',
+        temperature: 0.2,
+        maxRetries: 2,
+        ...(baseURL ? { configuration: { baseURL } } : {}),
+      });
+      this.logger.log(
+        `PromptGenerator using OpenAI-compatible model (baseURL: ${baseURL || 'default'})`,
+      );
+    } else {
+      throw new Error(
+        'Missing GEMINI_API_KEY or OPENAI_API_KEY for PromptGeneratorService',
+      );
+    }
   }
 
   async ensureCustomPrompt(): Promise<string> {
@@ -79,7 +100,7 @@ export class PromptGeneratorService {
       `Generating custom image description prompt from ${products.length} sample products${businessContext ? ' with business context' : ''}`,
     );
 
-    this.logger.debug('Invoking Gemini model with thinking level HIGH...');
+    this.logger.debug('Invoking model for prompt generation...');
 
     try {
       const result = await this.model.invoke([
@@ -89,7 +110,7 @@ export class PromptGeneratorService {
         new HumanMessage(prompt),
       ]);
 
-      this.logger.debug('Gemini model responded successfully');
+      this.logger.debug('Model responded successfully');
 
       const finalPrompt = String(result.content).trim();
 
@@ -110,7 +131,7 @@ export class PromptGeneratorService {
 
       return finalPrompt;
     } catch (error) {
-      this.logger.error('Failed to generate custom prompt with Gemini:', error);
+      this.logger.error('Failed to generate custom prompt:', error);
       throw error;
     }
   }

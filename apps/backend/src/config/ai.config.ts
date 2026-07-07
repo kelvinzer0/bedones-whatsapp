@@ -9,6 +9,11 @@ export interface AIConfig {
     apiKey: string;
     model: string;
   };
+  openai: {
+    apiKey: string;
+    model: string;
+    baseUrl: string;
+  };
 }
 
 export default registerAs(
@@ -21,6 +26,11 @@ export default registerAs(
     gemini: {
       apiKey: process.env.GEMINI_API_KEY || '',
       model: process.env.GEMINI_MODEL || 'gemini-2.5-pro',
+    },
+    openai: {
+      apiKey: process.env.OPENAI_API_KEY || '',
+      model: process.env.OPENAI_MODEL || 'gpt-4o',
+      baseUrl: process.env.OPENAI_API_BASE_URL || '',
     },
   }),
 );

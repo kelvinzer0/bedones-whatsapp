@@ -12,6 +12,7 @@ export class LangChainAgentService {
   private readonly logger = new Logger(LangChainAgentService.name);
   private grokModel: ChatOpenAI | null = null;
   private geminiModel: ChatGoogleGenerativeAI | null = null;
+  private openaiModel: ChatOpenAI | null = null;
   private tools: any[];
   private systemPrompt: string;
 
@@ -61,9 +62,28 @@ export class LangChainAgentService {
       this.logger.warn('Gemini API key not configured');
     }
 
-    if (!this.grokModel && !this.geminiModel) {
+    // OpenAI-compatible (custom baseURL supported)
+    const openaiApiKey = this.configService.get<string>('OPENAI_API_KEY');
+    if (openaiApiKey) {
+      const baseURL =
+        this.configService.get<string>('OPENAI_API_BASE_URL') || undefined;
+      this.openaiModel = new ChatOpenAI({
+        openAIApiKey: openaiApiKey,
+        modelName:
+          this.configService.get<string>('OPENAI_MODEL') || 'gpt-4o',
+        temperature: 0.7,
+        ...(baseURL ? { configuration: { baseURL } } : {}),
+      });
+      this.logger.log(
+        `OpenAI-compatible model initialized — model: ${this.openaiModel.modelName || 'gpt-4o'}, baseURL: ${baseURL || 'default OpenAI'}`,
+      );
+    } else {
+      this.logger.warn('OpenAI API key not configured');
+    }
+
+    if (!this.grokModel && !this.geminiModel && !this.openaiModel) {
       throw new Error(
-        'No AI model configured. Please set either GROK_API_KEY or GEMINI_API_KEY',
+        'No AI model configured. Please set GROK_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY',
       );
     }
   }
@@ -91,6 +111,19 @@ export class LangChainAgentService {
           return response.content.toString();
         } catch (error: any) {
           this.logger.error('Grok model failed:', error.message);
+          this.logger.log('Falling back...');
+        }
+      }
+
+      // Essayer OpenAI-compatible (si configuré)
+      if (this.openaiModel) {
+        try {
+          this.logger.debug('Trying OpenAI-compatible model...');
+          const response = await this.openaiModel.invoke(fullMessage);
+          this.logger.log('Response generated successfully with OpenAI-compatible model');
+          return response.content.toString();
+        } catch (error: any) {
+          this.logger.error('OpenAI model failed:', error.message);
           this.logger.log('Falling back to Gemini...');
         }
       }
