@@ -17,8 +17,12 @@ import { ContactResolverService } from './contact/contact-resolver.service';
 import { GroupTools } from './group/group.tools';
 import { IntentTools } from './intent/intent.tools';
 import { LabelsTools } from './labels/labels.tools';
+import { MediaTools } from './media/media.tools';
+import { TtsService } from './media/tts.service';
 import { MemoryTools } from './memory/memory.tools';
 import { MessagesTools } from './messages/messages.tools';
+import { WebSearchService } from './web/web-search.service';
+import { WebTools } from './web/web.tools';
 
 @Module({
   imports: [
@@ -39,9 +43,13 @@ import { MessagesTools } from './messages/messages.tools';
     ChatTools,
     GroupTools,
     LabelsTools,
+    MediaTools,
+    TtsService,
     MemoryTools,
     IntentTools,
     MessagesTools,
+    WebSearchService,
+    WebTools,
   ],
   controllers: [CommunicationTestController],
   exports: [
@@ -53,9 +61,13 @@ import { MessagesTools } from './messages/messages.tools';
     ChatTools,
     GroupTools,
     LabelsTools,
+    MediaTools,
+    TtsService,
     MemoryTools,
     IntentTools,
     MessagesTools,
+    WebSearchService,
+    WebTools,
   ],
 })
 export class ToolsModule {}

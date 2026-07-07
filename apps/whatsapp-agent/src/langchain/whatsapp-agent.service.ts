@@ -14,8 +14,10 @@ import { CommunicationTools } from '@app/tools/communication/communication.tools
 import { GroupTools } from '@app/tools/group/group.tools';
 import { IntentTools } from '@app/tools/intent/intent.tools';
 import { LabelsTools } from '@app/tools/labels/labels.tools';
+import { MediaTools } from '@app/tools/media/media.tools';
 import { MemoryTools } from '@app/tools/memory/memory.tools';
 import { MessagesTools } from '@app/tools/messages/messages.tools';
+import { WebTools } from '@app/tools/web/web.tools';
 import { ToolMessage } from '@langchain/core/messages';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatOpenAI } from '@langchain/openai';
@@ -138,6 +140,8 @@ export class WhatsAppAgentService implements OnModuleInit {
     private readonly memoryTools: MemoryTools,
     private readonly messagesTools: MessagesTools,
     private readonly intentTools: IntentTools,
+    private readonly mediaTools: MediaTools,
+    private readonly webTools: WebTools,
     private readonly sanitizationService: SanitizationService,
     private readonly rateLimitService: RateLimitService,
     private readonly backendClient: BackendClientService,
@@ -178,6 +182,8 @@ export class WhatsAppAgentService implements OnModuleInit {
       ...this.memoryTools.createTools(),
       ...this.messagesTools.createTools(),
       ...this.intentTools.createTools(),
+      ...this.mediaTools.createTools(),
+      ...this.webTools.createTools(),
     ];
 
     let tools = allTools;
