@@ -371,7 +371,7 @@ export class BillingService {
             reference,
             BillingPaymentStatus.CANCELED,
             {
-              failureReason: 'Paiement Stripe annulé.',
+              failureReason: 'Pembayaran Stripe dibatalkan.',
               metadata: query,
             },
           );
@@ -466,7 +466,7 @@ export class BillingService {
           reference,
           BillingPaymentStatus.EXPIRED,
           {
-            failureReason: 'Session Stripe expirée.',
+            failureReason: 'Sesi Stripe kedaluwarsa.',
             metadata: session,
             providerSessionId: session.id,
           },
@@ -630,7 +630,7 @@ export class BillingService {
           payment.reference,
           BillingPaymentStatus.FAILED,
           {
-            failureReason: 'Paiement Notch Pay échoué.',
+            failureReason: 'Pembayaran Notch Pay gagal.',
             metadata: {
               query,
               verification,
@@ -660,7 +660,7 @@ export class BillingService {
           payment.reference,
           BillingPaymentStatus.CANCELED,
           {
-            failureReason: 'Paiement Notch Pay annulé.',
+            failureReason: 'Pembayaran Notch Pay dibatalkan.',
             metadata: {
               query,
               verification,
@@ -820,7 +820,7 @@ export class BillingService {
         break;
       case 'checkout.session.async_payment_failed':
         await this.updatePaymentStatus(reference, BillingPaymentStatus.FAILED, {
-          failureReason: 'Paiement Stripe refusé.',
+          failureReason: 'Pembayaran Stripe ditolak.',
           metadata: dataObject,
           providerSessionId: session.id,
         });
@@ -835,7 +835,7 @@ export class BillingService {
           reference,
           BillingPaymentStatus.EXPIRED,
           {
-            failureReason: 'Session Stripe expirée.',
+            failureReason: 'Sesi Stripe kedaluwarsa.',
             metadata: dataObject,
             providerSessionId: session.id,
           },
@@ -934,7 +934,7 @@ export class BillingService {
         payment.reference,
         BillingPaymentStatus.FAILED,
         {
-          failureReason: 'Paiement Notch Pay échoué.',
+          failureReason: 'Pembayaran Notch Pay gagal.',
           metadata: event,
           providerPaymentId:
             typeof transaction?.id === 'string' ? transaction.id : reference,
@@ -951,7 +951,7 @@ export class BillingService {
         payment.reference,
         BillingPaymentStatus.CANCELED,
         {
-          failureReason: 'Paiement Notch Pay annulé.',
+          failureReason: 'Pembayaran Notch Pay dibatalkan.',
           metadata: event,
           providerPaymentId:
             typeof transaction?.id === 'string' ? transaction.id : reference,

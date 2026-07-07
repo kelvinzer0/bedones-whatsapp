@@ -33,13 +33,13 @@ export class CatalogController {
   @UseGuards(CatalogUploadGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Upload une image de produit depuis le connector',
+    summary: 'Upload gambar produk dari connector',
     description:
-      'Endpoint appelé par le script exécuté dans le connector pour uploader les images des produits. Le clientId est extrait du token JWT pour des raisons de sécurité. Accepte les données en base64 (JSON) depuis nodeFetch.',
+      'Endpoint dipanggil oleh script yang dijalankan di connector untuk mengupload gambar produk. clientId diekstrak dari token JWT untuk alasan keamanan. Menerima data dalam base64 (JSON) dari nodeFetch.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Image uploadée avec succès',
+    description: 'Gambar berhasil diupload',
     schema: {
       example: {
         success: true,
@@ -49,11 +49,11 @@ export class CatalogController {
   })
   @ApiResponse({
     status: 400,
-    description: "Erreur lors de l'upload",
+    description: 'Kesalahan saat upload',
   })
   @ApiResponse({
     status: 401,
-    description: 'Token invalide ou expiré',
+    description: 'Token tidak valid atau kedaluwarsa',
   })
   async uploadImage(
     @ClientId() clientId: string, // Extrait du token JWT
@@ -124,13 +124,13 @@ export class CatalogController {
   @UseGuards(CatalogUploadGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: "Upload l'avatar du compte WhatsApp",
+    summary: 'Upload avatar akun WhatsApp',
     description:
-      "Endpoint appelé par le script exécuté dans le connector pour uploader l'avatar du compte. Le clientId est extrait du token JWT. Accepte les données en base64 (JSON) depuis nodeFetch.",
+      'Endpoint dipanggil oleh script yang dijalankan di connector untuk mengupload avatar akun. clientId diekstrak dari token JWT. Menerima data dalam base64 (JSON) dari nodeFetch.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Avatar uploadé avec succès',
+    description: 'Avatar berhasil diupload',
   })
   async uploadAvatar(
     @ClientId() clientId: string,
@@ -171,13 +171,13 @@ export class CatalogController {
   @UseGuards(CatalogUploadGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Sauvegarde les informations du client WhatsApp',
+    summary: 'Simpan informasi klien WhatsApp',
     description:
-      'Endpoint appelé par le script pour sauvegarder les informations du compte WhatsApp Business.',
+      'Endpoint dipanggil oleh script untuk menyimpan informasi akun WhatsApp Business.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Informations sauvegardées avec succès',
+    description: 'Informasi berhasil disimpan',
   })
   async saveClientInfo(
     @ClientId() clientId: string,
@@ -204,13 +204,13 @@ export class CatalogController {
   @UseGuards(CatalogUploadGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Sauvegarde le catalogue (collections et produits)',
+    summary: 'Simpan katalog (koleksi dan produk)',
     description:
-      'Endpoint appelé par le script pour sauvegarder le catalogue complet avec les collections et produits.',
+      'Endpoint dipanggil oleh script untuk menyimpan katalog lengkap dengan koleksi dan produk.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Catalogue sauvegardé avec succès',
+    description: 'Katalog berhasil disimpan',
   })
   async saveCatalog(
     @ClientId() clientId: string,
@@ -235,13 +235,13 @@ export class CatalogController {
   @UseGuards(CatalogUploadGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Supprime des images obsolètes',
+    summary: 'Hapus gambar usang',
     description:
-      'Endpoint appelé par le script pour supprimer les images qui ne sont plus dans le catalogue WhatsApp. Supprime les fichiers de Minio et les entrées de la BD.',
+      'Endpoint dipanggil oleh script untuk menghapus gambar yang tidak lagi ada di katalog WhatsApp. Menghapus file dari Minio dan entri dari database.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Images supprimées avec succès',
+    description: 'Gambar berhasil dihapus',
     schema: {
       example: {
         success: true,
@@ -251,11 +251,11 @@ export class CatalogController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Erreur lors de la suppression',
+    description: 'Kesalahan saat menghapus',
   })
   @ApiResponse({
     status: 401,
-    description: 'Token invalide ou expiré',
+    description: 'Token tidak valid atau kedaluwarsa',
   })
   async deleteImages(
     @ClientId() clientId: string,
@@ -333,7 +333,7 @@ export class CatalogController {
   @ApiOperation({
     summary: 'Get image sync status',
     description:
-      "Endpoint frontend (dashboard catalogue) pour afficher l'état de la synchronisation asynchrone des images (SYNCING/DONE/FAILED) après un force-sync.",
+      'Endpoint frontend (dashboard katalog) untuk menampilkan status sinkronisasi gambar asinkron (SYNCING/DONE/FAILED) setelah force-sync.',
   })
   @ApiResponse({
     status: 200,
@@ -354,13 +354,13 @@ export class CatalogController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: "Récupère le catalogue de l'utilisateur",
+    summary: 'Ambil katalog pengguna',
     description:
-      'Retourne toutes les collections avec leurs produits et les produits non catégorisés.',
+      'Mengembalikan semua koleksi dengan produknya dan produk yang tidak terkategori.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Catalogue récupéré avec succès',
+    description: 'Katalog berhasil diambil',
   })
   @ApiResponse({
     status: 401,

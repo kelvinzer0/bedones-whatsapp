@@ -106,7 +106,7 @@ export class WaJsToolsService {
         },
         {
           name: 'getAllLabels',
-          description: 'Récupérer tous les labels WhatsApp',
+          description: 'Ambil semua label WhatsApp',
           schema: z.object({}),
         },
       ),
@@ -129,10 +129,10 @@ export class WaJsToolsService {
         },
         {
           name: 'addNewLabel',
-          description: 'Créer un nouveau label WhatsApp',
+          description: 'Buat label WhatsApp baru',
           schema: z.object({
-            name: z.string().describe('Nom du label'),
-            color: z.string().optional().describe('Couleur hex (ex: #4CAF50)'),
+            name: z.string().describe('Nama label'),
+            color: z.string().optional().describe('Warna hex (cth: #4CAF50)'),
           }),
         },
       ),
@@ -152,11 +152,11 @@ export class WaJsToolsService {
         },
         {
           name: 'editLabel',
-          description: 'Modifier un label existant',
+          description: 'Ubah label yang ada',
           schema: z.object({
-            labelId: z.string().describe('ID du label'),
-            name: z.string().describe('Nouveau nom'),
-            color: z.string().optional().describe('Nouvelle couleur hex'),
+            labelId: z.string().describe('ID label'),
+            name: z.string().describe('Nama baru'),
+            color: z.string().optional().describe('Warna hex baru'),
           }),
         },
       ),
@@ -178,9 +178,9 @@ export class WaJsToolsService {
         },
         {
           name: 'deleteLabel',
-          description: 'Supprimer un label',
+          description: 'Hapus label',
           schema: z.object({
-            labelId: z.string().describe('ID du label à supprimer'),
+            labelId: z.string().describe('ID label yang akan dihapus'),
           }),
         },
       ),
@@ -204,11 +204,11 @@ export class WaJsToolsService {
         },
         {
           name: 'addOrRemoveLabels',
-          description: "Ajouter ou retirer des labels d'une conversation",
+          description: "Tambah atau hapus label dari percakapan",
           schema: z.object({
-            chatId: z.string().describe('ID de la conversation'),
-            labelIds: z.array(z.string()).describe('IDs des labels'),
-            action: z.enum(['add', 'remove']).describe('Action à effectuer'),
+            chatId: z.string().describe('ID percakapan'),
+            labelIds: z.array(z.string()).describe('ID label'),
+            action: z.enum(['add', 'remove']).describe('Aksi yang akan dilakukan'),
           }),
         },
       ),
@@ -233,10 +233,10 @@ export class WaJsToolsService {
         },
         {
           name: 'getMessages',
-          description: "Lire les messages d'une conversation",
+          description: "Baca pesan dari percakapan",
           schema: z.object({
-            chatId: z.string().describe('ID de la conversation'),
-            limit: z.number().optional().describe('Nombre de messages'),
+            chatId: z.string().describe('ID percakapan'),
+            limit: z.number().optional().describe('Jumlah pesan'),
           }),
         },
       ),
@@ -254,9 +254,9 @@ export class WaJsToolsService {
         },
         {
           name: 'markIsRead',
-          description: 'Marquer une conversation comme lue',
+          description: 'Tandai percakapan sebagai dibaca',
           schema: z.object({
-            chatId: z.string().describe('ID de la conversation'),
+            chatId: z.string().describe('ID percakapan'),
           }),
         },
       ),
@@ -284,9 +284,9 @@ export class WaJsToolsService {
         },
         {
           name: 'getContact',
-          description: "Obtenir les informations d'un contact",
+          description: "Dapatkan informasi kontak",
           schema: z.object({
-            contactId: z.string().describe('ID du contact'),
+            contactId: z.string().describe('ID kontak'),
           }),
         },
       ),
@@ -316,24 +316,24 @@ export class WaJsToolsService {
         {
           name: 'getContactList',
           description:
-            'Obtenir la liste des contacts (max 10). Filtres disponibles: onlyMyContacts, withLabels, name (recherche par nom)',
+            'Dapatkan daftar kontak (maks 10). Filter tersedia: onlyMyContacts, withLabels, name (pencarian berdasarkan nama)',
           schema: z.object({
             onlyMyContacts: z
               .boolean()
               .optional()
-              .describe('Uniquement mes contacts (défaut: true)'),
+              .describe('Hanya kontak saya (default: true)'),
             withLabels: z
               .array(z.string())
               .optional()
-              .describe('Filtrer par labels (noms ou IDs)'),
+              .describe('Filter berdasarkan label (nama atau ID)'),
             name: z
               .string()
               .optional()
-              .describe('Rechercher un contact par nom'),
+              .describe('Cari kontak berdasarkan nama'),
             limit: z
               .number()
               .optional()
-              .describe('Nombre max de résultats (max 10, défaut: 10)'),
+              .describe('Jumlah maks hasil (maks 10, default: 10)'),
           }),
         },
       ),
@@ -353,9 +353,9 @@ export class WaJsToolsService {
         },
         {
           name: 'queryContactExists',
-          description: 'Vérifier si un numéro existe sur WhatsApp',
+          description: 'Periksa apakah nomor ada di WhatsApp',
           schema: z.object({
-            phoneNumber: z.string().describe('Numéro de téléphone'),
+            phoneNumber: z.string().describe('Nomor telepon'),
           }),
         },
       ),
@@ -377,7 +377,7 @@ export class WaJsToolsService {
         },
         {
           name: 'getAllGroups',
-          description: 'Récupérer tous les groupes WhatsApp',
+          description: 'Ambil semua grup WhatsApp',
           schema: z.object({}),
         },
       ),
@@ -396,12 +396,12 @@ export class WaJsToolsService {
         },
         {
           name: 'createGroup',
-          description: 'Créer un nouveau groupe WhatsApp',
+          description: 'Buat grup WhatsApp baru',
           schema: z.object({
-            name: z.string().describe('Nom du groupe'),
+            name: z.string().describe('Nama grup'),
             participants: z
               .array(z.string())
-              .describe('Numéros des participants'),
+              .describe('Nomor peserta'),
           }),
         },
       ),
@@ -426,7 +426,7 @@ export class WaJsToolsService {
         },
         {
           name: 'getMyProfileName',
-          description: 'Obtenir le nom du profil WhatsApp',
+          description: 'Dapatkan nama profil WhatsApp',
           schema: z.object({}),
         },
       ),
@@ -446,9 +446,9 @@ export class WaJsToolsService {
         },
         {
           name: 'setMyProfileName',
-          description: 'Modifier le nom du profil WhatsApp',
+          description: 'Ubah nama profil WhatsApp',
           schema: z.object({
-            name: z.string().describe('Nouveau nom'),
+            name: z.string().describe('Nama baru'),
           }),
         },
       ),
@@ -473,7 +473,7 @@ export class WaJsToolsService {
         },
         {
           name: 'getCollections',
-          description: 'Récupérer toutes les collections du catalogue WhatsApp',
+          description: 'Ambil semua koleksi katalog WhatsApp',
           schema: z.object({}),
         },
       ),
@@ -495,9 +495,9 @@ export class WaJsToolsService {
         },
         {
           name: 'getProductsFromCollection',
-          description: "Récupérer les produits d'une collection spécifique",
+          description: "Ambil produk dari koleksi tertentu",
           schema: z.object({
-            collectionId: z.string().describe('ID de la collection'),
+            collectionId: z.string().describe('ID koleksi'),
           }),
         },
       ),
@@ -520,10 +520,10 @@ export class WaJsToolsService {
         },
         {
           name: 'setProductVisibility',
-          description: 'Afficher ou masquer un produit',
+          description: 'Tampilkan atau sembunyikan produk',
           schema: z.object({
-            productId: z.string().describe('ID du produit'),
-            visible: z.boolean().describe('Visible ou non'),
+            productId: z.string().describe('ID produk'),
+            visible: z.boolean().describe('Tampak atau tidak'),
           }),
         },
       ),

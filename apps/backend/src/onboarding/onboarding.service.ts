@@ -407,14 +407,14 @@ export class OnboardingService {
         aiResponse = JSON.stringify({
           score: 20,
           context:
-            '## Informations de base récupérées\n\n- Profil WhatsApp Business connecté\n- Catalogue synchronisé',
+            '## Informasi dasar diambil\n\n- Profil WhatsApp Business terhubung\n- Katalog disinkronkan',
           needs: [
-            'Politique de livraison',
-            'Moyens de paiement acceptés',
-            'Politique de retour',
+            'Kebijakan pengiriman',
+            'Metode pembayaran yang diterima',
+            'Kebijakan retur',
           ],
           question:
-            'Proposez-vous la livraison à vos clients ? Si oui, dans quelles villes ?',
+            'Apakah Anda menyediakan pengiriman ke klien? Jika ya, ke kota mana?',
         });
       }
 
@@ -617,7 +617,7 @@ export class OnboardingService {
         // Emit error to user via WebSocket
         this.onboardingGateway.emitError(userId, {
           message:
-            "Désolé, l'IA rencontre actuellement un problème technique. Notre équipe a été notifiée. Veuillez réessayer dans quelques instants.",
+            "Maaf, AI sedang mengalami masalah teknis. Tim kami telah diberi tahu. Silakan coba lagi dalam beberapa saat.",
           type: 'ai_failure',
           retryable: true,
         });
@@ -693,7 +693,7 @@ export class OnboardingService {
     // Check score for warning
     let warning: string | null = null;
     if (thread.score < 80) {
-      warning = `Le score actuel est de ${thread.score}%. Il est recommandé d'avoir au moins 80% pour une expérience optimale. Vous pouvez continuer à améliorer le contexte plus tard.`;
+      warning = `Skor saat ini adalah ${thread.score}%. Disarankan untuk memiliki setidaknya 80% untuk pengalaman optimal. Anda dapat terus meningkatkan konteks nanti.`;
     }
 
     // Mark as completed

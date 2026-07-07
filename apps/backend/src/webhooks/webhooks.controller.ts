@@ -93,13 +93,13 @@ export class WebhooksController {
 
   @Post('whatsapp/connected')
   @ApiOperation({
-    summary: 'Webhook appelé quand WhatsApp se connecte',
+    summary: 'Webhook dipanggil saat WhatsApp terhubung',
     description:
-      'Endpoint appelé par le whatsapp-connector quand le client WhatsApp est prêt',
+      'Endpoint dipanggil oleh whatsapp-connector saat klien WhatsApp siap',
   })
   @ApiResponse({
     status: 200,
-    description: 'Connexion traitée avec succès',
+    description: 'Koneksi berhasil diproses',
   })
   async whatsappConnected(@Body() data: WhatsAppConnectedDto) {
     this.logger.log(`WhatsApp connected for: ${data.phoneNumber}`);
@@ -164,13 +164,13 @@ export class WebhooksController {
 
   @Post('whatsapp/events')
   @ApiOperation({
-    summary: 'Webhook pour tous les events WhatsApp',
+    summary: 'Webhook untuk semua event WhatsApp',
     description:
-      'Endpoint appelé par le whatsapp-connector pour tous les events (qr, authenticated, etc.)',
+      'Endpoint dipanggil oleh whatsapp-connector untuk semua event (qr, authenticated, dll.)',
   })
   @ApiResponse({
     status: 200,
-    description: 'Event traité avec succès',
+    description: 'Event berhasil diproses',
   })
   async whatsappEvents(@Body() payload: WhatsAppEventDto) {
     const timestamp = new Date().toISOString();

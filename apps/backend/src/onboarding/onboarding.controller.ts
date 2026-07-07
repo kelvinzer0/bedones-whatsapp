@@ -85,7 +85,7 @@ export class OnboardingController {
   @ApiOperation({
     summary: 'Ensure initial AI evaluation job exists',
     description:
-      "Crée et déclenche l'analyse initiale si aucune donnée n'est présente pour l'utilisateur.",
+      "Membuat dan memicu analisis awal jika tidak ada data untuk pengguna.",
   })
   async ensureInitialEvaluation(@Request() req: any) {
     return await this.onboardingService.ensureInitialEvaluation(req.user.id);

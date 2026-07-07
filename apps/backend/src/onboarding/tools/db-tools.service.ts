@@ -76,7 +76,7 @@ export class DbToolsService {
       },
       {
         name: 'readUserInfo',
-        description: "Lire les informations de l'utilisateur connecté",
+        description: "Baca informasi pengguna yang terhubung",
         schema: z.object({}),
       },
     );
@@ -96,7 +96,7 @@ export class DbToolsService {
       },
       {
         name: 'readBusinessProfile',
-        description: 'Lire le profil business WhatsApp complet',
+        description: 'Baca profil bisnis WhatsApp lengkap',
         schema: z.object({}),
       },
     );
@@ -126,16 +126,16 @@ export class DbToolsService {
       },
       {
         name: 'readProducts',
-        description: 'Lire les produits du catalogue',
+        description: 'Baca produk katalog',
         schema: z.object({
           limit: z
             .number()
             .optional()
-            .describe('Nombre max de produits (défaut 50)'),
+            .describe('Jumlah maks produk (default 50)'),
           collectionId: z
             .string()
             .optional()
-            .describe('Filtrer par ID de collection'),
+            .describe('Filter berdasarkan ID koleksi'),
         }),
       },
     );
@@ -159,9 +159,9 @@ export class DbToolsService {
       },
       {
         name: 'updateContext',
-        description: "Mettre à jour le contexte de l'agent (format Markdown)",
+        description: "Perbarui konteks agent (format Markdown)",
         schema: z.object({
-          context: z.string().describe('Nouveau contexte en markdown'),
+          context: z.string().describe('Konteks baru dalam markdown'),
         }),
       },
     );
@@ -182,9 +182,9 @@ export class DbToolsService {
       },
       {
         name: 'updateNeeds',
-        description: "Mettre à jour les besoins identifiés pour l'agent",
+        description: "Perbarui kebutuhan yang teridentifikasi untuk agent",
         schema: z.object({
-          needs: z.array(z.string()).describe('Liste des besoins'),
+          needs: z.array(z.string()).describe('Daftar kebutuhan'),
         }),
       },
     );
@@ -205,7 +205,7 @@ export class DbToolsService {
       },
       {
         name: 'getContextScore',
-        description: 'Obtenir le score actuel du contexte',
+        description: 'Dapatkan skor konteks saat ini',
         schema: z.object({}),
       },
     );
@@ -238,7 +238,7 @@ export class DbToolsService {
       {
         name: 'listAuthorizedGroups',
         description:
-          'Lister tous les groupes WhatsApp autorisés enregistrés dans la base de données avec leurs usages',
+          'Daftar semua grup WhatsApp yang diizinkan terdaftar di database dengan penggunaannya',
         schema: z.object({}),
       },
     );
@@ -263,7 +263,7 @@ export class DbToolsService {
         if (existing) {
           return JSON.stringify({
             success: false,
-            error: 'Ce groupe est déjà enregistré',
+            error: 'Grup ini sudah terdaftar',
             existingGroup: existing,
           });
         }
@@ -279,23 +279,23 @@ export class DbToolsService {
 
         return JSON.stringify({
           success: true,
-          message: 'Groupe ajouté avec succès',
+          message: 'Grup berhasil ditambahkan',
           group,
         });
       },
       {
         name: 'addAuthorizedGroup',
         description:
-          "Ajouter un groupe WhatsApp à la liste des groupes autorisés avec son usage (ex: 'Support client', 'Ventes', 'Notifications')",
+          "Tambahkan grup WhatsApp ke daftar grup yang diizinkan dengan penggunaannya (cth: 'Dukungan klien', 'Penjualan', 'Notifikasi')",
         schema: z.object({
           whatsappGroupId: z
             .string()
-            .describe("ID WhatsApp du groupe (ex: '12345@g.us')"),
-          name: z.string().describe('Nom du groupe'),
+            .describe("ID WhatsApp grup (cth: '12345@g.us')"),
+          name: z.string().describe('Nama grup'),
           usage: z
             .string()
             .describe(
-              "Usage du groupe (ex: 'Support client', 'Ventes', 'Notifications')",
+              "Penggunaan grup (cth: 'Dukungan klien', 'Penjualan', 'Notifikasi')",
             ),
         }),
       },
@@ -321,7 +321,7 @@ export class DbToolsService {
         if (!group) {
           return JSON.stringify({
             success: false,
-            error: 'Groupe non trouvé ou non autorisé',
+            error: 'Grup tidak ditemukan atau tidak diizinkan',
           });
         }
 
@@ -335,17 +335,17 @@ export class DbToolsService {
 
         return JSON.stringify({
           success: true,
-          message: 'Groupe mis à jour avec succès',
+          message: 'Grup berhasil diperbarui',
           group: updated,
         });
       },
       {
         name: 'updateAuthorizedGroup',
-        description: "Modifier le nom ou l'usage d'un groupe autorisé",
+        description: "Ubah nama atau penggunaan grup yang diizinkan",
         schema: z.object({
-          groupId: z.string().describe('ID du groupe dans la base de données'),
-          name: z.string().optional().describe('Nouveau nom du groupe'),
-          usage: z.string().optional().describe('Nouvel usage du groupe'),
+          groupId: z.string().describe('ID grup di database'),
+          name: z.string().optional().describe('Nama grup baru'),
+          usage: z.string().optional().describe('Penggunaan grup baru'),
         }),
       },
     );
@@ -370,7 +370,7 @@ export class DbToolsService {
         if (!group) {
           return JSON.stringify({
             success: false,
-            error: 'Groupe non trouvé ou non autorisé',
+            error: 'Grup tidak ditemukan atau tidak diizinkan',
           });
         }
 
@@ -380,14 +380,14 @@ export class DbToolsService {
 
         return JSON.stringify({
           success: true,
-          message: 'Groupe supprimé avec succès',
+          message: 'Grup berhasil dihapus',
         });
       },
       {
         name: 'deleteAuthorizedGroup',
-        description: 'Supprimer un groupe de la liste des groupes autorisés',
+        description: 'Hapus grup dari daftar grup yang diizinkan',
         schema: z.object({
-          groupId: z.string().describe('ID du groupe dans la base de données'),
+          groupId: z.string().describe('ID grup di database'),
         }),
       },
     );

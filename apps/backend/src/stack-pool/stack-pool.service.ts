@@ -355,7 +355,7 @@ export class StackPoolService implements OnModuleInit {
 
     if (!workflow) {
       throw new ServiceUnavailableException(
-        'Aucune stack libre et la demande de provisioning a échoué.',
+        'Tidak ada stack bebas dan permintaan provisioning gagal.',
       );
     }
 
@@ -559,7 +559,7 @@ export class StackPoolService implements OnModuleInit {
           });
           this.authGateway.emitConnectionError(
             dto.pairingToken,
-            'Le serveur na pas pu être créé chez Hetzner.',
+            'Server tidak dapat dibuat di Hetzner.',
           );
         }
       }
@@ -589,7 +589,7 @@ export class StackPoolService implements OnModuleInit {
 
     if (!dto.serverId) {
       throw new ServiceUnavailableException(
-        'serverId, userId ou agentId est requis pour libérer une capacité.',
+        'serverId, userId atau agentId diperlukan untuk melepaskan kapasitas.',
       );
     }
 
@@ -598,7 +598,7 @@ export class StackPoolService implements OnModuleInit {
     });
 
     if (!server) {
-      throw new ServiceUnavailableException('Serveur introuvable.');
+      throw new ServiceUnavailableException('Server tidak ditemukan.');
     }
 
     const workflow = await this.prisma.provisioningWorkflowRun.create({
@@ -650,7 +650,7 @@ export class StackPoolService implements OnModuleInit {
 
     const workflow = await this.findWorkflow(dto);
     if (!workflow) {
-      throw new ServiceUnavailableException('Workflow callback introuvable.');
+      throw new ServiceUnavailableException('Workflow callback tidak ditemukan.');
     }
 
     const workflowStatus = this.mapWorkflowStatus(dto.status);
@@ -1584,7 +1584,7 @@ export class StackPoolService implements OnModuleInit {
 
       this.authGateway.emitConnectionError(
         workflow.pairingToken,
-        'La stack est prête mais la session WhatsApp n’a pas pu démarrer.',
+        'Stack siap tetapi sesi WhatsApp tidak dapat dimulai.',
       );
     }
   }
@@ -1930,28 +1930,28 @@ export class StackPoolService implements OnModuleInit {
       case 'SERVER_INITIALIZING':
         return {
           subtitle:
-            'Nous démarrons un nouveau serveur pour accueillir votre agent.',
-          title: 'Initialisation du serveur',
+            'Kami memulai server baru untuk menampung agent Anda.',
+          title: 'Inisialisasi server',
         };
       case 'STACK_INSTALLING':
         return {
-          subtitle: 'Nous installons Bedones WhatsApp et ses dépendances.',
-          title: "Installation de l'IA",
+          subtitle: 'Kami menginstal Bedones WhatsApp dan dependensinya.',
+          title: 'Instalasi AI',
         };
       case 'STACK_STARTING':
         return {
-          subtitle: 'Nous attendons que les services deviennent disponibles.',
-          title: "Lancement de l'IA",
+          subtitle: 'Kami menunggu layanan tersedia.',
+          title: 'Peluncuran AI',
         };
       case 'QR_FETCHING':
         return {
-          subtitle: 'Nous récupérons les informations de connexion.',
-          title: 'Récupération du code QR',
+          subtitle: 'Kami mengambil informasi koneksi.',
+          title: 'Pengambilan kode QR',
         };
       default:
         return {
-          subtitle: 'Provisionnement en cours.',
-          title: 'Préparation de votre stack',
+          subtitle: 'Provisioning sedang berlangsung.',
+          title: 'Menyiapkan stack Anda',
         };
     }
   }

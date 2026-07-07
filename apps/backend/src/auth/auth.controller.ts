@@ -71,7 +71,7 @@ export class AuthController {
         pricingUrl: { type: 'string', example: '/pricing' },
         message: {
           type: 'string',
-          example: 'Un code de vérification a été envoyé',
+          example: 'Kode verifikasi telah dikirim',
         },
       },
     },
@@ -103,7 +103,7 @@ export class AuthController {
         pairingToken: { type: 'string', example: 'token123...' },
         message: {
           type: 'string',
-          example: 'Scannez le code QR avec WhatsApp',
+          example: 'Pindai kode QR dengan WhatsApp',
         },
       },
     },
@@ -139,7 +139,7 @@ export class AuthController {
         pairingToken: { type: 'string', example: 'token123...' },
         message: {
           type: 'string',
-          example: 'Nouveau code QR généré',
+          example: 'Kode QR baru dibuat',
         },
       },
     },

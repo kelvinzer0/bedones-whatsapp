@@ -25,17 +25,17 @@ export class WhatsAppAgentInternalController {
 
   @Get('me')
   @ApiOperation({
-    summary: "Lire l'état interne complet de l'agent",
+    summary: "Baca status internal lengkap agent",
     description:
-      "Endpoint interne backend, appelé par le whatsapp-agent pour récupérer l'objet WhatsAppAgent complet (cache local côté agent) et le groupe de gestion associé.",
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent untuk mengambil objek WhatsAppAgent lengkap (cache lokal di sisi agent) dan grup manajemen terkait.',
   })
   @ApiResponse({
     status: 200,
-    description: "Snapshot complet de l'agent retourné",
+    description: "Snapshot lengkap agent dikembalikan",
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async getAgentSnapshot(@AgentContext() context: AgentRequestContext) {
     return this.whatsappAgentInternalService.getAgentSnapshot(
@@ -46,17 +46,17 @@ export class WhatsAppAgentInternalController {
 
   @Patch('me')
   @ApiOperation({
-    summary: "Mettre à jour l'état interne de l'agent",
+    summary: "Perbarui status internal agent",
     description:
-      'Endpoint interne backend unique pour les mises à jour venant du whatsapp-agent. Toutes les propriétés sont optionnelles (prompt, statut de sync image, erreur sync).',
+      'Endpoint internal backend tunggal untuk pembaruan yang datang dari whatsapp-agent. Semua properti bersifat opsional (prompt, status sync gambar, error sync).',
   })
   @ApiResponse({
     status: 200,
-    description: 'Snapshot agent mis à jour et retourné',
+    description: 'Snapshot agent diperbarui dan dikembalikan',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async updateAgentSnapshot(
     @AgentContext() context: AgentRequestContext,

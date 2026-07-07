@@ -203,7 +203,7 @@ export function getPhoneDialCode(countryCode?: string | null) {
 
 export function getPhonePlaceholder(countryCode?: string | null) {
   const rule = KNOWN_PHONE_RULES[getFallbackCountryCode(countryCode)]
-  return rule?.placeholder ?? 'Numéro local'
+  return rule?.placeholder ?? 'Nomor lokal'
 }
 
 export function normalizeNationalNumber(
@@ -389,7 +389,7 @@ export function getCountryPhoneValidationError(
   }
 ) {
   const requiredMessage =
-    options?.requiredMessage ?? 'Veuillez entrer votre numéro.'
+    options?.requiredMessage ?? 'Silakan masukkan nomor Anda.'
   const normalizedValue = normalizeCountryPhoneValue(
     value,
     options?.defaultCountryCode
@@ -407,15 +407,15 @@ export function getCountryPhoneValidationError(
   )
 
   if (rule?.exactLength && digits.length !== rule.exactLength) {
-    return `Le numéro pour ${country?.name || 'ce pays'} doit contenir ${rule.exactLength} chiffres.`
+    return `Nomor untuk ${country?.name || 'negara ini'} harus terdiri dari ${rule.exactLength} digit.`
   }
 
   if (digits.length < min) {
-    return 'Le numéro saisi est trop court.'
+    return 'Nomor yang dimasukkan terlalu pendek.'
   }
 
   if (digits.length > max) {
-    return 'Le numéro saisi est trop long.'
+    return 'Nomor yang dimasukkan terlalu panjang.'
   }
 
   return null

@@ -38,17 +38,17 @@ export class ProductsInternalController {
 
   @Get('sample')
   @ApiOperation({
-    summary: 'Récupérer un échantillon de produits',
+    summary: 'Ambil sampel produk',
     description:
-      'Endpoint interne backend, appelé par le whatsapp-agent pour récupérer un échantillon représentatif du catalogue (génération/mise à jour du prompt de description image). Non destiné au frontend.',
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent untuk mengambil sampel representatif katalog (pembuatan/pembaruan prompt deskripsi gambar). Tidak ditujukan untuk frontend.',
   })
   @ApiResponse({
     status: 200,
-    description: "Échantillon de produits de l'agent retourné",
+    description: 'Sampel produk agent dikembalikan',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async getSampleProducts(
     @AgentContext() context: AgentRequestContext,
@@ -67,21 +67,21 @@ export class ProductsInternalController {
 
   @Get('by-retailer-id/:retailerId')
   @ApiOperation({
-    summary: 'Trouver un produit par retailer_id',
+    summary: 'Cari produk berdasarkan retailer_id',
     description:
-      'Endpoint interne backend, appelé par le pipeline image du whatsapp-agent après OCR pour matcher rapidement un produit via son code retailer.',
+      'Endpoint internal backend, dipanggil oleh pipeline image whatsapp-agent setelah OCR untuk mencocokkan produk dengan cepat melalui kode retailer.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Produit correspondant retourné (ou null)',
+    description: 'Produk yang cocok dikembalikan (atau null)',
   })
   @ApiResponse({
     status: 400,
-    description: 'retailerId manquant ou invalide',
+    description: 'retailerId tidak ada atau tidak valid',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async getProductByRetailerId(
     @AgentContext() context: AgentRequestContext,
@@ -100,21 +100,21 @@ export class ProductsInternalController {
 
   @Get('by-id/:productId')
   @ApiOperation({
-    summary: 'Trouver un produit par identifiant interne/WhatsApp/retailer',
+    summary: 'Cari produk berdasarkan ID internal/WhatsApp/retailer',
     description:
-      'Endpoint interne backend, appelé par le whatsapp-agent pour résoudre un identifiant produit vers le produit métier et son whatsapp_product_id.',
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent untuk meneruskan ID produk ke produk bisnis dan whatsapp_product_id-nya.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Produit correspondant retourné (ou null)',
+    description: 'Produk yang cocok dikembalikan (atau null)',
   })
   @ApiResponse({
     status: 400,
-    description: 'productId manquant ou invalide',
+    description: 'productId tidak ada atau tidak valid',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async getProductByAnyId(
     @AgentContext() context: AgentRequestContext,
@@ -134,21 +134,21 @@ export class ProductsInternalController {
   @Get('by-ids')
   @ApiOperation({
     summary:
-      'Trouver plusieurs produits par identifiants interne/WhatsApp/retailer',
+      'Cari beberapa produk berdasarkan ID internal/WhatsApp/retailer',
     description:
-      "Endpoint interne backend, appelé par le whatsapp-agent pour résoudre plusieurs identifiants produit et récupérer les données nécessaires à la construction d'une preview de lien produit.",
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent untuk meneruskan beberapa ID produk dan mengambil data yang diperlukan untuk membuat preview tautan produk.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Liste ordonnée des correspondances retournée',
+    description: 'Daftar pencocokan yang diurutkan dikembalikan',
   })
   @ApiResponse({
     status: 400,
-    description: 'Aucun identifiant valide fourni',
+    description: 'Tidak ada ID valid yang diberikan',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async getProductsByAnyIds(
     @AgentContext() context: AgentRequestContext,
@@ -168,21 +168,21 @@ export class ProductsInternalController {
 
   @Get('search-by-keywords')
   @ApiOperation({
-    summary: 'Rechercher des produits par mots-clés',
+    summary: 'Cari produk berdasarkan kata kunci',
     description:
-      'Endpoint interne backend, appelé par le whatsapp-agent pour la recherche OCR textuelle. Le matching est strictement effectué sur retailer_id.',
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent untuk pencarian OCR tekstual. Pencocokan dilakukan secara ketat pada retailer_id.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Produits et mots-clés matchés retournés',
+    description: 'Produk dan kata kunci yang cocok dikembalikan',
   })
   @ApiResponse({
     status: 400,
-    description: 'Aucun mot-clé valide fourni',
+    description: 'Tidak ada kata kunci valid yang diberikan',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async searchProductsByKeywords(
     @AgentContext() context: AgentRequestContext,
@@ -203,17 +203,17 @@ export class ProductsInternalController {
   @Patch('cover-image-descriptions')
   @ApiOperation({
     summary:
-      "Mettre à jour en batch les descriptions de cover et états d'indexation",
+      'Perbarui batch deskripsi cover dan status pengindeksan',
     description:
-      "Endpoint interne backend, appelé par le whatsapp-agent en fin d'indexation pour persister en une seule requête les descriptions de cover et remettre les flags d'indexation à false (produits et images).",
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent pada akhir pengindeksan untuk menyimpan deskripsi cover dan mengatur ulang flag pengindeksan ke false (produk dan gambar) dalam satu permintaan.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Batch appliqué sur les produits appartenant à cet agent',
+    description: 'Batch diterapkan pada produk milik agent ini',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async batchUpdateProductImageIndexing(
     @AgentContext() context: AgentRequestContext,
@@ -227,17 +227,17 @@ export class ProductsInternalController {
 
   @Get('for-image-indexing')
   @ApiOperation({
-    summary: "Lister les produits pour l'indexation image",
+    summary: 'Daftar produk untuk pengindeksan gambar',
     description:
-      'Endpoint interne backend, appelé par le whatsapp-agent pour récupérer les produits et leurs images de couverture à indexer dans Qdrant (traitement fait côté agent).',
+      'Endpoint internal backend, dipanggil oleh whatsapp-agent untuk mengambil produk dan gambar cover mereka yang akan diindeks di Qdrant (pemrosesan dilakukan di sisi agent).',
   })
   @ApiResponse({
     status: 200,
-    description: "Liste de produits prêts pour l'indexation image",
+    description: 'Daftar produk siap untuk pengindeksan gambar',
   })
   @ApiResponse({
     status: 401,
-    description: 'JWT inter-services invalide ou absent',
+    description: 'JWT antar-layanan tidak valid atau tidak ada',
   })
   async getProductsForImageIndexing(
     @AgentContext() context: AgentRequestContext,

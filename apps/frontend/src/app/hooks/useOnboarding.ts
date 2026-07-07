@@ -10,19 +10,19 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     path: '/onboarding/import',
     step: 0,
-    title: 'Importation de vos données WhatsApp Business',
+    title: 'Impor data WhatsApp Business Anda',
   },
   {
     path: '/onboarding/review-products',
     step: 1,
-    title: 'Vérification de vos produits',
+    title: 'Verifikasi produk Anda',
   },
   {
     path: '/onboarding/business-info',
     step: 2,
-    title: 'Informations de votre boutique',
+    title: 'Informasi toko Anda',
   },
-  { path: '/onboarding/advanced-options', step: 3, title: 'Options avancées' },
+  { path: '/onboarding/advanced-options', step: 3, title: 'Opsi lanjutan' },
 ]
 
 export function useOnboarding(currentPath: string) {

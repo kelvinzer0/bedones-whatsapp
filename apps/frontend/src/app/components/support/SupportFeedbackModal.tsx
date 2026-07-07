@@ -124,18 +124,18 @@ export function SupportFeedbackModal({
       })
 
       notification.success({
-        message: 'Message envoyé',
-        description: `Référence support : ${eventId}`,
+        message: 'Pesan terkirim',
+        description: `Referensi dukungan: ${eventId}`,
       })
 
       onClose()
     } catch (error) {
       notification.error({
-        message: 'Envoi impossible',
+        message: 'Pengiriman gagal',
         description:
           error instanceof Error
             ? error.message
-            : "Le retour n'a pas pu être envoyé.",
+            : "Umpan balik tidak dapat dikirim.",
       })
     } finally {
       setIsSubmitting(false)
@@ -148,7 +148,7 @@ export function SupportFeedbackModal({
       onCancel={onClose}
       footer={[
         <Button key='cancel' onClick={onClose}>
-          Annuler
+          Batal
         </Button>,
         <Button
           key='submit'
@@ -159,7 +159,7 @@ export function SupportFeedbackModal({
           iconPosition='end'
           onClick={() => form.submit()}
         >
-          Envoyer
+          Kirim
         </Button>,
       ]}
       width={520}
@@ -181,11 +181,11 @@ export function SupportFeedbackModal({
           <Alert
             type='warning'
             showIcon
-            message='Configuration Sentry frontend manquante'
+            message='Konfigurasi Sentry frontend tidak ditemukan'
             description={
               sentryConfig.reason === 'invalid_dsn'
-                ? 'VITE_SENTRY_DSN est présent mais invalide. Corrigez la variable pour activer le formulaire.'
-                : "Renseignez VITE_SENTRY_DSN dans la configuration frontend pour permettre l'envoi de feedback."
+                ? 'VITE_SENTRY_DSN ada tetapi tidak valid. Perbaiki variabel untuk mengaktifkan formulir.'
+                : "Atur VITE_SENTRY_DSN dalam konfigurasi frontend untuk mengirim umpan balik."
             }
           />
         ) : null}
@@ -207,7 +207,7 @@ export function SupportFeedbackModal({
                 validator: (_, value?: CountryPhoneValue) => {
                   const error = getCountryPhoneValidationError(value, {
                     defaultCountryCode: defaultPhoneCountryCode,
-                    requiredMessage: 'Veuillez entrer votre numéro.',
+                    requiredMessage: 'Silakan masukkan nomor Anda.',
                   })
 
                   return error
@@ -221,12 +221,12 @@ export function SupportFeedbackModal({
           </Form.Item>
 
           <Form.Item
-            label='Catégorie'
+            label='Kategori'
             name='category'
             rules={[
               {
                 required: true,
-                message: 'Sélectionnez un type de demande.',
+                message: 'Pilih tipe permintaan.',
               },
             ]}
           >
@@ -234,20 +234,20 @@ export function SupportFeedbackModal({
           </Form.Item>
 
           <Form.Item
-            label='Votre message'
+            label='Pesan Anda'
             name='message'
             rules={[
-              { required: true, message: 'Précisez votre message.' },
+              { required: true, message: 'Jelaskan pesan Anda.' },
               {
                 min: 20,
                 message:
-                  'Ajoutez un peu plus de contexte (20 caractères minimum).',
+                  'Tambahkan konteks lebih lanjut (minimal 20 karakter).',
               },
             ]}
           >
             <Input.TextArea
               rows={6}
-              placeholder='S’adapter à au client'
+              placeholder='Menyesuaikan dengan klien'
               showCount
               maxLength={2000}
             />
