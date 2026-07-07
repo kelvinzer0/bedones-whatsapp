@@ -1,0 +1,273 @@
+# =============================================================================
+# BEDONES WHATSAPP - Standalone Production Setup (1 VPS = full stack)
+# =============================================================================
+# Uses pre-built images from GHCR (no source build needed).
+# Suitable for testing, demo, or single-tenant production deployment.
+#
+# Usage:
+#   1. Copy .env.prod.example to .env.prod and edit values
+#   2. docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+#   3. docker compose -f docker-compose.prod.yml logs -f backend
+#
+# After backend is up, generate AGENT_BACKEND_TOKEN (see deploy/README.md).
+# =============================================================================
+
+name: bedones-whatsapp
+
+services:
+  # ===========================================================================
+  # PostgreSQL - single instance with 2 databases (app_db + agent_db)
+  # ===========================================================================
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bedones_net
+
+  # ===========================================================================
+  # Redis - shared cache & Bull queue
+  # ===========================================================================
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bedones_net
+
+  # ===========================================================================
+  # Qdrant - vector DB for agent image search
+  # ===========================================================================
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - bedones_net
+
+  # ===========================================================================
+  # Image Cropper - Python service for OpenCV image cropping
+  # ===========================================================================
+  image-cropper:
+    image: ghcr.io/kelvinzer0/bedones-whatsapp-cropper:main
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "8011"
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8011/health').read()"
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bedones_net
+
+  # ===========================================================================
+  # Backend - central API server (NestJS + Prisma)
+  # ===========================================================================
+  backend:
+    image: ghcr.io/kelvinzer0/bedones-whatsapp-backend:main
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # Database
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/app_db?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      # JWT & encryption
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      QR_JWT_SECRET: ${QR_JWT_SECRET}
+      AGENT_INTERNAL_JWT_SECRET: ${AGENT_INTERNAL_JWT_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      # URL config
+      BACKEND_URL: ${BACKEND_URL}
+      BACKEND_INTERNAL_URL: http://backend:3000
+      FRONTEND_URL: ${FRONTEND_URL}
+      CORS_ORIGINS: ${FRONTEND_URL}
+      # Connector
+      WHATSAPP_CONNECTOR_BASE_URL: "http://whatsapp-connector:3001"
+      CONNECTOR_SECRET: ${CONNECTOR_SECRET}
+      WPPCONNECT_SECRET_KEY: ${WPPCONNECT_SECRET_KEY:-THISISMYSECURETOKEN}
+      # AI providers
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      XAI_MODEL: ${XAI_MODEL:-grok-3}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-pro}
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemini}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-grok}
+      # Minio (optional - leave empty to disable)
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT:-}
+      MINIO_PORT: ${MINIO_PORT:-9000}
+      MINIO_USE_SSL: ${MINIO_USE_SSL:-false}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-}
+      MINIO_BUCKET: ${MINIO_BUCKET:-whatsapp-agent}
+      # Stack pool (disabled in standalone mode - no auto-provisioning)
+      STACK_POOL_PROVISION_ON_BOOT: "false"
+      STACK_POOL_BOOTSTRAP_VPS_COUNT: "0"
+      # Payment providers (optional)
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      NOTCH_PUBLIC_KEY: ${NOTCH_PUBLIC_KEY:-}
+      NOTCH_PRIVATE_KEY: ${NOTCH_PRIVATE_KEY:-}
+      NOTCH_HASH_KEY: ${NOTCH_HASH_KEY:-}
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "==> Running Prisma migrations for backend..."
+        cd /app/apps/backend
+        pnpm exec prisma migrate deploy
+        echo "==> Starting backend..."
+        exec node dist/main
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - bedones_net
+
+  # ===========================================================================
+  # WhatsApp Agent - LangChain AI agent (NestJS)
+  # ===========================================================================
+  whatsapp-agent:
+    image: ghcr.io/kelvinzer0/bedones-whatsapp-agent:main
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      image-cropper:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3002"
+      # Database (separate DB from backend)
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/agent_db?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      # Internal service URLs
+      CONNECTOR_URL: "http://whatsapp-connector:3001"
+      BACKEND_URL: "http://backend:3000"
+      BACKEND_INTERNAL_URL: http://backend:3000
+      CENTRAL_SERVER_URL: "http://backend:3000"
+      # Vector DB
+      QDRANT_URL: "http://qdrant:6333"
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: "6333"
+      # Image cropper
+      IMAGE_CROPPER_URL: "http://image-cropper:8011"
+      # Auth
+      AGENT_INTERNAL_JWT_SECRET: ${AGENT_INTERNAL_JWT_SECRET}
+      AGENT_BACKEND_TOKEN: ${AGENT_BACKEND_TOKEN:-}
+      # AI providers
+      GROK_API_KEY: ${XAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-pro}
+      GEMINI_EMBEDDING_MODEL: text-embedding-004
+      CLIP_IMAGE_MODEL: Xenova/clip-vit-base-patch16
+      QDRANT_IMAGE_VECTOR_SIZE: "512"
+      PRIMARY_MODEL: ${PRIMARY_MODEL:-gemini}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-grok}
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "==> Running Prisma migrations for whatsapp-agent..."
+        cd /app/apps/whatsapp-agent
+        pnpm exec prisma migrate deploy
+        echo "==> Starting whatsapp-agent..."
+        exec node dist/main
+    ports:
+      - "${AGENT_PORT:-3002}:3002"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3002/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - bedones_net
+
+  # ===========================================================================
+  # WhatsApp Connector - wwebjs client (NestJS + Chromium)
+  # ===========================================================================
+  whatsapp-connector:
+    image: ghcr.io/kelvinzer0/bedones-whatsapp-connector:main
+    restart: unless-stopped
+    depends_on:
+      whatsapp-agent:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      BACKEND_URL: "http://backend:3000"
+      BACKEND_INTERNAL_URL: http://backend:3000
+      WEBHOOK_URLS: "http://whatsapp-agent:3002/webhook/message,http://backend:3000/webhooks/whatsapp/events,http://backend:3000/webhooks/whatsapp/connected"
+      CONNECTOR_SECRET: ${CONNECTOR_SECRET}
+      CONNECTOR_INSTANCE_ID: ${CONNECTOR_INSTANCE_ID:-bedones-wa-local}
+      WHATSAPP_AUTOSTART: ${WHATSAPP_AUTOSTART:-true}
+      WHATSAPP_SESSION_PATH: /data/sessions
+      WHATSAPP_PUPPETEER_HEADLESS: "true"
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+    volumes:
+      - connector_sessions:/data
+    ports:
+      - "${CONNECTOR_PORT:-3001}:3001"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3001/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - bedones_net
+
+networks:
+  bedones_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  connector_sessions:
